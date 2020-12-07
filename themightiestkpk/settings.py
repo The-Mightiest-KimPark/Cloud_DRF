@@ -25,7 +25,7 @@ SECRET_KEY = 'l2o8xe@t_-bgpso9g0lw9=&!bks0n&-_2z)32b_h8t^#yrn%iy'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,7 +37,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'ai',
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+        #'rest_framework.permissions.IsAuthenticated',#추가
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',#추가
+        'rest_framework.authentication.BasicAuthentication',#추가
+    ),
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -74,10 +89,20 @@ WSGI_APPLICATION = 'themightiestkpk.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+
+
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+     'ENGINE': 'django.db.backends.mysql',
+     'NAME': 'themightiestkpk',  # DB명
+     'USER': 'admin',  # 데이터베이스 계정
+     'PASSWORD': 'themightiestkpk1',   # 계정 비밀번호
+     'HOST': 'themightiestkpk.c9jl6xhdt5hy.us-east-1.rds.amazonaws.com',  # 데이테베이스 IP
+     'PORT': '3306',  # 데이터베이스 port
+     }
 }
 
 
