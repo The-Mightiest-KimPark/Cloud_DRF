@@ -13,8 +13,7 @@ class Grocery(models.Model):
     refri_number = models.CharField(max_length=50, null=True)
     name = models.CharField(max_length=20, null=True)
     count = models.IntegerField(blank=True, null=True)
-    reg_date = models.DateField(blank=True, null=True)
-    reg_time = models.DateField(blank=True, null=True)
+    reg_date = models.DateTimeField(blank=True, null=True)
     gubun = models.CharField(max_length=5, null=True)
 
     class Meta:

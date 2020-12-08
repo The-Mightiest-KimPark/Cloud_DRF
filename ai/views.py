@@ -10,9 +10,9 @@ from .serializers import GrocerySerializer
 def HelloAPI(request):
     # 이미지 정보 받음
     params = request.data
+    print('params : ', params)
     url = params['url']
     reg_date = params['reg_date']
-    reg_time = params['reg_time']
     refri_number = params['refri_number']
 
     # AI분석 로직
@@ -31,7 +31,6 @@ def HelloAPI(request):
     for result in ai_result:
         result['refri_number'] = refri_number
         result['reg_date'] = reg_date
-        result['reg_time'] = reg_time
         result['gubun'] = 1
 
         serializer = GrocerySerializer(data=result)
