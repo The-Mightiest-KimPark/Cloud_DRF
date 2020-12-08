@@ -14,7 +14,7 @@ def AiImgGrocery(request):
     print('params : ', params)
     url = params['url']
     reg_date = params['reg_date']
-    refri_number = params['refri_number']
+    fridge_number = params['fridge_number']
 
     # AI분석 로직
     ai_result = [{
@@ -29,11 +29,11 @@ def AiImgGrocery(request):
     }]
 
     # 빅데이터 함수 호출(냉장고 번호와 재료들 넘겨줘야함?)
-    BdRecommRecipe(data=ai_result, refri_number= refri_number)
+    BdRecommRecipe(data=ai_result, fridge_number= fridge_number)
 
     # 결과 저장
     for result in ai_result:
-        result['refri_number'] = refri_number
+        result['fridge_number'] = fridge_number
         result['reg_date'] = reg_date
         result['gubun'] = 1
 
