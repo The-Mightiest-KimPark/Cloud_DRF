@@ -5,6 +5,6 @@ from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
 
 # Create your views here.
-@api_view(['GET'])
+@api_view(['POST'])
 def HelloAPI(request):
     return Response("hello world!")
