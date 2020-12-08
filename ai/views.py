@@ -9,11 +9,11 @@ from .serializers import GrocerySerializer
 @api_view(['GET','POST'])
 def HelloAPI(request):
     # 이미지 정보 받음
-    param = request.data
-    url = param['url']
-    reg_date = param['reg_date']
-    reg_time = param['reg_time']
-    refri_number = param['refri_number']
+    params = request.data
+    url = params['url']
+    reg_date = params['reg_date']
+    reg_time = params['reg_time']
+    refri_number = params['refri_number']
 
     # AI분석 로직
     ai_result = [{
