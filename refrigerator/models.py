@@ -27,6 +27,7 @@ class Refrigerator(models.Model):
 class Photo(models.Model):
     id = models.AutoField(primary_key=True) #PK(냉장고 사진PK)
     email = models.CharField(max_length=50, null=True) # FK(사용자id값)
+    file_name = models.CharField(max_length=50, null=True)
     url = models.CharField(max_length=500, null=True)
     reg_date = models.DateTimeField(blank=True, null=True)
 

@@ -26,7 +26,7 @@ def AiImgGrocery(request):
     print('email : ', email)
 
     # 이미지 저장
-    serializer = PhotoSerializer(data={"email":email,"url":url,"reg_date":reg_date})
+    serializer = PhotoSerializer(data={"email":email,"file_name":fridge_number,"url":url,"reg_date":reg_date})
     if serializer.is_valid():
         serializer.save()
         print('이미지 저장 성공')
