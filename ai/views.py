@@ -14,6 +14,7 @@ def AiImgGrocery(request):
     print('params : ', params)
     url = params['url']
     reg_date = params['reg_date']
+    print(reg_date)
     fridge_number = params['fridge_number']
 
     # AI분석 로직
