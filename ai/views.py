@@ -1,9 +1,11 @@
 from django.shortcuts import render
+from django.db.models import Q
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
 from .serializers import GrocerySerializer, AllGrocerySerializer
+from refrigerator.serializers import PhotoSerializer
 from .models import Grocery, AllGrocery
 from bigdata.views import BdRecommRecipe
 from refrigerator.models import Refrigerator
@@ -22,6 +24,14 @@ def AiImgGrocery(request):
     refri = Refrigerator.objects.get(fridge_number=fridge_number)
     email = refri.email
     print('email : ', email)
+
+    # 이미지 저장
+    serializer = PhotoSerializer(data={"email":email,"url":url,"reg_date":reg_date})
+    if serializer.is_valid():
+        serializer.save()
+        print('이미지 저장 성공')
+    else:
+        print('이미지 저장 실패')
 
     # AI분석 로직
     ai_result = [{
@@ -64,8 +74,9 @@ class AllGroceryName(generics.ListCreateAPIView):
 @api_view(['GET','POST'])
 def userInputGrocery(request):
     gubun = request.GET.get('gubun')
+    email = request.GET.get('email')
     if request.method == 'GET':
-        queryset = Grocery.objects.filter(gubun=gubun)
+        queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email))
         serializer = GrocerySerializer(queryset, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
