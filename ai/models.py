@@ -7,7 +7,7 @@ from django.contrib.auth.models import AbstractUser
 from datetime import datetime
 
 
-# 식재료 
+# 현재 식재료 
 class Grocery(models.Model):
     id = models.AutoField(primary_key=True) #PK(현재식재료PK)
     fridge_number = models.CharField(max_length=50, null=True)
@@ -18,6 +18,17 @@ class Grocery(models.Model):
 
     class Meta:
         db_table = 'GROCERY'
+
+    def __str__(self):
+        return self.name
+
+# 전체 식재료 
+class AllGrocery(models.Model):
+    id = models.AutoField(primary_key=True) #PK(현재식재료PK)
+    name = models.CharField(max_length=20, null=True)
+
+    class Meta:
+        db_table = 'ALL_GROCERY'
 
     def __str__(self):
         return self.name
