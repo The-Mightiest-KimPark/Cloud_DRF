@@ -17,9 +17,9 @@ class UserInfo(models.Model):
     name = models.CharField(max_length=500, null=True)
     password = models.CharField(max_length=500, null=True)
     guardian_name = models.CharField(max_length=500, null=True)
-    guardian_email = models.CharField(max_length=500, null=True)
     guardian_phone_number = models.CharField(max_length=500, null=True)
     purpose = models.CharField(max_length=500, null=True)
+    img_url = models.CharField(max_length=500, null=True)
 
     class Meta:
         db_table = 'USER_INFO'
