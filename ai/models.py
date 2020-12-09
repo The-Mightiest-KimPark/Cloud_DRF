@@ -10,7 +10,7 @@ from datetime import datetime
 # 현재 식재료 
 class Grocery(models.Model):
     id = models.AutoField(primary_key=True) #PK(현재식재료PK)
-    fridge_number = models.CharField(max_length=50, null=True)
+    email = models.CharField(max_length=50, null=True) # FK(사용자id값)
     name = models.CharField(max_length=20, null=True)
     count = models.IntegerField(blank=True, null=True)
     reg_date = models.DateTimeField(blank=True, null=True)

@@ -10,7 +10,7 @@ from datetime import datetime
 # 식재료 기반 추천 레시피
 class RecommRecipe(models.Model):
     id = models.AutoField(primary_key=True) #PK(추천레시피PK)
-    fridge_number = models.CharField(max_length=50, null=True)
+    email = models.CharField(max_length=50, null=True) # FK(사용자id값)
     name = models.CharField(max_length=50, null=True)
     ingredient = models.CharField(max_length=50, null=True)
     ingredient_name = models.CharField(max_length=50, null=True)
@@ -31,7 +31,6 @@ class RecommRecipe(models.Model):
 # 전체 레시피
 class AllRecipe(models.Model):
     id = models.AutoField(primary_key=True) #PK(추천레시피PK)
-    fridge_number = models.CharField(max_length=50, null=True)
     name = models.CharField(max_length=50, null=True)
     ingredient = models.CharField(max_length=50, null=True)
     ingredient_name = models.CharField(max_length=50, null=True)
