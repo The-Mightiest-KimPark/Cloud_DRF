@@ -20,7 +20,7 @@ class Grocery(models.Model):
         db_table = 'GROCERY'
 
     def __str__(self):
-        return self.name
+        return '{0}'.format(self.reg_date)
 
 # 전체 식재료 
 class AllGrocery(models.Model):

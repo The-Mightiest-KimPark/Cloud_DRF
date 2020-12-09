@@ -9,8 +9,12 @@ from .models import UserInfo, Follow, RecipeFavorite
 import json
 
 
-# 팔로우 / 언팔로우 (받는 값 : 사용자id, 팔로우한 상대email)
+# 팔로우 / 언팔로우 (받는 값 : email, 팔로우한 상대email)
 # 만든이 : snchoi
+#  {
+# 	"email": "test", 
+# 	"following_user_id": "test2"
+# }
 @api_view(['PUT'])
 def FollowAndUnfollow(request):
     params = request.data
@@ -33,18 +37,34 @@ def FollowAndUnfollow(request):
         if len(result):
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-    
 
 
-# 팔로우 된 상태일 때 친구 냉장고 가장최근 사진 조회 (조건 : )
+
+# 팔로우 된 상태일 때 친구 냉장고 가장최근 사진 조회 (조건: read안읽고, 최신사진순으로)
+# 받는 값 : 구분값, email, 팔로우한 상대email
 # 만든이 : snchoi
 @api_view(['GET'])
 def FollowingLatestPhoto(request):
     gubun = request.GET.get('gubun')
     pass
 
-# 사진 읽음 표시
+
+
+
+# 사진 읽음 표시 (받는 값 : email, 팔로우한 상대email)
+# 만든이 : snchoi
+# {
+# 	"email": "test", 
+# 	"following_user_id": "test2"
+# }
 @api_view(['PUT'])
 def FollowPhotoRead(request):
-    pass
+    params = request.data
+    email = params['email']
+    following_user_id = params['following_user_id']
 
+    follow = Follow.objects.get(email=email,following_user_id=following_user_id)
+    follow.read = True
+    follow.save()
+    print('읽음 완료')
+    return Response(status=status.HTTP_201_CREATED)

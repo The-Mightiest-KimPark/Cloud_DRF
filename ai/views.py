@@ -9,6 +9,7 @@ from refrigerator.serializers import PhotoSerializer
 from .models import Grocery, AllGrocery
 from bigdata.views import BdRecommRecipe
 from refrigerator.models import Refrigerator
+import json
 
 # AI 이미지 분석을 통한 결과 저장
 # 만든이 : snchoi
@@ -69,29 +70,33 @@ class AllGroceryName(generics.ListCreateAPIView):
 
 
 
-# 재료 조회(gubun=1 : 이미지 인식 ,  gubun=2 : 직접입력) / 사용자 재료 입력
+# 가장 최근 재료 조회(gubun=1 : 이미지 인식 ,  gubun=2 : 직접입력) / 사용자 재료 입력
 # 만든이 : snchoi
 @api_view(['GET','POST'])
 def userInputGrocery(request):
     gubun = request.GET.get('gubun')
     email = request.GET.get('email')
+
     if request.method == 'GET':
-        queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email))
+        #  {
+        # 	"gubun": 1 또는 2, 
+        # 	"email": "test2"
+        # }
+        latest_date = Grocery.objects.filter(Q(gubun=gubun),Q(email=email)).order_by('-reg_date')[:1].values_list('reg_date', flat=True)
+        queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email),Q(reg_date=latest_date))
         serializer = GrocerySerializer(queryset, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
+        # {
+        # "email": "test",
+        # "name": "banana",
+        # "count": 3,
+        # "reg_date": "2020-12-08T00:00:00Z"-현재날짜,
+        # "gubun": "2"
+        # }   
         serializer = GrocerySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-'''
-{
-"fridge_number": "test",
-"name": "banana",
-"count": 3,
-"reg_date": "2020-12-08T00:00:00Z",
-"gubun": "2"
-}   
-'''
 

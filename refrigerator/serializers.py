@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Refrigerator, Photo, Seosor
+from .models import Refrigerator, Photo, Sensor
 
 
 # 냉장고
@@ -17,5 +17,5 @@ class PhotoSerializer(serializers.ModelSerializer):
 # 센서
 class SensorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Seosor
+        model = Sensor
         fields= '__all__'
