@@ -6,15 +6,14 @@ from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
 from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer
 from .models import UserInfo, Follow, RecipeFavorite
+from refrigerator.models import Photo
+from refrigerator.serializers import PhotoSerializer
 import json
 
 
-# 팔로우 / 언팔로우 (받는 값 : email, 팔로우한 상대email)
+# 팔로우 / 언팔로우 
+# 받는 값(json) : email, following_user_id
 # 만든이 : snchoi
-#  {
-# 	"email": "test", 
-# 	"following_user_id": "test2"
-# }
 @api_view(['PUT'])
 def FollowAndUnfollow(request):
     params = request.data
@@ -41,22 +40,46 @@ def FollowAndUnfollow(request):
 
 
 # 팔로우 된 상태일 때 친구 냉장고 가장최근 사진 조회 (조건: read안읽고, 최신사진순으로)
-# 받는 값 : 구분값, email, 팔로우한 상대email
+# 받는 값 : email
 # 만든이 : snchoi
 @api_view(['GET'])
 def FollowingLatestPhoto(request):
-    gubun = request.GET.get('gubun')
-    pass
+    # 값 받아오기
+    email = request.GET.get('email')
+    
+    # 내가 팔로우 하는 친구email조회(읽지 않은 사진)
+    follow_queryset = Follow.objects.filter(Q(email=email),Q(read=False))
+    follow_serializer = FollowSerializer(follow_queryset, many=True)
+    
+    real_result_list = []
+    for follow in follow_serializer.data:
+        # 친구email
+        f_u_email = follow['following_user_id']
+        # 친구email을 통해 '이미지'와 '날짜' 가져옴(날짜 내림차순)
+        photo_queryset = Photo.objects.filter(email=f_u_email).order_by('-reg_date')[:1]
+        photo_serializer = PhotoSerializer(photo_queryset, many=True)
+        result_list = []
+        for photo in photo_serializer.data:
+            result_dict = {}
+            email = photo['email']
+            url = photo['url']
+            reg_date = photo['reg_date']
+            result_dict['email'] = email
+            result_dict['url'] = url
+            result_dict['reg_date'] = reg_date
+
+            # 친구email을 통해 '이름' 가져옴
+            name = UserInfo.objects.get(email=email).name
+            result_dict['name'] = name
+        real_result_list.append(result_dict)
+    return Response(real_result_list)
 
 
 
 
-# 사진 읽음 표시 (받는 값 : email, 팔로우한 상대email)
+# 사진 읽음 표시
+# 받는 값(json) : email, following_user_id
 # 만든이 : snchoi
-# {
-# 	"email": "test", 
-# 	"following_user_id": "test2"
-# }
 @api_view(['PUT'])
 def FollowPhotoRead(request):
     params = request.data
@@ -65,6 +88,9 @@ def FollowPhotoRead(request):
 
     follow = Follow.objects.get(email=email,following_user_id=following_user_id)
     follow.read = True
-    follow.save()
-    print('읽음 완료')
-    return Response(status=status.HTTP_201_CREATED)
+    try:
+        follow.save()
+        print('읽음 완료')
+        return Response({"result":True}, status=status.HTTP_201_CREATED)
+    except:
+        return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)

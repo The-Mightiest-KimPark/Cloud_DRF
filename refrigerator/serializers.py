@@ -19,3 +19,10 @@ class SensorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sensor
         fields= '__all__'
+
+
+# 냉장고 번호만 조회
+class RefrigeratorNumberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Refrigerator
+        fields= '__all__'

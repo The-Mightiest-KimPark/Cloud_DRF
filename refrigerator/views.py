@@ -4,27 +4,53 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
-from .serializers import GrocerySerializer, AllGrocerySerializer
-from refrigerator.serializers import PhotoSerializer
+from .serializers import RefrigeratorSerializer, PhotoSerializer, SensorSerializer
 from .models import Refrigerator, Photo, Sensor
-from bigdata.views import BdRecommRecipe
-from refrigerator.models import Refrigerator
 import json
 
-# 전체 냉장고 번호만 조회 - 회원가입 후 냉장고 번호 유효한 번호인지 확인
+# 냉장고 번호 유효성 검사 - 회원가입 후 냉장고 번호 유효한 번호인지 확인
+# 받는 값 : fridge_number
 # 만든이 : snchoi
-class FridgeNumberGet(generics.ListCreateAPIView):
-    pass
+@api_view(['GET'])
+def FridgeNumberVerification(request):
+    fridge_number = request.GET.get('fridge_number')
+    try:
+        queryset = Refrigerator.objects.get(fridge_number=fridge_number)
+        return Response({"result":True}, status=status.HTTP_201_CREATED)
+    except:
+        return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-# 사용자 email 냉장고 정보에 매핑(삽입)
+# 사용자 email을 냉장고 정보에 매핑(삽입)
+# 받는 값 : email, fridge_number
 # 만든이 : snchoi
-@api_view(['GET','POST'])
+@api_view(['PUT'])
 def InsertUserInfoToFridge(request):
-    pass
+    params = request.data
+    fridge_number = params['fridge_number']
+    email = params['email']
+    refri_info = Refrigerator.objects.get(fridge_number=fridge_number)
+    refri_info.email = email
+    try:
+        refri_info.save()
+        return Response({"result":True}, status=status.HTTP_201_CREATED)
+    except:
+        return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# 외출 모드ON OFF 변경
-class GoingOutMode(generics.ListCreateAPIView):
-    pass
+
+# 외출 모드 ON OFF 변경
+# 받는 값 : email, motion_sensor_on_off -> (1/0)
+# 만든이 : snchoi
+@api_view(['PUT'])
+def GoingOutMode(request):
+    params = request.data
+    email = params['email']
+    motion_sensor_on_off = params['motion_sensor_on_off']
+    refri_info = Refrigerator.objects.get(email=email)
+    refri_info.motion_sensor_on_off = motion_sensor_on_off
+    try:
+        refri_info.save()
+        return Response({"result":True}, status=status.HTTP_201_CREATED)
+    except:
+        return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
