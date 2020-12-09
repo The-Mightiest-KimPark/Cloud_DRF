@@ -18,6 +18,7 @@ class UserInfo(models.Model):
     user_name = models.CharField(max_length=500, null=True)
     password = models.CharField(max_length=500, null=True)
     guardian_name = models.CharField(max_length=500, null=True)
+    guardian_email = models.CharField(max_length=500, null=True)
     guardian_phone_number = models.CharField(max_length=500, null=True)
     purpose = models.CharField(max_length=500, null=True)
 
@@ -29,7 +30,7 @@ class UserInfo(models.Model):
 
 
 # 팔로우
-class Photo(models.Model):
+class Follow(models.Model):
     id = models.AutoField(primary_key=True) #PK(냉장고 사진PK)
     user_id = models.IntegerField(blank=True, null=True)
     following_user_id = models.CharField(max_length=500, null=True)
