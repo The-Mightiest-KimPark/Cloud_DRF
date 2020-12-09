@@ -11,7 +11,7 @@ from datetime import datetime
 # 냉장고
 class Refrigerator(models.Model):
     fridge_number = models.CharField(max_length=50, primary_key=True) #PK(냉장고PK)
-    user_id = models.IntegerField(blank=True, null=True)
+    email = models.CharField(max_length=50, null=True) # FK(사용자id값)
     manutactor_date = models.DateField
     motion_sensor_on_off = models.IntegerField(default=0)
     motion_period = models.IntegerField(default=1)
@@ -26,7 +26,7 @@ class Refrigerator(models.Model):
 # 사진
 class Photo(models.Model):
     id = models.AutoField(primary_key=True) #PK(냉장고 사진PK)
-    fridge_number = models.CharField(max_length=50, null=True)
+    email = models.CharField(max_length=50, null=True) # FK(사용자id값)
     url = models.CharField(max_length=500, null=True)
     reg_date = models.DateTimeField(blank=True, null=True)
 
@@ -40,7 +40,7 @@ class Photo(models.Model):
 # 센서
 class Seosor(models.Model):
     id = models.AutoField(primary_key=True) #PK(냉장고 사진PK)
-    fridge_number = models.CharField(max_length=50, null=True)
+    email = models.CharField(max_length=50, null=True) # FK(사용자id값)
     name = models.CharField(max_length=50, null=True)
     value = models.IntegerField(blank=True, null=True)
     reg_date = models.DateTimeField(blank=True, null=True)

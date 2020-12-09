@@ -10,12 +10,11 @@ from datetime import datetime
 
 # 사용자
 class UserInfo(models.Model):
-    id = models.AutoField(primary_key=True) #PK(사용자PK)
+    email = models.CharField(primary_key=True,max_length=50) # PK(사용자PK)
     age = models.IntegerField(blank=True,null=True)
     sex = models.IntegerField(blank=True,null=True)
     phone_number = models.CharField(max_length=500, null=True)
-    user_email = models.CharField(max_length=500, null=True)
-    user_name = models.CharField(max_length=500, null=True)
+    name = models.CharField(max_length=500, null=True)
     password = models.CharField(max_length=500, null=True)
     guardian_name = models.CharField(max_length=500, null=True)
     guardian_email = models.CharField(max_length=500, null=True)
@@ -32,7 +31,7 @@ class UserInfo(models.Model):
 # 팔로우
 class Follow(models.Model):
     id = models.AutoField(primary_key=True) #PK(냉장고 사진PK)
-    user_id = models.IntegerField(blank=True, null=True)
+    email = models.CharField(max_length=50, null=True) # FK(사용자id값)
     following_user_id = models.CharField(max_length=500, null=True)
     read = models.BooleanField(default=False)
 
@@ -45,7 +44,7 @@ class Follow(models.Model):
 # 레시피 즐겨찾기
 class RecipeFavorite(models.Model):
     id = models.AutoField(primary_key=True) #PK(레시피 즐겨찾기PK)
-    user_id = models.IntegerField(blank=True, null=True)
+    email = models.CharField(max_length=50, null=True) # FK(사용자id값)
     recipe_id = models.IntegerField(blank=True, null=True)
 
     class Meta:

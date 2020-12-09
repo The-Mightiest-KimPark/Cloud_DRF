@@ -3,19 +3,25 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
-from .serializers import GrocerySerializer
+from .serializers import GrocerySerializer, AllGrocerySerializer
+from .models import Grocery, AllGrocery
 from bigdata.views import BdRecommRecipe
+from refrigerator.models import Refrigerator
 
 # AI 이미지 분석을 통한 결과 저장
+# 만든이 : snchoi
 @api_view(['POST'])
 def AiImgGrocery(request):
     # 이미지 정보 받음
     params = request.data
-    print('params : ', params)
     url = params['url']
     reg_date = params['reg_date']
-    print(reg_date)
     fridge_number = params['fridge_number']
+
+    # 냉장고 번호를 통해 아이디 값 가져오기
+    refri = Refrigerator.objects.get(fridge_number=fridge_number)
+    email = refri.email
+    print('email : ', email)
 
     # AI분석 로직
     ai_result = [{
@@ -30,11 +36,11 @@ def AiImgGrocery(request):
     }]
 
     # 빅데이터 함수 호출(냉장고 번호와 재료들 넘겨줘야함?)
-    BdRecommRecipe(data=ai_result, fridge_number= fridge_number)
+    BdRecommRecipe(data=ai_result, email= email)
 
     # 결과 저장
     for result in ai_result:
-        result['fridge_number'] = fridge_number
+        result['email'] = email
         result['reg_date'] = reg_date
         result['gubun'] = 1
 
@@ -43,3 +49,38 @@ def AiImgGrocery(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# 전체 재료 조회 - 직접 입력 시 존재하는 재료에서 선택하도록 
+# 만든이 : snchoi
+class AllGroceryName(generics.ListCreateAPIView):
+    queryset = AllGrocery.objects.all()
+    serializer_class = AllGrocerySerializer
+
+
+
+# 재료 조회(gubun=1 : 이미지 인식 ,  gubun=2 : 직접입력) / 사용자 재료 입력
+# 만든이 : snchoi
+@api_view(['GET','POST'])
+def userInputGrocery(request):
+    gubun = request.GET.get('gubun')
+    if request.method == 'GET':
+        queryset = Grocery.objects.filter(gubun=gubun)
+        serializer = GrocerySerializer(queryset, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = GrocerySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+'''
+{
+"fridge_number": "test",
+"name": "banana",
+"count": 3,
+"reg_date": "2020-12-08T00:00:00Z",
+"gubun": "2"
+}   
+'''
+
