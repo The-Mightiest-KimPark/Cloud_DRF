@@ -1,1 +1,21 @@
-# AI와 빅데이터에서 사용할 장고프로젝트
+# 프로젝트 세팅
+
+가상환경 폴더 생성
+'''
+python -m venv venv
+'''
+
+프로젝트가 가상환경을 바라보도록 설정
+'''
+source venv/Script/activate
+'''
+
+가상폴더를 바라보도록 한 뒤 모듈 설치
+'''
+pip install -r requirements.txt
+'''
+
+프로젝트 로컬 서버에 띄우기
+'''
+python manage.py runserver
+'''
