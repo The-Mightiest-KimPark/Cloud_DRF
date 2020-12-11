@@ -172,7 +172,46 @@ def TockenCheck(request):
 
     return Response(status=status.HTTP_403_FORBIDDEN)    
 
-# 회원 사진 등록(multipart로 받은 파일 S3에 올리고 디비에 url저장하기)            
-# 받는 값 : email, multipart file
+# 레시피 즐겨찾기
+# 받는 값 : email, recipe_id
 # 만든이 : snchoi
+@api_view(['PUT','GET'])
+def RecipeFavorites(request):
+
+    # 레시피 즐겨찾기 등록 / 취소         
+    if request.method == 'PUT':
+        params = request.data
+        email = params['email']
+        recipe_id = params['recipe_id']
+
+        # 즐겨찾기 여부 확인
+        favorite = RecipeFavorite.objects.filter(Q(email=email),Q(recipe_id=recipe_id))
+        print('favorite : ', favorite)
+        
+        # 즐겨찾기 했다면
+        if favorite: 
+            # 즐겨찾기 취소
+            try:
+                favorite.delete()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+        
+        # 즐겨찾기 하지 않았다면
+        else:
+            # 즐겨찾기 추가
+            serializer = RecipeFavoriteSerializer(data=params)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # 즐겨찾기한 레시피 조회
+    elif request.method == 'GET':
+        # 해당 아이디가 즐겨찾기 한 레시피 id 조회
+        pass
+        # 레시피id값에 해당하는 추천 레시피 
+
+
 
