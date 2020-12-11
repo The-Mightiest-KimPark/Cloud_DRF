@@ -9,6 +9,9 @@ from .models import UserInfo, Follow, RecipeFavorite
 from refrigerator.models import Photo
 from refrigerator.serializers import PhotoSerializer
 import json
+import bcrypt
+import jwt
+from themightiestkpk.settings import SECRET_KEY
 
 
 # 팔로우 / 언팔로우 
@@ -94,3 +97,82 @@ def FollowPhotoRead(request):
         return Response({"result":True}, status=status.HTTP_201_CREATED)
     except:
         return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# 회원가입
+# 받는 값(json) : email, age, sex, phone_number, name, password, guardian_name, guardian_phone_number, purpose
+# 만든이 : snchoi
+@api_view(['POST'])
+def SignUp(request):
+    data = request.data
+    try:
+        # 존재하는 이메일 이라면
+        if UserInfo.objects.filter(email=data['email']).exists():
+            return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 비밀번호 암호화
+        password = data['password'].encode('utf-8')
+        password_crypt = bcrypt.hashpw(password, bcrypt.gensalt())
+        password_crypt = password_crypt.decode('utf-8')
+
+        UserInfo(
+            email=data['email'],
+            age=data['age'],
+            sex=data['sex'],
+            phone_number=data['phone_number'],
+            name=data['name'],
+            password=password_crypt,
+            guardian_name=data['guardian_name'],
+            guardian_phone_number=data['guardian_phone_number'],
+            purpose=data['purpose'],
+            img_url=None
+        ).save()
+
+        return Response({"result":True}, status=status.HTTP_200_OK)
+
+    except KeyError:
+        return Response({"message":"INVALID_KEYS"}, status=status.HTTP_400_BAD_REQUEST)
+
+# 로그인
+# 받는 값(json) : email, age, sex, phone_number, name, password, guardian_name, guardian_phone_number, purpose
+# 만든이 : snchoi
+@api_view(['POST'])
+def SignIn(request):
+    data = request.data
+    try:
+        if UserInfo.objects.filter(email=data['email']).exists():
+            user = UserInfo.objects.get(email=data['email'])
+
+            # 비밀번호 확인
+            # 사용자가 입력한 비밀번호를 인코딩하고, 사용자의 이메일과 매칭되는 DB의 비밀번호를 찾아와서 인코딩. 이 두 값을 bcrypt.checkpw로 비교하면 됨
+            if bcrypt.checkpw(data['password'].encode('utf-8'), user.password.encode('utf-8')):
+                # 토큰 발행
+                token = jwt.encode({'email':data['email']}, SECRET_KEY, algorithm='HS256')
+                token = token.decode('utf-8')
+
+                return Response({"token":token}, status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    except KeyError:
+        return Response({"message":"INVALID_KEYS"}, status=status.HTTP_400_BAD_REQUEST)
+
+# 토큰 체크(인가된 사용자인지 확인)
+# 받는 값 : token
+# 만든이 : snchoi
+@api_view(['POST'])
+def TockenCheck(request):
+    data = request.data
+    user_token_info = jwt.decode(data['token'], SECRET_KEY, algorithm = 'HS256')
+
+    if UserInfo.objects.filter(email=user_token_info['email']).exists():
+        return Response(status=status.HTTP_200_OK)
+
+    return Response(status=status.HTTP_403_FORBIDDEN)    
+
+# 회원 사진 등록(multipart로 받은 파일 S3에 올리고 디비에 url저장하기)            
+# 받는 값 : email, multipart file
+# 만든이 : snchoi
+
