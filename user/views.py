@@ -1,17 +1,23 @@
 from django.shortcuts import render
 from django.db.models import Q
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
-from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer
-from .models import UserInfo, Follow, RecipeFavorite
+
 from refrigerator.models import Photo
 from refrigerator.serializers import PhotoSerializer
+from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer
+from .models import UserInfo, Follow, RecipeFavorite
+from themightiestkpk.settings import SECRET_KEY
+from bigdata.models import AllRecipe
+from bigdata.serializers import AllRecipeSerializer
+
 import json
 import bcrypt
 import jwt
-from themightiestkpk.settings import SECRET_KEY
+
 
 
 # 팔로우 / 언팔로우 
@@ -173,19 +179,19 @@ def TockenCheck(request):
     return Response(status=status.HTTP_403_FORBIDDEN)    
 
 # 레시피 즐겨찾기
-# 받는 값 : email, recipe_id
 # 만든이 : snchoi
 @api_view(['PUT','GET'])
 def RecipeFavorites(request):
 
-    # 레시피 즐겨찾기 등록 / 취소         
+    # 레시피 즐겨찾기 등록 / 취소  
+    # 받는 값 : email, recipe_id       
     if request.method == 'PUT':
         params = request.data
         email = params['email']
-        recipe_id = params['recipe_id']
+        recipe_num = params['recipe_num']
 
         # 즐겨찾기 여부 확인
-        favorite = RecipeFavorite.objects.filter(Q(email=email),Q(recipe_id=recipe_id))
+        favorite = RecipeFavorite.objects.filter(Q(email=email),Q(recipe_num=recipe_num))
         print('favorite : ', favorite)
         
         # 즐겨찾기 했다면
@@ -193,9 +199,9 @@ def RecipeFavorites(request):
             # 즐겨찾기 취소
             try:
                 favorite.delete()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(status=status.HTTP_201_CREATED)
             except:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
             
         
         # 즐겨찾기 하지 않았다면
@@ -208,10 +214,23 @@ def RecipeFavorites(request):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # 즐겨찾기한 레시피 조회
+    # 받는 값 : email
     elif request.method == 'GET':
-        # 해당 아이디가 즐겨찾기 한 레시피 id 조회
-        pass
-        # 레시피id값에 해당하는 추천 레시피 
+        # 해당 아이디가 즐겨찾기 한 recipe_num 조회
+        email = request.GET.get('email')
+
+        recipe_numbers_queryset = RecipeFavorite.objects.filter(email=email)
+        recipe_serializer = RecipeFavoriteSerializer(recipe_numbers_queryset, many=True)
+
+        # recipe_num 값에 해당하는 추천 레시피 값 리턴
+        recipe_from_user = []
+        for recipe_favorite_info in recipe_serializer.data:
+            recipe_num = recipe_favorite_info['recipe_num']
+            all_recipe_queryset = AllRecipe.objects.filter(recipe_num=recipe_num)
+            allrecipe_serializer = AllRecipeSerializer(all_recipe_queryset, many=True)
+            recipe_from_user.append(allrecipe_serializer.data)
+        return Response(recipe_from_user)
+
 
 
 
