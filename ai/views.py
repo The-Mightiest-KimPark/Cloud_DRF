@@ -124,12 +124,7 @@ def userInputGrocery(request):
                 cordinate=None
             ).save()
             print('저장완료')
-            return Response(status=status.HTTP_201_CREATED)
+            return Response({"result":True}, status=status.HTTP_201_CREATED)
         except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        # serializer = GrocerySerializer(data=request.data)
-        # if serializer.is_valid():
-        #     serializer.save()
-        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
 
