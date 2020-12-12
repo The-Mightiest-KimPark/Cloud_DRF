@@ -11,6 +11,7 @@ from bigdata.views import BdRecommRecipe
 from refrigerator.models import Refrigerator
 import json
 import datetime
+from pytz import timezone
 
 # AI 이미지 분석을 통한 결과 저장
 # 만든이 : snchoi
@@ -19,7 +20,8 @@ def AiImgGrocery(request):
     # 이미지 정보 받음
     params = request.data
     url = params['url']
-    reg_date = datetime.datetime.now()
+    reg_date = KST = datetime.datetime.now(timezone('Asia/Seoul'))
+
     print('reg_date : ', reg_date)
     fridge_number = params['fridge_number']
 
