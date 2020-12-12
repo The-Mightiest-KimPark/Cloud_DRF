@@ -226,7 +226,7 @@ def RecipeFavorites(request):
         recipe_from_user = []
         for recipe_favorite_info in recipe_serializer.data:
             all_recipe_id = recipe_favorite_info['all_recipe_id']
-            all_recipe_queryset = AllRecipe.objects.filter(all_recipe_id=all_recipe_id)
+            all_recipe_queryset = AllRecipe.objects.filter(id=all_recipe_id)
             allrecipe_serializer = AllRecipeSerializer(all_recipe_queryset, many=True)
             recipe_from_user.append(allrecipe_serializer.data)
         return Response(recipe_from_user)

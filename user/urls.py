@@ -8,5 +8,5 @@ urlpatterns = [
     path('api/sign-up/', views.SignUp),
     path('api/sign-in/', views.SignIn),
     path('api/token-check/', views.TockenCheck),
-    path('api/recipe-favorite/', views.RecipeFavorites)
+    path('api/recipe-favorite/', views.RecipeFavorites),
 ]
