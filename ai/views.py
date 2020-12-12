@@ -20,6 +20,7 @@ def AiImgGrocery(request):
     params = request.data
     url = params['url']
     reg_date = datetime.datetime.now()
+    print('reg_date : ', reg_date)
     fridge_number = params['fridge_number']
 
     # 냉장고 번호를 통해 아이디 값 가져오기
@@ -81,14 +82,14 @@ class AllGroceryName(generics.ListCreateAPIView):
 # 만든이 : snchoi
 @api_view(['GET','POST'])
 def userInputGrocery(request):
-    gubun = request.GET.get('gubun')
-    email = request.GET.get('email')
-
     if request.method == 'GET':
         #  {
         # 	"gubun": 1 또는 2, 
         # 	"email": "test2"
         # }
+        gubun = request.GET.get('gubun')
+        email = request.GET.get('email')
+
         latest_date = Grocery.objects.filter(Q(gubun=gubun),Q(email=email)).order_by('-reg_date')[:1].values_list('reg_date', flat=True)
         queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email),Q(reg_date=latest_date))
         serializer = GrocerySerializer(queryset, many=True)
