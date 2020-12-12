@@ -24,7 +24,7 @@ python manage.py runserver
 ```
 
 
-# REST API - User
+# REST API
 
 
 
