@@ -13,7 +13,7 @@ class Refrigerator(models.Model):
     fridge_number = models.CharField(max_length=50, primary_key=True) #PK(냉장고PK)
     email = models.CharField(max_length=50, null=True) # FK(사용자id값)
     manutactor_date = models.DateField
-    motion_sensor_on_off = models.IntegerField(default=0)
+    outing_mode = models.IntegerField(default=0)
     motion_period = models.IntegerField(default=1)
 
     class Meta:

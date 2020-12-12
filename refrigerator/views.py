@@ -51,16 +51,16 @@ def InsertUserInfoToFridge(request):
 
 
 
-# 외출 모드 ON OFF 변경
-# 받는 값 : email, motion_sensor_on_off -> (1/0)
+# 외출모드 ON OFF 변경
+# 받는 값 : email, outing_mode -> (1/0)
 # 만든이 : snchoi
 @api_view(['PUT'])
 def GoingOutMode(request):
     params = request.data
     email = params['email']
-    motion_sensor_on_off = params['motion_sensor_on_off']
+    outing_mode = params['outing_mode']
     refri_info = Refrigerator.objects.get(email=email)
-    refri_info.motion_sensor_on_off = motion_sensor_on_off
+    refri_info.outing_mode = outing_mode
     try:
         refri_info.save()
         return Response({"result":True}, status=status.HTTP_201_CREATED)
