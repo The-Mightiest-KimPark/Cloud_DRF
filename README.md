@@ -49,6 +49,17 @@ drf :  http://52.91.0.142:8000
 - 만든이 : snchoi
 
 
+### POST dev/sensor
+
+- lambda
+- 센서값 저장 및 문자전송
+  - 센서값 저장
+  - 불꽃 센서(fire)값 50이하 시 보호자에게 문자 발송
+- **body** : {fridge_number : str(냉장고번호), name: str(센서이름), value: int(센서값), reg_date: str(현재날짜)}
+- date형태 : '%Y-%m-%d %H:%M:%S.%f'
+- return: HTTP_200_OK | HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
 
 ### GET api/all-grocery-name/
 
