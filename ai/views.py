@@ -21,7 +21,8 @@ def AiImgGrocery(request):
     # 이미지 정보 받음
     params = request.data
     url = params['url']
-    reg_date = datetime.datetime.now(timezone('Asia/Seoul'))
+    reg_date = params['reg_date']
+    # reg_date = datetime.datetime.now(timezone('Asia/Seoul'))
     # reg_date = datetime.datetime.strptime(reg_date, '%Y-%m-%d %H:%M:%S.%f')
     # reg_date = reg_date(timezone('Asia/Seoul'))
 
