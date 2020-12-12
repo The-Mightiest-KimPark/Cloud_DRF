@@ -12,6 +12,7 @@ from refrigerator.models import Refrigerator
 import json
 import datetime
 from pytz import timezone
+from django.utils import timezone
 
 # AI 이미지 분석을 통한 결과 저장
 # 만든이 : snchoi
@@ -20,7 +21,7 @@ def AiImgGrocery(request):
     # 이미지 정보 받음
     params = request.data
     url = params['url']
-    reg_date = datetime.datetime.now()
+    reg_date = timezone.localtime()
     # reg_date = datetime.datetime.strptime(reg_date, '%Y-%m-%d %H:%M:%S.%f')
     # reg_date = reg_date(timezone('Asia/Seoul'))
 
