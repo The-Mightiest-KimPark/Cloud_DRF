@@ -18,7 +18,7 @@ def AiImgGrocery(request):
     # 이미지 정보 받음
     params = request.data
     url = params['url']
-    reg_date = params['reg_date']
+    reg_date = params['reg_date'] 
     fridge_number = params['fridge_number']
 
     # 냉장고 번호를 통해 아이디 값 가져오기
@@ -36,15 +36,20 @@ def AiImgGrocery(request):
 
     # AI분석 로직
     ai_result = [{
-        ''
+        'all_grocery_id': 1,
         'name' : '바나나',
-        'count' : 3
+        'count' : 3,
+        'cordinate' : "[[1,2],[3,2]]"
     },{
+        'all_grocery_id': 2,
         'name' : '사과',
-        'count' : 1
+        'count' : 1,
+        'cordinate' : "[[1,2],[3,2]]"
     },{
+        'all_grocery_id': 3,
         'name' : '고구마',
-        'count' : 2
+        'count' : 2,
+        'cordinate' : "[[1,2],[3,2]]"
     }]
 
     # 빅데이터 함수 호출(냉장고 번호와 재료들 넘겨줘야함?)
