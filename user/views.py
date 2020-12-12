@@ -184,14 +184,14 @@ def TockenCheck(request):
 def RecipeFavorites(request):
 
     # 레시피 즐겨찾기 등록 / 취소  
-    # 받는 값 : email, recipe_id       
+    # 받는 값 : email, all_recipe_id       
     if request.method == 'PUT':
         params = request.data
         email = params['email']
-        recipe_num = params['recipe_num']
+        all_recipe_id = params['all_recipe_id']
 
         # 즐겨찾기 여부 확인
-        favorite = RecipeFavorite.objects.filter(Q(email=email),Q(recipe_num=recipe_num))
+        favorite = RecipeFavorite.objects.filter(Q(email=email),Q(all_recipe_id=all_recipe_id))
         print('favorite : ', favorite)
         
         # 즐겨찾기 했다면
@@ -216,17 +216,17 @@ def RecipeFavorites(request):
     # 즐겨찾기한 레시피 조회
     # 받는 값 : email
     elif request.method == 'GET':
-        # 해당 아이디가 즐겨찾기 한 recipe_num 조회
+        # 해당 아이디가 즐겨찾기 한 all_recipe_id 조회
         email = request.GET.get('email')
 
-        recipe_numbers_queryset = RecipeFavorite.objects.filter(email=email)
-        recipe_serializer = RecipeFavoriteSerializer(recipe_numbers_queryset, many=True)
+        all_recipe_id_queryset = RecipeFavorite.objects.filter(email=email)
+        recipe_serializer = RecipeFavoriteSerializer(all_recipe_id_queryset, many=True)
 
-        # recipe_num 값에 해당하는 추천 레시피 값 리턴
+        # all_recipe_id 값에 해당하는 추천 레시피 값 리턴
         recipe_from_user = []
         for recipe_favorite_info in recipe_serializer.data:
-            recipe_num = recipe_favorite_info['recipe_num']
-            all_recipe_queryset = AllRecipe.objects.filter(recipe_num=recipe_num)
+            all_recipe_id = recipe_favorite_info['all_recipe_id']
+            all_recipe_queryset = AllRecipe.objects.filter(all_recipe_id=all_recipe_id)
             allrecipe_serializer = AllRecipeSerializer(all_recipe_queryset, many=True)
             recipe_from_user.append(allrecipe_serializer.data)
         return Response(recipe_from_user)

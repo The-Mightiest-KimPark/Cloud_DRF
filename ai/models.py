@@ -11,10 +11,12 @@ from datetime import datetime
 class Grocery(models.Model):
     id = models.AutoField(primary_key=True) #PK(현재식재료PK)
     email = models.CharField(max_length=50, null=True) # FK(사용자id값)
+    all_grocery_id = models.IntegerField(blank=True, null=True) # FK(식료품id값)
     name = models.CharField(max_length=20, null=True)
     count = models.IntegerField(blank=True, null=True)
     reg_date = models.DateTimeField(blank=True, null=True)
     gubun = models.CharField(max_length=5, null=True)
+    cordiname = models.CharField(max_length=500, null=True)
 
     class Meta:
         db_table = 'GROCERY'

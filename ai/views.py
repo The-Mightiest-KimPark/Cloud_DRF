@@ -36,6 +36,7 @@ def AiImgGrocery(request):
 
     # AI분석 로직
     ai_result = [{
+        ''
         'name' : '바나나',
         'count' : 3
     },{

@@ -45,7 +45,7 @@ class Follow(models.Model):
 class RecipeFavorite(models.Model):
     id = models.AutoField(primary_key=True) #PK(레시피 즐겨찾기PK)
     email = models.CharField(max_length=50, null=True) # FK(사용자id값)
-    recipe_num = models.IntegerField(blank=True, null=True) 
+    all_recipe_id = models.IntegerField(blank=True, null=True) 
 
     class Meta:
         db_table = 'RECIPE_FAVORITE'
