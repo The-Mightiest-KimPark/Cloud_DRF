@@ -10,6 +10,7 @@ from .models import Grocery, AllGrocery
 from bigdata.views import BdRecommRecipe
 from refrigerator.models import Refrigerator
 import json
+import datetime
 
 # AI 이미지 분석을 통한 결과 저장
 # 만든이 : snchoi
@@ -18,7 +19,7 @@ def AiImgGrocery(request):
     # 이미지 정보 받음
     params = request.data
     url = params['url']
-    reg_date = params['reg_date'] 
+    reg_date = datetime.datetime.now()
     fridge_number = params['fridge_number']
 
     # 냉장고 번호를 통해 아이디 값 가져오기
