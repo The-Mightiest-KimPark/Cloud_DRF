@@ -15,7 +15,7 @@ class Grocery(models.Model):
     name = models.CharField(max_length=20, null=True)
     count = models.IntegerField(blank=True, null=True)
     reg_date = models.DateTimeField(blank=True, null=True)
-    gubun = models.CharField(max_length=5, null=True)
+    gubun = models.IntegerField(blank=True, null=True)
     cordinate = models.CharField(max_length=500, null=True)
 
     class Meta:

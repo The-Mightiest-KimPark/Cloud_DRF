@@ -112,9 +112,24 @@ def userInputGrocery(request):
         # "reg_date": "2020-12-08T00:00:00Z"-현재날짜,
         # "gubun": "2"
         # }   
-        serializer = GrocerySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        data = request.data
+        try:
+            Grocery(
+                email=data['email'],
+                all_grocery_id=data['all_grocery_id'],
+                name=data['name'],
+                count=data['count'],
+                reg_date=data['reg_date'],
+                gubun=2,
+                cordinate=None
+            ).save()
+            print('저장완료')
+            return Response(status=status.HTTP_201_CREATED)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        # serializer = GrocerySerializer(data=request.data)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
