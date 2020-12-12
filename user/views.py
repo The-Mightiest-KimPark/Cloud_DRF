@@ -134,13 +134,13 @@ def SignUp(request):
             img_url=None
         ).save()
 
-        return Response({"result":True}, status=status.HTTP_200_OK)
+        return Response({"result":True}, status=status.HTTP_201_CREATED)
 
     except KeyError:
         return Response({"message":"INVALID_KEYS"}, status=status.HTTP_400_BAD_REQUEST)
 
 # 로그인
-# 받는 값(json) : email, age, sex, phone_number, name, password, guardian_name, guardian_phone_number, purpose
+# 받는 값(json) : email, password
 # 만든이 : snchoi
 @api_view(['POST'])
 def SignIn(request):
