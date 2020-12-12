@@ -20,7 +20,8 @@ def AiImgGrocery(request):
     # 이미지 정보 받음
     params = request.data
     url = params['url']
-    reg_date = KST = datetime.datetime.now(timezone('Asia/Seoul'))
+    reg_date = params['reg_date']
+    reg_date = reg_date(timezone('Asia/Seoul'))
 
     print('reg_date : ', reg_date)
     fridge_number = params['fridge_number']
@@ -68,9 +69,12 @@ def AiImgGrocery(request):
 
         serializer = GrocerySerializer(data=result)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            try:
+                serializer.save()
+            except:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
 
 
 # 전체 재료 이름, 재료id 조회 - 직접 입력 시 존재하는 재료에서 선택하도록 
