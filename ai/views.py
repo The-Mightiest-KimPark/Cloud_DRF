@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
-from .serializers import GrocerySerializer, AllGroceryNameSerializer
+from .serializers import GrocerySerializer, AllGrocerySerializer
 from refrigerator.serializers import PhotoSerializer
 from .models import Grocery, AllGrocery
 from bigdata.views import BdRecommRecipe
@@ -69,11 +69,11 @@ def AiImgGrocery(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# 전체 재료 이름 조회 - 직접 입력 시 존재하는 재료에서 선택하도록 
+# 전체 재료 이름, 재료id 조회 - 직접 입력 시 존재하는 재료에서 선택하도록 
 # 만든이 : snchoi
 class AllGroceryName(generics.ListCreateAPIView):
-    queryset = AllGrocery.objects.all().values('name')
-    serializer_class = AllGroceryNameSerializer
+    queryset = AllGrocery.objects.all()
+    serializer_class = AllGrocerySerializer
 
 
 
