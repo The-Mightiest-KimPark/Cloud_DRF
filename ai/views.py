@@ -62,7 +62,7 @@ def AiImgGrocery(request):
     # 결과 저장
     for result in ai_result:
         result['email'] = email
-        result['reg_date'] = reg_date
+        result['reg_date'] = str(reg_date)
         print('result[reg_date] : ', result['reg_date'])
         result['gubun'] = 1
 
