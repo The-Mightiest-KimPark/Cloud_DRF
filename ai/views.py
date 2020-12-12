@@ -12,7 +12,7 @@ from refrigerator.models import Refrigerator
 import json
 import datetime
 from pytz import timezone
-from django.utils import timezone
+# from django.utils import timezone
 
 # AI 이미지 분석을 통한 결과 저장
 # 만든이 : snchoi
@@ -65,7 +65,7 @@ def AiImgGrocery(request):
     # 결과 저장
     for result in ai_result:
         result['email'] = email
-        result['reg_date'] = str(reg_date)
+        result['reg_date'] = reg_date
         print('result[reg_date] : ', result['reg_date'])
         result['gubun'] = 1
 
