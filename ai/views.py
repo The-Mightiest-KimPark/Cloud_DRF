@@ -63,6 +63,7 @@ def AiImgGrocery(request):
     for result in ai_result:
         result['email'] = email
         result['reg_date'] = reg_date
+        print('result[reg_date] : ', result['reg_date'])
         result['gubun'] = 1
 
         serializer = GrocerySerializer(data=result)
