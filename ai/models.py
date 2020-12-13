@@ -16,7 +16,7 @@ class Grocery(models.Model):
     count = models.IntegerField(blank=True, null=True)
     reg_date = models.DateTimeField(blank=True, null=True)
     gubun = models.IntegerField(blank=True, null=True)
-    cordinate = models.CharField(max_length=500, null=True)
+    coordinate = models.JSONField(null=True)
 
     class Meta:
         db_table = 'GROCERY'
