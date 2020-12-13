@@ -53,17 +53,17 @@ def AiImgGrocery(request):
         'all_grocery_id': 1,
         'name' : '바나나',
         'count' : 3,
-        'cordinate' : "[[1,2],[3,2]]"
+        'coordinate' : "[[1,2],[3,2]]"
     },{
         'all_grocery_id': 2,
         'name' : '사과',
         'count' : 1,
-        'cordinate' : "[[1,2],[3,2]]"
+        'coordinate' : "[[1,2],[3,2]]"
     },{
         'all_grocery_id': 3,
         'name' : '고구마',
         'count' : 2,
-        'cordinate' : "[[1,2],[3,2]]"
+        'coordinate' : "[[1,2],[3,2]]"
     }]
 
     # 빅데이터 함수 호출(냉장고 번호와 재료들 넘겨줘야함?)
@@ -122,17 +122,17 @@ def AiImgGroceryTest(request):
         'all_grocery_id': 1,
         'name' : '바나나',
         'count' : 3,
-        'cordinate' : "[[1,2],[3,2]]"
+        'coordinate' : "[[1,2],[3,2]]"
     },{
         'all_grocery_id': 2,
         'name' : '사과',
         'count' : 1,
-        'cordinate' : "[[1,2],[3,2]]"
+        'coordinate' : "[[1,2],[3,2]]"
     },{
         'all_grocery_id': 3,
         'name' : '고구마',
         'count' : 2,
-        'cordinate' : "[[1,2],[3,2]]"
+        'coordinate' : "[[1,2],[3,2]]"
     }]
 
     # 빅데이터 함수 호출(냉장고 번호와 재료들 넘겨줘야함?)
