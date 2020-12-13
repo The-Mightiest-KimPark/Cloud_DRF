@@ -164,6 +164,14 @@ class AllGroceryName(generics.ListCreateAPIView):
     queryset = AllGrocery.objects.all()
     serializer_class = AllGrocerySerializer
 
+@api_view(['POST'])
+def test(request):
+    data = request.data
+    serializer = GrocerySerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 가장 최근 재료 조회(gubun=1 : 이미지 인식 ,  gubun=2 : 직접입력) / 사용자 재료 입력
