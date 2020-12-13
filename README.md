@@ -86,7 +86,7 @@ drf :  http://52.91.0.142:8000
 
 - DRF
 - 재료 직접 입력
-- **body** : GROCERY {"email": str, "all_grocery_id": int, "name": str, "count": int, "reg_date": str(date)}
+- **body** : GROCERY {"email": str, "all_grocery_id": int, "name": str, "count": int}
 - return : HTTP_201_CREATED | HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
 
