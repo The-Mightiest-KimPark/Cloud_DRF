@@ -1,17 +1,22 @@
 from django.shortcuts import render
 from django.db.models import Q
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
+
 from .serializers import GrocerySerializer, AllGrocerySerializer
 from refrigerator.serializers import PhotoSerializer
 from .models import Grocery, AllGrocery
 from bigdata.views import BdRecommRecipe
 from refrigerator.models import Refrigerator
+
+from pytz import timezone
+
 import json
 import datetime
-from pytz import timezone
+
 # from django.utils import timezone
 
 # AI 이미지 분석을 통한 결과 저장
@@ -90,41 +95,65 @@ class AllGroceryName(generics.ListCreateAPIView):
 
 # 가장 최근 재료 조회(gubun=1 : 이미지 인식 ,  gubun=2 : 직접입력) / 사용자 재료 입력
 # 만든이 : snchoi
-@api_view(['GET','POST'])
+@api_view(['GET','POST', 'PUT', 'DELETE'])
 def userInputGrocery(request):
+
+    # 가장 최근 재료 조회(gubun=1 : 이미지 인식 ,  gubun=2 : 직접입력)
     if request.method == 'GET':
-        #  {
-        # 	"gubun": 1 또는 2, 
-        # 	"email": "test2"
-        # }
         gubun = request.GET.get('gubun')
         email = request.GET.get('email')
 
-        latest_date = Grocery.objects.filter(Q(gubun=gubun),Q(email=email)).order_by('-reg_date')[:1].values_list('reg_date', flat=True)
-        queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email),Q(reg_date=latest_date))
+        # latest_date = Grocery.objects.filter(Q(gubun=gubun),Q(email=email)).order_by('-reg_date')[:1].values_list('reg_date', flat=True)
+        # queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email),Q(reg_date=latest_date))
+        queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email))
         serializer = GrocerySerializer(queryset, many=True)
         return Response(serializer.data)
+    
+    # 사용자 재료 입력
     elif request.method == 'POST':
-        # {
-        # "email": "test",
-        # "name": "banana",
-        # "count": 3,
-        # "reg_date": "2020-12-08T00:00:00Z"-현재날짜,
-        # "gubun": "2"
-        # }   
         data = request.data
+        data['gubun'] = 2 #구분값은 직접입력 값인 2로 지정
+        serializer = GrocerySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # 사용자 입력 재료 수정
+    elif request.method == 'PUT':
+        data = request.data
+        email = data['email']
+        name = data['name']
+        count = data['count']
+        all_grocery_id = data['all_grocery_id']
         try:
-            Grocery(
-                email=data['email'],
-                all_grocery_id=data['all_grocery_id'],
-                name=data['name'],
-                count=data['count'],
-                reg_date=data['reg_date'],
-                gubun=2,
-                cordinate=None
-            ).save()
-            print('저장완료')
-            return Response({"result":True}, status=status.HTTP_201_CREATED)
+            grocery_queryset = Grocery.objects.get(Q(all_grocery_id=all_grocery_id),Q(email=email),Q(gubun=2))
+            grocery_queryset.name = name
+            grocery_queryset.count = count
+            grocery_queryset.all_grocery_id = data['all_grocery_id']
+
+            try:
+                grocery_queryset.save()
+                return Response({"result":True}, status=status.HTTP_201_CREATED)
+            except:
+                return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except:
+            return Response({"result":False}, status=status.HTTP_404_NOT_FOUND)
+
+
+    # 사용자 입력 재료 삭제
+    elif request.method == 'DELETE':
+        data = request.data
+        email = data['email']
+        all_grocery_id = data['all_grocery_id']
+        try:
+            queryset = Grocery.objects.get(Q(all_grocery_id=all_grocery_id),Q(email=email))
+            queryset.delete()
         except:
             return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"result":True}, status=status.HTTP_201_CREATED)
+
+
+        
 
