@@ -73,7 +73,7 @@ drf :  http://52.91.0.142:8000
 ### GET api/user-input-grocery/?gubun=int&email=str
 
 - DRF
-- 가장 최근 재료 조회
+- 냉장고 재료 조회
 - **parameter**: 
   - gubun = int(1(이미지 인식) or 2(직접입력)) 
   - email = str(사용자email)
