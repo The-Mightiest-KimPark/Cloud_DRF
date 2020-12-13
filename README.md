@@ -85,10 +85,32 @@ drf :  http://52.91.0.142:8000
 ### POST api/user-input-grocery/
 
 - DRF
-- 재료 직접 입력
+- 재료 직접 입력 삽입
 - **body** : GROCERY {"email": str, "all_grocery_id": int, "name": str, "count": int}
 - return : HTTP_201_CREATED | HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
+
+
+
+### PUT api/user-input-grocery/
+
+- DRF
+- 재료 직접 입력 수정
+- **body** : GROCERY {"email": str, "all_grocery_id": int, "name": str, "count": int}
+- return : HTTP_201_CREATED | HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
+
+
+### DELETE api/user-input-grocery/
+
+- DRF
+- 재료 직접 입력 삭제
+- **body** : GROCERY {"email": str, "all_grocery_id": int}
+- return : HTTP_201_CREATED | HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
+
 
 
 
