@@ -32,7 +32,7 @@ python manage.py runserver
 
 lambda :  https://8i8wxh81q2.execute-api.us-east-1.amazonaws.com
 
-drf :  http://52.91.0.142:8000
+drf :  http://52.91.0.142 또는 http://ec2-52-91-0-142.compute-1.amazonaws.com/
 
 
 
