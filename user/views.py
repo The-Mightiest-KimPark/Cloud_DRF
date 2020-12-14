@@ -276,13 +276,17 @@ def GroceryAlarm(request):
         all_grocery_id_queryset = Alarm.objects.filter(email=email)
         grocery_serializer = AlarmSerializer(all_grocery_id_queryset, many=True)
 
-        # # all_grocery_id 값에 해당하는 식료품 조회
-        # grocery_from_user = []
-        # for recipe_favorite_info in grocery_serializer.data:
-        #     all_grocery = recipe_favorite_info['all_grocery_id']
-        #     all_grocery_queryset = AllGrocery.objects.filter(id=all_grocery)
+        # 식재료 이름도 같이 보내주기
+        # all_grocery_id 값에 해당하는 식료품 조회
+        grocery_from_user = []
+        for recipe_favorite_info in grocery_serializer.data:
+            all_grocery_id = recipe_favorite_info['all_grocery_id']
+            all_grocery = AllGrocery.objects.get(id=all_grocery_id)
+            recipe_favorite_info['name'] = all_grocery.name
             
-        #     allgrocery_serializer = AllGrocerySerializer(all_grocery_queryset, many=True)
-        #     grocery_from_user.append(allgrocery_serializer.data[0])
-        return Response(grocery_serializer.data)
+            grocery_from_user.append(recipe_favorite_info)
+            # allgrocery_serializer = AllGrocerySerializer(all_grocery_queryset, many=True)
+            # grocery_from_user.append(allgrocery_serializer.data[0])
+
+        return Response(grocery_from_user)
 
