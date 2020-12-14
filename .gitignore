@@ -241,4 +241,7 @@ pyvenv.cfg
 .venv
 pip-selfcheck.json
 
+# aws key file
+awskey.py
+
 # End of https://www.toptal.com/developers/gitignore/api/python,django,venv

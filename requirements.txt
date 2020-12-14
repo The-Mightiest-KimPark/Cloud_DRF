@@ -17,6 +17,7 @@ Django==3.1.2
 django-cors-headers==3.5.0
 django-extensions==3.0.9
 django-filter==2.4.0
+django-storages==1.10.1
 djangorestframework==3.12.1
 djangorestframework-jwt==1.11.0
 entrypoints==0.3
@@ -53,6 +54,7 @@ pickleshare==0.7.5
 Pillow==7.2.0
 prometheus-client==0.8.0
 prompt-toolkit==3.0.8
+psycopg2==2.8.6
 ptyprocess==0.6.0
 pycparser==2.20
 Pygments==2.7.2
@@ -61,7 +63,7 @@ pyparsing==2.4.7
 pyrsistent==0.16.0
 python-dateutil==2.8.1
 pytz==2020.1
-#pywin32==228
+pywin32==228
 pywinpty==0.5.7
 pyzmq==19.0.1
 qtconsole==4.7.5

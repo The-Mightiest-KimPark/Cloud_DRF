@@ -17,6 +17,9 @@ from pytz import timezone
 
 import json
 import datetime
+import boto3
+import awskey
+
 
 # from django.utils import timezone
 
@@ -164,14 +167,43 @@ class AllGroceryName(generics.ListCreateAPIView):
     queryset = AllGrocery.objects.all()
     serializer_class = AllGrocerySerializer
 
-@api_view(['POST'])
+@api_view(['GET'])
 def test(request):
-    data = request.data
-    serializer = GrocerySerializer(data=data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # s3 정보 가져오기
+    s3_client = boto3.client('s3',
+            region_name = awskey.AWS_REGION,
+            aws_access_key_id = awskey.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key = awskey.AWS_SECRET_ACCESS_KEY)
+
+    s3_resource = boto3.resource('s3',
+            region_name = awskey.AWS_REGION,
+            aws_access_key_id = awskey.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key = awskey.AWS_SECRET_ACCESS_KEY)
+
+    bucket_name = awskey.AWS_STORAGE_BUCKET_NAME
+    my_bucket = s3_resource.Bucket(bucket_name)
+    
+    for file in my_bucket.objects.all():
+        params = {'Bucket': bucket_name, 'Key': file.key}
+        
+        # 사진 URL
+        url = s3_client.generate_presigned_url('get_object', params)
+        print('url : ', url)
+
+        # 파일 이름
+        fridge_number = (file.key).split('.')[0]
+        print('fridge_number : ', fridge_number)
+
+    
+    return Response({"result": True})
+
+    # data = request.data
+    # serializer = GrocerySerializer(data=data)
+    # if serializer.is_valid():
+    #     serializer.save()
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 가장 최근 재료 조회(gubun=1 : 이미지 인식 ,  gubun=2 : 직접입력) / 사용자 재료 입력
