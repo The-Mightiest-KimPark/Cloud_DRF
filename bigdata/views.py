@@ -4,14 +4,26 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
 from .serializers import RecommRecipeSerializer
+from ai.models import Grocery
 import pymysql
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 
+import requests
+
 # AI 이미지 분석을 통한 결과 저장
-def BdRecommRecipe(data, email):
-    # 재료 정보 받음 data = 재료정보, email = 사용자id
+@api_view(['POST'])
+def BdRecommRecipe(request):
+    print('빅데이터 진입')
+    # 해당 사용자가 가지고 있는 재료정보 
+    print('request : ', request.data)
+    email = request.data['email']
+    print('email : ', email)
+    response = requests.get(f'http://127.0.0.1:8000/api/user-input-grocery/?email={email}')
+    print('response : ', response.text)
+    print('빅데이터 함수에서 여기까지 왔다')
+
     grocery = ' '.join(data['name'].values)
 
     # 빅데이터 로직
