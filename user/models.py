@@ -5,12 +5,15 @@ from django.utils import timezone
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 
 # 사용자
 class UserInfo(models.Model):
-    email = models.CharField(primary_key=True,max_length=50) # PK(사용자PK)
+    email = models.CharField(User, primary_key=True,max_length=50) # PK(사용자PK)
     age = models.IntegerField(blank=True,null=True)
     sex = models.IntegerField(blank=True,null=True)
     phone_number = models.CharField(max_length=500, null=True)
@@ -26,6 +29,16 @@ class UserInfo(models.Model):
 
     def __int__(self):
         return self.id
+
+    # def __str__(self):
+    #     return self.email.username
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserInfo.objects.create(email=instance)
+    instance.userinfo.save()
+
 
 
 # 팔로우

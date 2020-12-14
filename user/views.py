@@ -232,5 +232,8 @@ def RecipeFavorites(request):
         return Response(recipe_from_user)
 
 
-
+# user information
+# class MemberDetailView(DetailView):
+#     template_name = 'detail.html'
+#     model = UserInfo
 

@@ -1,0 +1,19 @@
+{% comment %} {% extends 'base.html' %}
+
+{% block title %}userinfo{% endblock title %}
+
+{% block contents %}
+
+<h2>user info</h2>
+<table class="table">
+    <tr>
+        <th width = '20%'> email </th>
+        <td>{{member.email}}</td>
+    </tr>
+    <tr>
+        <th>name</th>
+        <td>{{member.name}}</td>
+    </tr>
+</table>
+
+{% endblock contents %} {% endcomment %}

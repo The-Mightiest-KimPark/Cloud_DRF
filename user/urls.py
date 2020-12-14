@@ -1,4 +1,5 @@
 from django.urls import path, include
+from django.views.generic import RedirectView
 from . import views
 
 urlpatterns = [
@@ -9,4 +10,5 @@ urlpatterns = [
     path('api/sign-in/', views.SignIn),
     path('api/token-check/', views.TockenCheck),
     path('api/recipe-favorite/', views.RecipeFavorites),
+    # path('<str:pk>/detail', views.MemberDetailView.as_view(), 'detail'),
 ]
