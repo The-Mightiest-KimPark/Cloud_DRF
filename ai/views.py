@@ -216,9 +216,14 @@ def userInputGrocery(request):
         gubun = request.GET.get('gubun')
         email = request.GET.get('email')
 
-        # latest_date = Grocery.objects.filter(Q(gubun=gubun),Q(email=email)).order_by('-reg_date')[:1].values_list('reg_date', flat=True)
-        # queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email),Q(reg_date=latest_date))
-        queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email))
+        # 구분값이 존재한다면 
+        if gubun:
+            queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email))
+        
+        # 구분값이 존재하지 않는다면
+        else:
+            queryset = Grocery.objects.filter(Q(email=email))
+            
         serializer = GrocerySerializer(queryset, many=True)
         return Response(serializer.data)
     
