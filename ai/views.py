@@ -17,7 +17,7 @@ from pytz import timezone
 
 import json
 import datetime
-import boto3
+#import boto3
 import awskey
 
 
@@ -167,36 +167,36 @@ class AllGroceryName(generics.ListCreateAPIView):
     queryset = AllGrocery.objects.all()
     serializer_class = AllGrocerySerializer
 
-@api_view(['GET'])
-def test(request):
+# @api_view(['GET'])
+# def test(request):
 
-    # s3 정보 가져오기
-    s3_client = boto3.client('s3',
-            region_name = awskey.AWS_REGION,
-            aws_access_key_id = awskey.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key = awskey.AWS_SECRET_ACCESS_KEY)
+#     # s3 정보 가져오기
+#     s3_client = boto3.client('s3',
+#             region_name = awskey.AWS_REGION,
+#             aws_access_key_id = awskey.AWS_ACCESS_KEY_ID,
+#             aws_secret_access_key = awskey.AWS_SECRET_ACCESS_KEY)
 
-    s3_resource = boto3.resource('s3',
-            region_name = awskey.AWS_REGION,
-            aws_access_key_id = awskey.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key = awskey.AWS_SECRET_ACCESS_KEY)
+#     s3_resource = boto3.resource('s3',
+#             region_name = awskey.AWS_REGION,
+#             aws_access_key_id = awskey.AWS_ACCESS_KEY_ID,
+#             aws_secret_access_key = awskey.AWS_SECRET_ACCESS_KEY)
 
-    bucket_name = awskey.AWS_STORAGE_BUCKET_NAME
-    my_bucket = s3_resource.Bucket(bucket_name)
+#     bucket_name = awskey.AWS_STORAGE_BUCKET_NAME
+#     my_bucket = s3_resource.Bucket(bucket_name)
     
-    for file in my_bucket.objects.all():
-        params = {'Bucket': bucket_name, 'Key': file.key}
+#     for file in my_bucket.objects.all():
+#         params = {'Bucket': bucket_name, 'Key': file.key}
         
-        # 사진 URL
-        url = s3_client.generate_presigned_url('get_object', params)
-        print('url : ', url)
+#         # 사진 URL
+#         url = s3_client.generate_presigned_url('get_object', params)
+#         print('url : ', url)
 
-        # 파일 이름
-        fridge_number = (file.key).split('.')[0]
-        print('fridge_number : ', fridge_number)
+#         # 파일 이름
+#         fridge_number = (file.key).split('.')[0]
+#         print('fridge_number : ', fridge_number)
 
     
-    return Response({"result": True})
+#     return Response({"result": True})
 
     # data = request.data
     # serializer = GrocerySerializer(data=data)
