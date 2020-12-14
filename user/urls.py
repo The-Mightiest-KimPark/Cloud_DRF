@@ -7,4 +7,5 @@ urlpatterns = [
     path('api/follow-latest-photo', views.FollowingLatestPhoto),
     path('api/sign-up/', views.SignUp),
     path('api/sign-in/', views.SignIn),
+    path('api/recipe-favorite/', views.RecipeFavorites)
 ]
