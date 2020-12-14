@@ -241,13 +241,41 @@ drf :  http://52.91.0.142 또는 http://ec2-52-91-0-142.compute-1.amazonaws.com/
 
 
 
+### POST api/grocery-alarm/
+
+- DRF
+- 식재료 알림 등록
+- **body**: {email: str(내 이메일), all_grocery_id: int(식재료id), count: int(해당재료가 몇개일 때 알림받을지)}
+- return: HTTP_201_CREATED| HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
+
+
 ### PUT api/grocery-alarm/
 
 - DRF
-- 식재료 알림 등록 / 취소 
-  - 식재료 알림 체크 여부 확인 > 체크 했다면 > 클릭시 체크 취소
-  - 식재료 알림 체크 여부 확인 > 체크 하지 않았다면 > 클릭시 체크 등록
+- 식재료 알림 수정
 - **body**: {email: str(내 이메일), all_grocery_id: int(식재료id), count: int(해당재료가 몇개일 때 알림받을지)}
+- return: HTTP_201_CREATED| HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
+
+
+### POST api/grocery-alarm/
+
+- DRF
+- 식재료 알림 등록
+- **body**: {email: str(내 이메일), all_grocery_id: int(식재료id), count: int(해당재료가 몇개일 때 알림받을지)}
+- return: HTTP_201_CREATED| HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
+
+
+### DELETE api/grocery-alarm/
+
+- DRF
+- 식재료 알림 삭제
+- **body**: {email: str(내 이메일), all_grocery_id: int(식재료id)}
 - return: HTTP_201_CREATED| HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
 
