@@ -20,7 +20,7 @@ def BdRecommRecipe(request):
     print('request : ', request.data)
     email = request.data['email']
     print('email : ', email)
-    response = requests.get(f'http://127.0.0.1:8000/api/user-input-grocery/?email={email}')
+    response = requests.get(f'http://52.91.0.142/api/user-input-grocery/?email={email}')
     print('response : ', response.text)
     print('빅데이터 함수에서 여기까지 왔다')
 

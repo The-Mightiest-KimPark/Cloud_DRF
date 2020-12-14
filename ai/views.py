@@ -151,7 +151,7 @@ def AiImgGroceryTest(request):
     # 빅데이터 함수 호출(냉장고 번호와 재료들 넘겨줘야함?)
     headers = {"Content-Type": "application/json"}
     data = {"email":email}
-    res = requests.post('http://127.0.0.1:8000/api/bd-recomm-recipe/', data=data, headers=headers)
+    res = requests.post('http://52.91.0.142/api/bd-recomm-recipe/', data=data, headers=headers)
     # BdRecommRecipe(email= email)
 
     return Response(serializer.data, status=status.HTTP_201_CREATED)
