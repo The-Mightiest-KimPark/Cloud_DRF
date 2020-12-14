@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'bigdata',
     'refrigerator',
     'user',
-    'storages',
+    #'storages',
 ]
 
 
