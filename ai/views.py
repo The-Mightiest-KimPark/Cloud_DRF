@@ -22,6 +22,7 @@ import datetime
 #import boto3
 import awskey
 import s3fs
+import requests
 
 
 # from django.utils import timezone
@@ -89,11 +90,6 @@ def AiImgGroceryTest(request):
     params = request.data
     url = params['url']
     reg_date = params['reg_date']
-    # reg_date = datetime.datetime.now(timezone('Asia/Seoul'))
-    # reg_date = datetime.datetime.strptime(reg_date, '%Y-%m-%d %H:%M:%S.%f')
-    # reg_date = reg_date(timezone('Asia/Seoul'))
-
-    print('reg_date : ', reg_date)
     fridge_number = params['fridge_number']
 
     # 냉장고 번호를 통해 아이디 값 가져오기
@@ -103,7 +99,9 @@ def AiImgGroceryTest(request):
 
     
     # 이전 날짜 이미지 다 삭제
-    Photo.objects.filter(email=email).delete()
+    photo = Photo.objects.filter(email=email)
+    if photo:
+        photo.delete()
     
     # 이미지 저장
     serializer = PhotoSerializer(data={"email":email,"file_name":fridge_number,"url":url,"reg_date":reg_date})
@@ -118,38 +116,44 @@ def AiImgGroceryTest(request):
         'all_grocery_id': 1,
         'name' : '바나나',
         'count' : 3,
-        'coordinate' : "[[1,2],[3,2]]"
+        'coordinate' : [[1,2],[3,2]]
     },{
         'all_grocery_id': 2,
         'name' : '사과',
         'count' : 1,
-        'coordinate' : "[[1,2],[3,2]]"
+        'coordinate' : [[1,2],[3,2]]
     },{
         'all_grocery_id': 3,
         'name' : '고구마',
         'count' : 2,
-        'coordinate' : "[[1,2],[3,2]]"
+        'coordinate' : [[1,2],[3,2]]
     }]
 
-    # 빅데이터 함수 호출(냉장고 번호와 재료들 넘겨줘야함?)
-    BdRecommRecipe(data=ai_result, email= email)
-
     # 이전 결과 다 삭제
-    Grocery.objects.filter(email=email).delete()
+    grocery = Grocery.objects.filter(email=email)
+    if grocery:
+        grocery.delete()
     
     # 결과 저장
     for result in ai_result:
         result['email'] = email
         result['reg_date'] = reg_date
-        print('result[reg_date] : ', result['reg_date'])
         result['gubun'] = 1
 
         serializer = GrocerySerializer(data=result)
         if serializer.is_valid():
             try:
                 serializer.save()
+                print('이미지 인식 재료 결과 저장 완료')
             except:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # 빅데이터 함수 호출(냉장고 번호와 재료들 넘겨줘야함?)
+    headers = {"Content-Type": "application/json"}
+    data = {"email":email}
+    res = requests.post('http://52.91.0.142/api/bd-recomm-recipe/', data=data, headers=headers)
+    # BdRecommRecipe(email= email)
+
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
