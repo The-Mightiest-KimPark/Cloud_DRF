@@ -11,6 +11,7 @@ from datetime import datetime
 class RecommRecipe(models.Model):
     id = models.AutoField(primary_key=True) #PK(추천레시피PK)
     email = models.CharField(max_length=50, null=True) # FK(사용자id값)
+    all_recipe_id = models.IntegerField(blank=True, null=True) #FK(레시피id값)
     name = models.CharField(max_length=50, null=True)
     ingredient = models.CharField(max_length=50, null=True)
     ingredient_name = models.CharField(max_length=50, null=True)
