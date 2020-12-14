@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
 from .serializers import RecommRecipeSerializer
+from .models import AllRecipe
 from ai.models import Grocery
 import pymysql
 import pandas as pd
@@ -13,34 +14,35 @@ from sklearn.metrics.pairwise import linear_kernel
 import requests
 
 # AI 이미지 분석을 통한 결과 저장
-@api_view(['POST'])
-def BdRecommRecipe(request):
+def BdRecommRecipe(email):
     print('빅데이터 진입')
-    # 해당 사용자가 가지고 있는 재료정보 
-    print('request : ', request.data)
-    email = request.data['email']
+    # # 해당 사용자가 가지고 있는 재료정보 
+    # print('request : ', request.data)
+    # email = request.data['email']
     print('email : ', email)
-    response = requests.get(f'http://52.91.0.142:8000/api/user-input-grocery/?email={email}')
+    response = requests.get(f'http://127.0.0.1:8000/api/user-input-grocery/?email={email}')
     print('response : ', response.text)
     print('빅데이터 함수에서 여기까지 왔다')
-
+    data = response.text
     grocery = ' '.join(data['name'].values)
 
     # 빅데이터 로직
     # MariaDB에서 data호출
-    conn = pymysql.connect(host='themightiestkpk.c9jl6xhdt5hy.us-east-1.rds.amazonaws.com', port=3306, user='admin',
-                           passwd='themightiestkpk1', db='themightiestkpk', cursorclass=pymysql.cursors.DictCursor)
-    try:
-        cur = conn.cursor()
-        sql = '''
-            SELECT *
-            FROM ALL_RECIPE
-            WHERE 1 = 1
-        '''
-        cur.execute(sql)
-        result = cur.fetchall()
-    finally:
-        conn.close()
+    result = AllRecipe.objects.all()
+    # conn = pymysql.connect(host='themightiestkpk.c9jl6xhdt5hy.us-east-1.rds.amazonaws.com', port=3306, user='admin',
+    #                        passwd='themightiestkpk1', db='themightiestkpk', cursorclass=pymysql.cursors.DictCursor)
+    # try:
+        
+    #     cur = conn.cursor()
+    #     sql = '''
+    #         SELECT *
+    #         FROM ALL_RECIPE
+    #         WHERE 1 = 1
+    #     '''
+    #     cur.execute(sql)
+    #     result = cur.fetchall()
+    # finally:
+    #     conn.close()
     # 데이터프레임생성
     recipe_data = pd.DataFrame(result)
 
