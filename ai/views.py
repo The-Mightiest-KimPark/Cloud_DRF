@@ -148,11 +148,11 @@ def AiImgGroceryTest(request):
             except:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # 빅데이터 함수 호출(냉장고 번호와 재료들 넘겨줘야함?)
-    headers = {"Content-Type": "application/json"}
-    data = {"email":email}
-    res = requests.post('http://52.91.0.142:8000/api/bd-recomm-recipe/', data=data, headers=headers)
-    # BdRecommRecipe(email= email)
+    # 빅데이터 함수 호출
+    # headers = {"Content-Type": "application/json"}
+    # data = {"email":email}
+    # res = requests.post('http://52.91.0.142:8000/api/bd-recomm-recipe/', data=data, headers=headers)
+    BdRecommRecipe(email= email)
 
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
