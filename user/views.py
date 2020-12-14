@@ -238,39 +238,54 @@ def RecipeFavorites(request):
         return Response(recipe_from_user)
 
 
-# 식재료 알림 삽입 / 조회
-@api_view(['PUT','GET'])
+# 식재료 알림 삽입 / 조회 / 수정 / 삭제
+@api_view(['POST','GET','PUT','DELETE'])
 def GroceryAlarm(request):
 
+    # 식재료 알림 삽입
+    if request.method == 'POST':
+        serializer = AlarmSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # 식재료 수정
     # 받는 값 : email, all_grocery_id, count  
-    if request.method == 'PUT':
+    elif request.method == 'PUT':
         params = request.data
         email = params['email']
         all_grocery_id = params['all_grocery_id']
         count = params['count']
 
-        # 알림 체크 여부 
-        alarm = Alarm.objects.filter(Q(email=email),Q(all_grocery_id=all_grocery_id))
+        alarm = Alarm.objects.get(Q(email=email),Q(all_grocery_id=all_grocery_id))
         
-        # 알림 체크 했다면
-        if alarm: 
-            # 체크 취소
-            try:
-                alarm.delete()
-                return Response(status=status.HTTP_201_CREATED)
-            except:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-            
-        
-        # 알림 체크 하지 않았다면
-        else:
-            # 체크 추가
-            serializer = AlarmSerializer(data=params)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        alarm.email = email
+        alarm.all_grocery_id = all_grocery_id
+        alarm.count = count
 
+        try:
+            alarm.save()
+            return Response(status=status.HTTP_201_CREATED)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    # 식재료 알림 삭제
+    elif request.method == 'DELETE':
+        params = request.data
+        email = params['email']
+        all_grocery_id = params['all_grocery_id']
+
+        queryset = Alarm.objects.get(Q(email=email),Q(all_grocery_id=all_grocery_id))
+
+        try:
+            queryset.delete()
+            return Response(status=status.HTTP_201_CREATED)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+    
     # 알림 체크한 값 조회
     # 받는 값 : email
     elif request.method == 'GET':
@@ -286,11 +301,7 @@ def GroceryAlarm(request):
         for recipe_favorite_info in grocery_serializer.data:
             all_grocery_id = recipe_favorite_info['all_grocery_id']
             all_grocery = AllGrocery.objects.get(id=all_grocery_id)
-            recipe_favorite_info['name'] = all_grocery.name
-            
+            recipe_favorite_info['name'] = all_grocery.name        
             grocery_from_user.append(recipe_favorite_info)
-            # allgrocery_serializer = AllGrocerySerializer(all_grocery_queryset, many=True)
-            # grocery_from_user.append(allgrocery_serializer.data[0])
-
         return Response(grocery_from_user)
 

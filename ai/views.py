@@ -21,6 +21,7 @@ import json
 import datetime
 #import boto3
 import awskey
+import s3fs
 
 
 # from django.utils import timezone
