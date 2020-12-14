@@ -12,9 +12,11 @@ from refrigerator.models import Photo
 from .models import Grocery, AllGrocery
 from bigdata.views import BdRecommRecipe
 from refrigerator.models import Refrigerator
-
+from ai.my_yolo import YOLO
+from urllib import request as rqt
+from io import BytesIO
+from PIL import Image
 from pytz import timezone
-
 import json
 import datetime
 #import boto3
@@ -25,69 +27,59 @@ import awskey
 
 # AI 이미지 분석을 통한 결과 저장
 # 만든이 : snchoi
-@api_view(['POST'])
+@api_view(['GET'])
 def AiImgGrocery(request):
-    # 이미지 정보 받음
-    params = request.data
-    url = params['url']
-    reg_date = params['reg_date']
-    # reg_date = datetime.datetime.now(timezone('Asia/Seoul'))
-    # reg_date = datetime.datetime.strptime(reg_date, '%Y-%m-%d %H:%M:%S.%f')
-    # reg_date = reg_date(timezone('Asia/Seoul'))
+    # # 이미지 정보 받음
+    # params = request.data
+    # url = params['url']
+    # reg_date = params['reg_date']
+    # fridge_number = params['fridge_number']
+    #
+    # # 냉장고 번호를 통해 아이디 값 가져오기
+    # refri = Refrigerator.objects.get(fridge_number=fridge_number)
+    # email = refri.email
+    # print('email : ', email)
+    #
+    # # 이미지 저장
+    # serializer = PhotoSerializer(data={"email":email,"file_name":fridge_number,"url":url,"reg_date":reg_date})
+    # if serializer.is_valid():
+    #     serializer.save()
+    #     print('이미지 저장 성공')
+    # else:
+    #     print('이미지 저장 실패')
+    #------------근웅----------------
 
-    print('reg_date : ', reg_date)
-    fridge_number = params['fridge_number']
+    url = "https://themightiestkpk1.s3.amazonaws.com/train12124.jpg"
+    model_path = 'ai/000/trained_weights_final.h5'
+    class_path = 'ai/_classes.txt'
 
-    # 냉장고 번호를 통해 아이디 값 가져오기
-    refri = Refrigerator.objects.get(fridge_number=fridge_number)
-    email = refri.email
-    print('email : ', email)
+    yolo = YOLO(model_path=model_path, classes_path=class_path)
 
-    # 이미지 저장
-    serializer = PhotoSerializer(data={"email":email,"file_name":fridge_number,"url":url,"reg_date":reg_date})
-    if serializer.is_valid():
-        serializer.save()
-        print('이미지 저장 성공')
-    else:
-        print('이미지 저장 실패')
+    # 이미지 로딩
+    res = rqt.urlopen(url).read()
+    img = Image.open(BytesIO(res))
+    ai_result = yolo.my_detect_image(img)
 
-    # AI분석 로직
-    ai_result = [{
-        'all_grocery_id': 1,
-        'name' : '바나나',
-        'count' : 3,
-        'coordinate' : "[[1,2],[3,2]]"
-    },{
-        'all_grocery_id': 2,
-        'name' : '사과',
-        'count' : 1,
-        'coordinate' : "[[1,2],[3,2]]"
-    },{
-        'all_grocery_id': 3,
-        'name' : '고구마',
-        'count' : 2,
-        'coordinate' : "[[1,2],[3,2]]"
-    }]
+    # ------------------------------
+
+
 
     # 빅데이터 함수 호출(냉장고 번호와 재료들 넘겨줘야함?)
-    BdRecommRecipe(data=ai_result, email= email)
+    # BdRecommRecipe(data=ai_result, email= email)
+    #
+    # # 결과 저장
+    # for result in ai_result:
+    #     result['email'] = email
+    #     result['reg_date'] = reg_date
+    #     result['gubun'] = 1
 
-    # 결과 저장
-    for result in ai_result:
-        result['email'] = email
-        result['reg_date'] = reg_date
-        print('result[reg_date] : ', result['reg_date'])
-        result['gubun'] = 1
+        # serializer = GrocerySerializer(data=result)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(ai_result)
 
-        serializer = GrocerySerializer(data=result)
-        if serializer.is_valid():
-            try:
-                serializer.save()
-            except:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-
+  
 # AI 이미지 분석을 통한 결과 저장 복사본
 # 만든이 : snchoi
 @api_view(['POST'])

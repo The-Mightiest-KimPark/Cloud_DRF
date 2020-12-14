@@ -8,6 +8,7 @@ from rest_framework import viewsets, permissions, generics, status, filters
 
 from refrigerator.models import Photo
 from refrigerator.serializers import PhotoSerializer
+
 from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer, AlarmSerializer
 from .models import UserInfo, Follow, RecipeFavorite, Alarm
 from themightiestkpk.settings import SECRET_KEY
@@ -186,6 +187,7 @@ def TockenCheck(request):
 def RecipeFavorites(request):
 
     # 레시피 즐겨찾기 등록 / 취소  
+
     # 받는 값 : email, all_recipe_id       
     if request.method == 'PUT':
         params = request.data
@@ -194,6 +196,7 @@ def RecipeFavorites(request):
 
         # 즐겨찾기 여부 확인
         favorite = RecipeFavorite.objects.filter(Q(email=email),Q(all_recipe_id=all_recipe_id))
+
         print('favorite : ', favorite)
         
         # 즐겨찾기 했다면
@@ -217,6 +220,7 @@ def RecipeFavorites(request):
 
     # 즐겨찾기한 레시피 조회
     # 받는 값 : email
+
     elif request.method == 'GET':
         # 해당 아이디가 즐겨찾기 한 all_recipe_id 조회
         email = request.GET.get('email')
