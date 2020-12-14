@@ -8,6 +8,7 @@ from rest_framework import viewsets, permissions, generics, status, filters
 
 from refrigerator.models import Photo
 from refrigerator.serializers import PhotoSerializer
+
 from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer, AlarmSerializer
 from .models import UserInfo, Follow, RecipeFavorite, Alarm
 from themightiestkpk.settings import SECRET_KEY
@@ -186,6 +187,7 @@ def TockenCheck(request):
 def RecipeFavorites(request):
 
     # 레시피 즐겨찾기 등록 / 취소  
+
     # 받는 값 : email, all_recipe_id       
     if request.method == 'PUT':
         params = request.data
@@ -194,6 +196,7 @@ def RecipeFavorites(request):
 
         # 즐겨찾기 여부 확인
         favorite = RecipeFavorite.objects.filter(Q(email=email),Q(all_recipe_id=all_recipe_id))
+
         print('favorite : ', favorite)
         
         # 즐겨찾기 했다면
@@ -217,6 +220,7 @@ def RecipeFavorites(request):
 
     # 즐겨찾기한 레시피 조회
     # 받는 값 : email
+
     elif request.method == 'GET':
         # 해당 아이디가 즐겨찾기 한 all_recipe_id 조회
         email = request.GET.get('email')
@@ -276,13 +280,17 @@ def GroceryAlarm(request):
         all_grocery_id_queryset = Alarm.objects.filter(email=email)
         grocery_serializer = AlarmSerializer(all_grocery_id_queryset, many=True)
 
-        # # all_grocery_id 값에 해당하는 식료품 조회
-        # grocery_from_user = []
-        # for recipe_favorite_info in grocery_serializer.data:
-        #     all_grocery = recipe_favorite_info['all_grocery_id']
-        #     all_grocery_queryset = AllGrocery.objects.filter(id=all_grocery)
+        # 식재료 이름도 같이 보내주기
+        # all_grocery_id 값에 해당하는 식료품 조회
+        grocery_from_user = []
+        for recipe_favorite_info in grocery_serializer.data:
+            all_grocery_id = recipe_favorite_info['all_grocery_id']
+            all_grocery = AllGrocery.objects.get(id=all_grocery_id)
+            recipe_favorite_info['name'] = all_grocery.name
             
-        #     allgrocery_serializer = AllGrocerySerializer(all_grocery_queryset, many=True)
-        #     grocery_from_user.append(allgrocery_serializer.data[0])
-        return Response(grocery_serializer.data)
+            grocery_from_user.append(recipe_favorite_info)
+            # allgrocery_serializer = AllGrocerySerializer(all_grocery_queryset, many=True)
+            # grocery_from_user.append(allgrocery_serializer.data[0])
+
+        return Response(grocery_from_user)
 
