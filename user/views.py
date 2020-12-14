@@ -8,11 +8,13 @@ from rest_framework import viewsets, permissions, generics, status, filters
 
 from refrigerator.models import Photo
 from refrigerator.serializers import PhotoSerializer
-from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer
-from .models import UserInfo, Follow, RecipeFavorite
+from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer, AlarmSerializer
+from .models import UserInfo, Follow, RecipeFavorite, Alarm
 from themightiestkpk.settings import SECRET_KEY
 from bigdata.models import AllRecipe
 from bigdata.serializers import AllRecipeSerializer
+from ai.models import AllGrocery
+from ai.serializers import AllGrocerySerializer
 
 import json
 import bcrypt
@@ -232,5 +234,55 @@ def RecipeFavorites(request):
         return Response(recipe_from_user)
 
 
+# 식재료 알림 삽입 / 조회
+@api_view(['PUT','GET'])
+def GroceryAlarm(request):
 
+    # 받는 값 : email, all_grocery_id, count  
+    if request.method == 'PUT':
+        params = request.data
+        email = params['email']
+        all_grocery_id = params['all_grocery_id']
+        count = params['count']
+
+        # 알림 체크 여부 
+        alarm = Alarm.objects.filter(Q(email=email),Q(all_grocery_id=all_grocery_id))
+        
+        # 알림 체크 했다면
+        if alarm: 
+            # 체크 취소
+            try:
+                alarm.delete()
+                return Response(status=status.HTTP_201_CREATED)
+            except:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            
+        
+        # 알림 체크 하지 않았다면
+        else:
+            # 체크 추가
+            serializer = AlarmSerializer(data=params)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # 알림 체크한 값 조회
+    # 받는 값 : email
+    elif request.method == 'GET':
+        # 사용자 아이디에 해당하는 알림 등록값 조회
+        email = request.GET.get('email')
+
+        all_grocery_id_queryset = Alarm.objects.filter(email=email)
+        grocery_serializer = AlarmSerializer(all_grocery_id_queryset, many=True)
+
+        # # all_grocery_id 값에 해당하는 식료품 조회
+        # grocery_from_user = []
+        # for recipe_favorite_info in grocery_serializer.data:
+        #     all_grocery = recipe_favorite_info['all_grocery_id']
+        #     all_grocery_queryset = AllGrocery.objects.filter(id=all_grocery)
+            
+        #     allgrocery_serializer = AllGrocerySerializer(all_grocery_queryset, many=True)
+        #     grocery_from_user.append(allgrocery_serializer.data[0])
+        return Response(grocery_serializer.data)
 
