@@ -240,7 +240,6 @@ def RecipeFavorites(request):
 # class MemberDetailView(DetailView):
 #     template_name = 'detail.html'
 #     model = UserInfo
-=======
 
 # 식재료 알림 삽입 / 조회 / 수정 / 삭제
 @api_view(['POST','GET','PUT','DELETE'])
