@@ -8,7 +8,7 @@ from rest_framework import viewsets, permissions, generics, status, filters
 
 from refrigerator.models import Photo
 from refrigerator.serializers import PhotoSerializer
-from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer
+from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer, UserViewSerializer
 from .models import UserInfo, Follow, RecipeFavorite
 from themightiestkpk.settings import SECRET_KEY
 from bigdata.models import AllRecipe
@@ -237,3 +237,15 @@ def RecipeFavorites(request):
 #     template_name = 'detail.html'
 #     model = UserInfo
 
+
+# 유저 정보
+class UserInfo(generics.ListCreateAPIView):
+    # name = "UserInfo"
+    # def get(self, request, *args, **kwargs):
+    #     email = request.query_params.get("id")
+    #     query = UserInfo.id.get(id=email)
+    #     serializer = UserViewSerializer(query, many=False)
+
+    #     return Response(serializer.data)
+    queryset = UserInfo.objects.all()
+    serializer_class = UserViewSerializer

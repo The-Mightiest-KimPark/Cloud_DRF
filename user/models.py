@@ -24,20 +24,31 @@ class UserInfo(models.Model):
     purpose = models.CharField(max_length=500, null=True)
     img_url = models.CharField(max_length=500, null=True)
 
+    # objects = 
+
     class Meta:
         db_table = 'USER_INFO'
 
+    USERNAME_FIELD = 'email'
+
     def __int__(self):
+        return self.id
+
+    def get_id(self):
         return self.id
 
     # def __str__(self):
     #     return self.email.username
 
-@receiver(post_save, sender=User)
-def create_or_update_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserInfo.objects.create(email=instance)
-    instance.userinfo.save()
+# class Auth(models.Model):
+#     user = models.ForeignKey(UserInfo, related_name='auths', on_delete=models.CASCADE)
+#     role = models.CharField(max_length=30, default=ROLES.get('ROLE_NORMAL', 'NORMAL'))
+
+# @receiver(post_save, sender=User)
+# def create_or_update_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#         UserInfo.objects.create(email=instance)
+#     instance.userinfo.save()
 
 
 
