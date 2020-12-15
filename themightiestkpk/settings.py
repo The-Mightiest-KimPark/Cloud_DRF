@@ -50,12 +50,12 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
         #'rest_framework.permissions.IsAuthenticated',#추가
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',#추가
-        'rest_framework.authentication.BasicAuthentication',#추가
-    ),
+    ]#,
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    #     'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    #     'rest_framework.authentication.SessionAuthentication',#추가
+    #     'rest_framework.authentication.BasicAuthentication',#추가
+    # ),
 }
 
 MIDDLEWARE = [
