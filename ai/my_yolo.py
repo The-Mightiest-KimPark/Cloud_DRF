@@ -26,9 +26,9 @@ from ai.models import AllGrocery
 
 class YOLO(object):
     _defaults = {
-        "model_path": 'model_data/yolo.h5',
+        "model_path": 'ai/000/trained_weights_finnal.h5',
         "anchors_path": 'ai/yolo_anchors.txt',
-        "classes_path": 'model_data/coco_classes.txt',
+        "classes_path": 'ai/_classes.txt',
         "score" : 0.3,
         "iou" : 0.45,
         "model_image_size" : (416, 416),
@@ -122,14 +122,23 @@ class YOLO(object):
         print(image_data.shape)
         image_data /= 255.
         image_data = np.expand_dims(image_data, 0)  # Add batch dimension.
-        with tf.device('/device:GPU:0'):
+        with self.sess.graph.as_default():  # new line (required)
+            # K.tensorflow_backend.set_session(self.sess)    # new line (wasn't required for me)
+
             out_boxes, out_scores, out_classes = self.sess.run(
-            [self.boxes, self.scores, self.classes],
-            feed_dict={
-                self.yolo_model.input: image_data,
-                self.input_image_shape: [image.size[1], image.size[0]],
-                K.learning_phase(): 0
-            })
+                [self.boxes, self.scores, self.classes],
+                feed_dict={
+                    self.yolo_model.input: image_data,
+                    self.input_image_shape: [image.size[1], image.size[0]],
+                    K.learning_phase(): 0
+                })
+        # out_boxes, out_scores, out_classes = self.sess.run(
+        #     [self.boxes, self.scores, self.classes],
+        #     feed_dict={
+        #         self.yolo_model.input: image_data,
+        #         self.input_image_shape: [image.size[1], image.size[0]],
+        #         K.learning_phase(): 0
+        #     })
 
         print('Found {} boxes for {}'.format(len(out_boxes), 'img'))
 #         print(out_boxes, out_scores, out_classes)
