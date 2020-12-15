@@ -12,10 +12,10 @@ from refrigerator.models import Photo
 from .models import Grocery, AllGrocery
 from bigdata.views import BdRecommRecipe
 from refrigerator.models import Refrigerator
-from ai.my_yolo import YOLO
 from urllib import request as rqt
 from io import BytesIO
 from PIL import Image
+from .import load
 from pytz import timezone
 import json
 import datetime
@@ -52,15 +52,16 @@ def AiImgGrocery(request):
     #------------근웅----------------
 
     url = "https://themightiestkpk1.s3.amazonaws.com/train12124.jpg"
-    model_path = 'ai/000/trained_weights_final.h5'
-    class_path = 'ai/_classes.txt'
+    # url = 'https://themightiestkpk1.s3.amazonaws.com/test9.jpg'
+    # model_path = 'ai/000/trained_weights_final.h5'
+    # class_path = 'ai/_classes.txt'
 
-    yolo = YOLO(model_path=model_path, classes_path=class_path)
+    # yolo = YOLO(model_path=model_path, classes_path=class_path)
 
     # 이미지 로딩
     res = rqt.urlopen(url).read()
     img = Image.open(BytesIO(res))
-    ai_result = yolo.my_detect_image(img)
+    ai_result = load.pre_yolo.yolo.my_detect_image(img)
 
     # ------------------------------
 
