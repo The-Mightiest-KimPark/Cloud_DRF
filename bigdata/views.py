@@ -50,6 +50,7 @@ def BdRecommRecipe(email):
     #     conn.close()
 
     # 데이터프레임생성
+    # recipe_data = pd.DataFrame(result)
     recipe_data = pd.DataFrame(list(result), columns=['id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num'])
 
     # 현재 냉장고재료 0열에 추가
