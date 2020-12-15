@@ -73,7 +73,19 @@ drf :  http://52.91.0.142 또는 http://ec2-52-91-0-142.compute-1.amazonaws.com/
 ### GET api/user-input-grocery/?gubun=int&email=str
 
 - DRF
-- 냉장고 재료 조회
+- 사용자 냉장고 재료 조회(직접입력, 이미지 인식 구분하여 조회)
+- **parameter**: 
+  - gubun = int(1(이미지 인식) or 2(직접입력)) 
+  - email = str(사용자email)
+- return  : GROCERY [{"id": int, "email": str, "all_grocery_id": int,  "name": str, "count": int, "reg_date": str(date), "gubun": int, "coordinate": "str(list)" },{}]
+- 만든이 : snchoi
+
+
+
+### GET api/user-input-grocery/?email=str
+
+- DRF
+- 사용자 냉장고 재료 조회(구분 없이 전체 재료 조회)
 - **parameter**: 
   - gubun = int(1(이미지 인식) or 2(직접입력)) 
   - email = str(사용자email)
@@ -226,6 +238,57 @@ drf :  http://52.91.0.142 또는 http://ec2-52-91-0-142.compute-1.amazonaws.com/
           "img": str(레시피 이미지),
           "recipe_num": int(만개의 레시피 고유번호)}, {}]
 - 만든이 : snchoi
+
+
+
+### POST api/grocery-alarm/
+
+- DRF
+- 식재료 알림 등록
+- **body**: {email: str(내 이메일), all_grocery_id: int(식재료id), count: int(해당재료가 몇개일 때 알림받을지)}
+- return: HTTP_201_CREATED| HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
+
+
+### PUT api/grocery-alarm/
+
+- DRF
+- 식재료 알림 수정
+- **body**: {email: str(내 이메일), all_grocery_id: int(식재료id), count: int(해당재료가 몇개일 때 알림받을지)}
+- return: HTTP_201_CREATED| HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
+
+
+### DELETE api/grocery-alarm/
+
+- DRF
+- 식재료 알림 삭제
+- **body**: {email: str(내 이메일), all_grocery_id: int(식재료id)}
+- return: HTTP_201_CREATED| HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
+
+
+### GET api/grocery-alarm/?email=str
+
+- DRF
+- 사용자별 식재료 알림 조회
+- **parameter**: 
+  - email = str(이메일)
+- return: ALARM [
+      [{
+          "id": 3,
+          "email": "sn0716@naver.com",
+          "all_grocery_id": 12,
+          "count": 2
+      }, {}]
+- 만든이 : snchoi
+
+
+
+
 
 
 

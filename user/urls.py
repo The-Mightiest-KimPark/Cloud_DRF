@@ -10,8 +10,10 @@ urlpatterns = [
     path('api/follow-latest-photo/', views.FollowingLatestPhoto),
     path('api/sign-up/', views.SignUp),
     path('api/sign-in/', views.SignIn),
+
     path('api/token-check/', views.TockenCheck),
     path('api/recipe-favorite/', views.RecipeFavorites),
     # path('<str:pk>/detail', views.MemberDetailView.as_view(), 'detail'),
     path('api/user-info/', views.UserInfo.as_view()),
+    path('api/grocery-alarm/', views.GroceryAlarm),
 ]

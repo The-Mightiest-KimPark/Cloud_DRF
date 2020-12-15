@@ -21,5 +21,5 @@ urlpatterns = [
     path("", include("ai.urls")),
     path("", include("user.urls")),
     path("", include('refrigerator.urls')),
-    #path('', include("bigdata.urls")),
+    path('', include("bigdata.urls")),
 ]
