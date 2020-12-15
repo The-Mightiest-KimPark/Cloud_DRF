@@ -1,5 +1,8 @@
 from django.urls import path, include
+from django.conf.urls import url
+from django.views.generic import RedirectView
 from . import views
+from .views import *
 
 urlpatterns = [
     path('api/follow/', views.FollowAndUnfollow),
@@ -10,5 +13,7 @@ urlpatterns = [
 
     path('api/token-check/', views.TockenCheck),
     path('api/recipe-favorite/', views.RecipeFavorites),
+    # path('<str:pk>/detail', views.MemberDetailView.as_view(), 'detail'),
+    path('api/user-info/', views.UserInfo.as_view()),
     path('api/grocery-alarm/', views.GroceryAlarm),
 ]

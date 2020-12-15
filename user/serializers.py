@@ -35,3 +35,20 @@ class AlarmSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Photo
 #         fields= ('email, url, reg_date, name')
+
+
+# 비밀번호 제외 유저정보
+class UserViewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserInfo
+        fields = [
+            'email',
+            'age',
+            'sex',
+            'phone_number',
+            'name',
+            'guardian_name',
+            'guardian_phone_number',
+            'purpose',
+            # 'img_url'
+        ]

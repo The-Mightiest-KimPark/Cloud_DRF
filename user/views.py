@@ -8,8 +8,7 @@ from rest_framework import viewsets, permissions, generics, status, filters
 
 from refrigerator.models import Photo
 from refrigerator.serializers import PhotoSerializer
-
-from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer, AlarmSerializer
+from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer, UserViewSerializer, AlarmSerializer
 from .models import UserInfo, Follow, RecipeFavorite, Alarm
 from themightiestkpk.settings import SECRET_KEY
 from bigdata.models import AllRecipe
@@ -237,6 +236,11 @@ def RecipeFavorites(request):
             recipe_from_user.append(allrecipe_serializer.data[0])
         return Response(recipe_from_user)
 
+# user information
+# class MemberDetailView(DetailView):
+#     template_name = 'detail.html'
+#     model = UserInfo
+=======
 
 # 식재료 알림 삽입 / 조회 / 수정 / 삭제
 @api_view(['POST','GET','PUT','DELETE'])
@@ -291,7 +295,6 @@ def GroceryAlarm(request):
     elif request.method == 'GET':
         # 사용자 아이디에 해당하는 알림 등록값 조회
         email = request.GET.get('email')
-
         all_grocery_id_queryset = Alarm.objects.filter(email=email)
         grocery_serializer = AlarmSerializer(all_grocery_id_queryset, many=True)
 
@@ -305,3 +308,14 @@ def GroceryAlarm(request):
             grocery_from_user.append(recipe_favorite_info)
         return Response(grocery_from_user)
 
+# 유저 정보
+class UserInfo(generics.ListCreateAPIView):
+    # name = "UserInfo"
+    # def get(self, request, *args, **kwargs):
+    #     email = request.query_params.get("id")
+    #     query = UserInfo.id.get(id=email)
+    #     serializer = UserViewSerializer(query, many=False)
+
+    #     return Response(serializer.data)
+    queryset = UserInfo.objects.all()
+    serializer_class = UserViewSerializer
