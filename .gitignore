@@ -243,5 +243,7 @@ pip-selfcheck.json
 
 # aws key file
 awskey.py
+# Ai model
+000/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,django,venv
