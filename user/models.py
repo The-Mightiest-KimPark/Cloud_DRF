@@ -5,12 +5,15 @@ from django.utils import timezone
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from datetime import datetime
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 
 # 사용자
 class UserInfo(models.Model):
-    email = models.CharField(primary_key=True,max_length=50) # PK(사용자PK)
+    email = models.CharField(User, primary_key=True,max_length=50) # PK(사용자PK)
     age = models.IntegerField(blank=True,null=True)
     sex = models.IntegerField(blank=True,null=True)
     phone_number = models.CharField(max_length=500, null=True)
@@ -21,11 +24,32 @@ class UserInfo(models.Model):
     purpose = models.CharField(max_length=500, null=True)
     img_url = models.CharField(max_length=500, null=True)
 
+    # objects = 
+
     class Meta:
         db_table = 'USER_INFO'
 
+    USERNAME_FIELD = 'email'
+
     def __int__(self):
         return self.id
+
+    def get_id(self):
+        return self.id
+
+    # def __str__(self):
+    #     return self.email.username
+
+# class Auth(models.Model):
+#     user = models.ForeignKey(UserInfo, related_name='auths', on_delete=models.CASCADE)
+#     role = models.CharField(max_length=30, default=ROLES.get('ROLE_NORMAL', 'NORMAL'))
+
+# @receiver(post_save, sender=User)
+# def create_or_update_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#         UserInfo.objects.create(email=instance)
+#     instance.userinfo.save()
+
 
 
 # 팔로우
@@ -45,10 +69,24 @@ class Follow(models.Model):
 class RecipeFavorite(models.Model):
     id = models.AutoField(primary_key=True) #PK(레시피 즐겨찾기PK)
     email = models.CharField(max_length=50, null=True) # FK(사용자id값)
-    recipe_num = models.IntegerField(blank=True, null=True) 
+    all_recipe_id = models.IntegerField(blank=True, null=True) 
 
     class Meta:
         db_table = 'RECIPE_FAVORITE'
+
+    def __int__(self):
+        return self.id
+
+# 식재료 알림
+class Alarm(models.Model):
+    id = models.AutoField(primary_key=True) #PK(레시피 즐겨찾기PK)
+    email = models.CharField(max_length=50, null=True) # FK(사용자id값)
+    all_grocery_id = models.IntegerField(blank=True, null=True)  #FK(식료품id값)
+    count = models.IntegerField(blank=True, null=True)
+
+
+    class Meta:
+        db_table = 'ALARM'
 
     def __int__(self):
         return self.id

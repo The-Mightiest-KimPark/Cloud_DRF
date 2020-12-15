@@ -8,11 +8,13 @@ from rest_framework import viewsets, permissions, generics, status, filters
 
 from refrigerator.models import Photo
 from refrigerator.serializers import PhotoSerializer
-from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer
-from .models import UserInfo, Follow, RecipeFavorite
+from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer, UserViewSerializer, AlarmSerializer
+from .models import UserInfo, Follow, RecipeFavorite, Alarm
 from themightiestkpk.settings import SECRET_KEY
 from bigdata.models import AllRecipe
 from bigdata.serializers import AllRecipeSerializer
+from ai.models import AllGrocery
+from ai.serializers import AllGrocerySerializer
 
 import json
 import bcrypt
@@ -134,13 +136,13 @@ def SignUp(request):
             img_url=None
         ).save()
 
-        return Response({"result":True}, status=status.HTTP_200_OK)
+        return Response({"result":True}, status=status.HTTP_201_CREATED)
 
     except KeyError:
         return Response({"message":"INVALID_KEYS"}, status=status.HTTP_400_BAD_REQUEST)
 
 # 로그인
-# 받는 값(json) : email, age, sex, phone_number, name, password, guardian_name, guardian_phone_number, purpose
+# 받는 값(json) : email, password
 # 만든이 : snchoi
 @api_view(['POST'])
 def SignIn(request):
@@ -184,14 +186,16 @@ def TockenCheck(request):
 def RecipeFavorites(request):
 
     # 레시피 즐겨찾기 등록 / 취소  
-    # 받는 값 : email, recipe_id       
+
+    # 받는 값 : email, all_recipe_id       
     if request.method == 'PUT':
         params = request.data
         email = params['email']
-        recipe_num = params['recipe_num']
+        all_recipe_id = params['all_recipe_id']
 
         # 즐겨찾기 여부 확인
-        favorite = RecipeFavorite.objects.filter(Q(email=email),Q(recipe_num=recipe_num))
+        favorite = RecipeFavorite.objects.filter(Q(email=email),Q(all_recipe_id=all_recipe_id))
+
         print('favorite : ', favorite)
         
         # 즐겨찾기 했다면
@@ -215,22 +219,102 @@ def RecipeFavorites(request):
 
     # 즐겨찾기한 레시피 조회
     # 받는 값 : email
+
     elif request.method == 'GET':
-        # 해당 아이디가 즐겨찾기 한 recipe_num 조회
+        # 해당 아이디가 즐겨찾기 한 all_recipe_id 조회
         email = request.GET.get('email')
 
-        recipe_numbers_queryset = RecipeFavorite.objects.filter(email=email)
-        recipe_serializer = RecipeFavoriteSerializer(recipe_numbers_queryset, many=True)
+        all_recipe_id_queryset = RecipeFavorite.objects.filter(email=email)
+        recipe_serializer = RecipeFavoriteSerializer(all_recipe_id_queryset, many=True)
 
-        # recipe_num 값에 해당하는 추천 레시피 값 리턴
+        # all_recipe_id 값에 해당하는 추천 레시피 값 리턴
         recipe_from_user = []
         for recipe_favorite_info in recipe_serializer.data:
-            recipe_num = recipe_favorite_info['recipe_num']
-            all_recipe_queryset = AllRecipe.objects.filter(recipe_num=recipe_num)
+            all_recipe_id = recipe_favorite_info['all_recipe_id']
+            all_recipe_queryset = AllRecipe.objects.filter(id=all_recipe_id)
             allrecipe_serializer = AllRecipeSerializer(all_recipe_queryset, many=True)
-            recipe_from_user.append(allrecipe_serializer.data)
+            recipe_from_user.append(allrecipe_serializer.data[0])
         return Response(recipe_from_user)
 
+# user information
+# class MemberDetailView(DetailView):
+#     template_name = 'detail.html'
+#     model = UserInfo
+
+# 식재료 알림 삽입 / 조회 / 수정 / 삭제
+@api_view(['POST','GET','PUT','DELETE'])
+def GroceryAlarm(request):
+
+    # 식재료 알림 삽입
+    if request.method == 'POST':
+        serializer = AlarmSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # 식재료 수정
+    # 받는 값 : email, all_grocery_id, count  
+    elif request.method == 'PUT':
+        params = request.data
+        email = params['email']
+        all_grocery_id = params['all_grocery_id']
+        count = params['count']
+
+        alarm = Alarm.objects.get(Q(email=email),Q(all_grocery_id=all_grocery_id))
+        
+        alarm.email = email
+        alarm.all_grocery_id = all_grocery_id
+        alarm.count = count
+
+        try:
+            alarm.save()
+            return Response(status=status.HTTP_201_CREATED)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    # 식재료 알림 삭제
+    elif request.method == 'DELETE':
+        params = request.data
+        email = params['email']
+        all_grocery_id = params['all_grocery_id']
+
+        queryset = Alarm.objects.get(Q(email=email),Q(all_grocery_id=all_grocery_id))
+
+        try:
+            queryset.delete()
+            return Response(status=status.HTTP_201_CREATED)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+    
+    # 알림 체크한 값 조회
+    # 받는 값 : email
+    elif request.method == 'GET':
+        # 사용자 아이디에 해당하는 알림 등록값 조회
+        email = request.GET.get('email')
+        all_grocery_id_queryset = Alarm.objects.filter(email=email)
+        grocery_serializer = AlarmSerializer(all_grocery_id_queryset, many=True)
 
+        # 식재료 이름도 같이 보내주기
+        # all_grocery_id 값에 해당하는 식료품 조회
+        grocery_from_user = []
+        for recipe_favorite_info in grocery_serializer.data:
+            all_grocery_id = recipe_favorite_info['all_grocery_id']
+            all_grocery = AllGrocery.objects.get(id=all_grocery_id)
+            recipe_favorite_info['name'] = all_grocery.name        
+            grocery_from_user.append(recipe_favorite_info)
+        return Response(grocery_from_user)
+
+# 유저 정보
+class UserInfo(generics.ListCreateAPIView):
+    # name = "UserInfo"
+    # def get(self, request, *args, **kwargs):
+    #     email = request.query_params.get("id")
+    #     query = UserInfo.id.get(id=email)
+    #     serializer = UserViewSerializer(query, many=False)
+
+    #     return Response(serializer.data)
+    queryset = UserInfo.objects.all()
+    serializer_class = UserViewSerializer
