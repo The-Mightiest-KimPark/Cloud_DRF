@@ -7,6 +7,7 @@ from .serializers import RecommRecipeSerializer
 from .models import AllRecipe
 from ai.models import Grocery
 import pymysql
+import re
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
@@ -24,11 +25,15 @@ def BdRecommRecipe(email):
     print('response : ', response.text)
     print('빅데이터 함수에서 여기까지 왔다')
     data = response.text
-    grocery = ' '.join(data['name'].values)
+    # grocery = ' '.join(data['name'].values)
+    grocery = re.findall('"name":".*?"', data)
+    grocery = ' '.join(grocery)
+    grocery = re.sub('[",:,name]', '', grocery)
 
     # 빅데이터 로직
     # MariaDB에서 data호출
-    result = AllRecipe.objects.all()
+    result = AllRecipe.objects.values_list('id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num')
+
     # conn = pymysql.connect(host='themightiestkpk.c9jl6xhdt5hy.us-east-1.rds.amazonaws.com', port=3306, user='admin',
     #                        passwd='themightiestkpk1', db='themightiestkpk', cursorclass=pymysql.cursors.DictCursor)
     # try:
@@ -43,8 +48,9 @@ def BdRecommRecipe(email):
     #     result = cur.fetchall()
     # finally:
     #     conn.close()
+
     # 데이터프레임생성
-    recipe_data = pd.DataFrame(result)
+    recipe_data = pd.DataFrame(list(result), columns=['id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num'])
 
     # 현재 냉장고재료 0열에 추가
     for n in range((len(recipe_data) // 10000) + 1):
@@ -120,3 +126,4 @@ def BdRecommRecipe(email):
             conn.commit()
             conn.close()
 
+    return True;
