@@ -19,38 +19,13 @@ from .import load
 from pytz import timezone
 import json
 import datetime
-#import boto3
-import awskey
-# import s3fs
 import requests
 
-
-# from django.utils import timezone
 
 # AI 이미지 분석을 통한 결과 저장
 # 만든이 : snchoi
 @api_view(['GET'])
 def AiImgGrocery(request):
-    # # 이미지 정보 받음
-    # params = request.data
-    # url = params['url']
-    # reg_date = params['reg_date']
-    # fridge_number = params['fridge_number']
-    #
-    # # 냉장고 번호를 통해 아이디 값 가져오기
-    # refri = Refrigerator.objects.get(fridge_number=fridge_number)
-    # email = refri.email
-    # print('email : ', email)
-    #
-    # # 이미지 저장
-    # serializer = PhotoSerializer(data={"email":email,"file_name":fridge_number,"url":url,"reg_date":reg_date})
-    # if serializer.is_valid():
-    #     serializer.save()
-    #     print('이미지 저장 성공')
-    # else:
-    #     print('이미지 저장 실패')
-    #------------근웅----------------
-
     url = "https://themightiestkpk1.s3.amazonaws.com/train12124.jpg"
     # url = 'https://themightiestkpk1.s3.amazonaws.com/test9.jpg'
     # model_path = 'ai/000/trained_weights_final.h5'
@@ -62,24 +37,7 @@ def AiImgGrocery(request):
     res = rqt.urlopen(url).read()
     img = Image.open(BytesIO(res))
     ai_result = load.pre_yolo.yolo.my_detect_image(img)
-
     # ------------------------------
-
-
-
-    # 빅데이터 함수 호출(냉장고 번호와 재료들 넘겨줘야함?)
-    # BdRecommRecipe(data=ai_result, email= email)
-    #
-    # # 결과 저장
-    # for result in ai_result:
-    #     result['email'] = email
-    #     result['reg_date'] = reg_date
-    #     result['gubun'] = 1
-
-        # serializer = GrocerySerializer(data=result)
-        # if serializer.is_valid():
-        #     serializer.save()
-        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(ai_result)
 
   
@@ -169,43 +127,6 @@ class AllGroceryName(generics.ListCreateAPIView):
     queryset = AllGrocery.objects.all()
     serializer_class = AllGrocerySerializer
 
-# @api_view(['GET'])
-# def test(request):
-
-#     # s3 정보 가져오기
-#     s3_client = boto3.client('s3',
-#             region_name = awskey.AWS_REGION,
-#             aws_access_key_id = awskey.AWS_ACCESS_KEY_ID,
-#             aws_secret_access_key = awskey.AWS_SECRET_ACCESS_KEY)
-
-#     s3_resource = boto3.resource('s3',
-#             region_name = awskey.AWS_REGION,
-#             aws_access_key_id = awskey.AWS_ACCESS_KEY_ID,
-#             aws_secret_access_key = awskey.AWS_SECRET_ACCESS_KEY)
-
-#     bucket_name = awskey.AWS_STORAGE_BUCKET_NAME
-#     my_bucket = s3_resource.Bucket(bucket_name)
-    
-#     for file in my_bucket.objects.all():
-#         params = {'Bucket': bucket_name, 'Key': file.key}
-        
-#         # 사진 URL
-#         url = s3_client.generate_presigned_url('get_object', params)
-#         print('url : ', url)
-
-#         # 파일 이름
-#         fridge_number = (file.key).split('.')[0]
-#         print('fridge_number : ', fridge_number)
-
-    
-#     return Response({"result": True})
-
-    # data = request.data
-    # serializer = GrocerySerializer(data=data)
-    # if serializer.is_valid():
-    #     serializer.save()
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # 가장 최근 재료 조회(gubun=1 : 이미지 인식 ,  gubun=2 : 직접입력) / 사용자 재료 입력
@@ -233,12 +154,16 @@ def userInputGrocery(request):
     elif request.method == 'POST':
         data = request.data
         data['gubun'] = 2 #구분값은 직접입력 값인 2로 지정
+        email = data['email']
         serializer = GrocerySerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+            # 빅데이터 추천 레시피 저장 함수 불러오기
+            res = requests.get(f'http://3.92.44.79/api/bd-recomm-recipe/?email={email}')
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     # 사용자 입력 재료 수정
     elif request.method == 'PUT':
         data = request.data
