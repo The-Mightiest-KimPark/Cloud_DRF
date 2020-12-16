@@ -60,6 +60,14 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 - return: HTTP_200_OK | HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
 
+### GET api/sensorvalue/?email=str(이메일)&name=str(센서이름)
+
+- DRF
+- 센서값 조회
+- return: SENSOR[{id: int(pk), email: str(이메일), name: str(센서이름), value: int(센서값), reg_date: str(등록일-> 형식:2020-12-15T11:01:25.518280)}]
+- 만든이 : snchoi
+
+
 
 ### GET api/all-grocery-name/
 
