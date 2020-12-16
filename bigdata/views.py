@@ -19,16 +19,10 @@ import json
 @api_view(['GET'])
 def BdRecommRecipe(request):
     email = request.GET.get('email')
-    print('빅데이터 진입')
-    # # 해당 사용자가 가지고 있는 재료정보 
-    # print('request : ', request.data)
-    # email = request.data['email']
-    print('email : ', email)
+
+    # 해당 사용자가 가지고 있는 재료정보 
     response = requests.get(f'http://3.92.44.79/api/user-input-grocery/?email={email}')
-    print('response : ', response.text)
-    print('빅데이터 함수에서 여기까지 왔다')
     data = response.text
-    # grocery = ' '.join(data['name'].values)
     grocery = re.findall('"name":".*?"', data)
     grocery = ' '.join(grocery)
     grocery = re.sub('[",:,name]', '', grocery)
@@ -86,26 +80,22 @@ def BdRecommRecipe(request):
     # json으로 변환
     recomm_recipe_to_json = recomm_recipe.to_json(orient="records")
     recomm_recipe_results = json.loads(recomm_recipe_to_json)
-    print('recomm_recipe_results : ', recomm_recipe_results)
     
     # 해당 사용자의 이전 결과 다 삭제
     recommRecipe = RecommRecipe.objects.filter(email=email)
     if recommRecipe:
         recommRecipe.delete()
-        print('삭제 성공')
 
-        # 사용자 이메일 컬럼 추가
+    # 사용자 이메일 컬럼 추가
     for recomm_recipe_result in recomm_recipe_results:
         recomm_recipe_result['email'] = email
         recomm_recipe_result['all_recipe_id'] = recomm_recipe_result['id']
-        print('여기까지 오니??')
+
         # 데이터 저장
         serializer = RecommRecipeSerializer(data=recomm_recipe_result)
         if serializer.is_valid():
             serializer.save()
-            print('저장중')
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    print('저장 완료')
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
