@@ -15,6 +15,8 @@ from bigdata.models import AllRecipe
 from bigdata.serializers import AllRecipeSerializer
 from ai.models import AllGrocery
 from ai.serializers import AllGrocerySerializer
+from refrigerator.models import Refrigerator
+from refrigerator.serializers import RefrigeratorSerializer
 
 import json
 import bcrypt
@@ -111,15 +113,31 @@ def FollowPhotoRead(request):
 
 
 # 사용자 정보 조회
-# 친구 이메일로 조회시 당사자 이름, 이메일 정보 조회
 # 받는 값 : email
 # 만든이 : snchoi
 @api_view(['GET'])
 def FollowUserInfo(request):
     email = request.GET.get('email')
-    queryset = UserInfo.objects.filter(email=email)
-    serializer = UserViewSerializer(queryset, many=True)
-    return Response(serializer.data)
+
+    user_info = {}
+    user = UserInfo.objects.get(email=email)
+    user_info['email'] = user.email
+    user_info['age'] = user.age
+    user_info['sex'] = user.sex
+    user_info['phone_number'] = user.phone_number
+    user_info['name'] = user.name
+    user_info['guardian_name'] = user.guardian_name
+    user_info['guardian_phone_number'] = user.guardian_phone_number
+    user_info['purpose'] = user.purpose
+    user_info['img_url'] = user.img_url
+
+    # 알림 값 추가 , 모션센서 알림 값 추가
+    refri = Refrigerator.objects.get(email=email)
+    user_info['alarm_mode'] = refri.alarm_mode
+    user_info['outing_mode'] = refri.outing_mode
+    user_info['motion_period'] = refri.motion_period
+    
+    return Response(user_info)
 
 
 # 회원가입
