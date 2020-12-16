@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
 from .serializers import RecommRecipeSerializer
-from .models import AllRecipe
+from .models import AllRecipe, RecommRecipe
 from ai.models import Grocery
 import pymysql
 import re
@@ -13,15 +13,18 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 
 import requests
+import json
 
 # AI 이미지 분석을 통한 결과 저장
-def BdRecommRecipe(email):
+@api_view(['GET'])
+def BdRecommRecipe(request):
+    email = request.GET.get('email')
     print('빅데이터 진입')
     # # 해당 사용자가 가지고 있는 재료정보 
     # print('request : ', request.data)
     # email = request.data['email']
     print('email : ', email)
-    response = requests.get(f'http://127.0.0.1:8000/api/user-input-grocery/?email={email}')
+    response = requests.get(f'http://3.92.44.79/api/user-input-grocery/?email={email}')
     print('response : ', response.text)
     print('빅데이터 함수에서 여기까지 왔다')
     data = response.text
@@ -34,23 +37,6 @@ def BdRecommRecipe(email):
     # MariaDB에서 data호출
     result = AllRecipe.objects.values_list('id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num')
 
-    # conn = pymysql.connect(host='themightiestkpk.c9jl6xhdt5hy.us-east-1.rds.amazonaws.com', port=3306, user='admin',
-    #                        passwd='themightiestkpk1', db='themightiestkpk', cursorclass=pymysql.cursors.DictCursor)
-    # try:
-        
-    #     cur = conn.cursor()
-    #     sql = '''
-    #         SELECT *
-    #         FROM ALL_RECIPE
-    #         WHERE 1 = 1
-    #     '''
-    #     cur.execute(sql)
-    #     result = cur.fetchall()
-    # finally:
-    #     conn.close()
-
-    # 데이터프레임생성
-    # recipe_data = pd.DataFrame(result)
     recipe_data = pd.DataFrame(list(result), columns=['id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num'])
 
     # 현재 냉장고재료 0열에 추가
@@ -97,34 +83,29 @@ def BdRecommRecipe(email):
     recomm_recipe = recomm_recipe[:10]
     recomm_recipe.reset_index(drop=True, inplace=True)
 
-    # 추천 레시피 결과 저장
-    for re_num in range(10):
-        id_num = re_num + 1
-        all_recipe_id = int(recomm_recipe['id'][re_num])
-        name = recomm_recipe['name'][re_num]
-        ingredient = recomm_recipe['ingredient'][re_num]
-        ingredient_name = recomm_recipe['ingredient_name'][re_num]
-        seasoning = recomm_recipe['seasoning'][re_num]
-        seasoning_name = recomm_recipe['seasoning_name'][re_num]
-        howto = recomm_recipe['howto'][re_num]
-        purpose = recomm_recipe['purpose'][re_num]
-        views = int(recomm_recipe['views'][re_num])
-        img = recomm_recipe['img'][re_num]
-        recipe_num = int(recomm_recipe['recipe_num'][re_num])
+    # json으로 변환
+    recomm_recipe_to_json = recomm_recipe.to_json(orient="records")
+    recomm_recipe_results = json.loads(recomm_recipe_to_json)
+    print('recomm_recipe_results : ', recomm_recipe_results)
+    
+    # 해당 사용자의 이전 결과 다 삭제
+    recommRecipe = RecommRecipe.objects.filter(email=email)
+    if recommRecipe:
+        recommRecipe.delete()
+        print('삭제 성공')
 
-        # MariaDB에 저장
-        conn = pymysql.connect(host='themightiestkpk.c9jl6xhdt5hy.us-east-1.rds.amazonaws.com', port=3306, user='admin',
-                               passwd='themightiestkpk1', db='themightiestkpk', cursorclass=pymysql.cursors.DictCursor)
-        try:
-            cur = conn.cursor()
-            #             sql = "INSERT INTO RECOMM_RECIPE VALUES (id, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            sql = "UPDATE RECOMM_RECIPE SET id=id, email=%s, all_recipe_id=%s, name=%s, ingredient=%s, ingredient_name=%s, seasoning=%s, seasoning_name=%s, howto=%s, purpose=%s, views=%s, img=%s, recipe_num=%s WHERE id=%s"
-            val = (
-            email, all_recipe_id, name, ingredient, ingredient_name, seasoning, seasoning_name, howto, purpose, views,
-            img, recipe_num, id_num)
-            cur.execute(sql, val)
-        finally:
-            conn.commit()
-            conn.close()
+        # 사용자 이메일 컬럼 추가
+    for recomm_recipe_result in recomm_recipe_results:
+        recomm_recipe_result['email'] = email
+        recomm_recipe_result['all_recipe_id'] = recomm_recipe_result['id']
+        print('여기까지 오니??')
+        # 데이터 저장
+        serializer = RecommRecipeSerializer(data=recomm_recipe_result)
+        if serializer.is_valid():
+            serializer.save()
+            print('저장중')
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    print('저장 완료')
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    return True;
