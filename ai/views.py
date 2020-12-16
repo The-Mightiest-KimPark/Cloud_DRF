@@ -87,10 +87,6 @@ def AiImgGroceryTest(request):
     #     'coordinate' : [[1,2],[3,2]]
     # }]
 
-    for result in ai_result:
-        result['all_grocery_id'] = AllGrocery.objects.get(name=result['name']).id
-
-
 
     # 이전 결과 다 삭제
     grocery = Grocery.objects.filter(email=email)
@@ -99,6 +95,7 @@ def AiImgGroceryTest(request):
     
     # 결과 저장
     for result in ai_result:
+        result['all_grocery_id'] = AllGrocery.objects.get(name=result['name']).id
         result['email'] = email
         result['reg_date'] = reg_date
         result['gubun'] = 1
