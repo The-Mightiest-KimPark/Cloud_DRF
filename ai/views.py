@@ -114,7 +114,25 @@ def AiImgGroceryTest(request):
 
     # AI분석 로직
     # API로 받아오기
-    ai_result = requests.get(f'http://127.0.0.1:8000/api/aitest/?url={url}')
+    # ai_result = requests.get(f'http://127.0.0.1:8000/api/aitest/?url={url}')
+    ai_result = [{
+        'all_grocery_id': 6,
+        'name' : '당근',
+        'count' : 3,
+        'coordinate' : [[1,2],[3,2]]
+    },{
+        'all_grocery_id': 16,
+        'name' : '가지',
+        'count' : 2,
+        'coordinate' : [[1,2],[3,2]]
+    },{
+        'all_grocery_id': 10,
+        'name' : '사과',
+        'count' : 2,
+        'coordinate' : [[1,2],[3,2]]
+    }]
+
+
 
     # 이전 결과 다 삭제
     grocery = Grocery.objects.filter(email=email)
