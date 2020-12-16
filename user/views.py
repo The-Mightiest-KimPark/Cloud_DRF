@@ -117,7 +117,7 @@ def FollowUserInfo(request):
     print('email : ', email)
     queryset = UserInfo.objects.filter(email=email)
     print('queryset : ', queryset)
-    serializer = UserInfoSerializer(queryset, many=True)
+    serializer = UserViewSerializer(queryset, many=True)
     return Response(serializer.data)
 
 
