@@ -28,6 +28,7 @@ class Grocery(models.Model):
 class AllGrocery(models.Model):
     id = models.AutoField(primary_key=True) #PK(현재식재료PK)
     name = models.CharField(max_length=20, null=True)
+    name_english = models.CharField(max_length=20, null=True)
 
     class Meta:
         db_table = 'ALL_GROCERY'

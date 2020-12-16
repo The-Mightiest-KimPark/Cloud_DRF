@@ -1,1 +1,1 @@
-default_app_config = 'ai.load.pre_yolo'
+# default_app_config = 'ai.load.pre_yolo'

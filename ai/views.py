@@ -113,22 +113,8 @@ def AiImgGroceryTest(request):
         print('이미지 저장 실패')
 
     # AI분석 로직
-    ai_result = [{
-        'all_grocery_id': 1,
-        'name' : '바나나',
-        'count' : 3,
-        'coordinate' : [[1,2],[3,2]]
-    },{
-        'all_grocery_id': 2,
-        'name' : '사과',
-        'count' : 1,
-        'coordinate' : [[1,2],[3,2]]
-    },{
-        'all_grocery_id': 3,
-        'name' : '고구마',
-        'count' : 2,
-        'coordinate' : [[1,2],[3,2]]
-    }]
+    # API로 받아오기
+    ai_result = requests.get(f'http://127.0.0.1:8000/api/aitest/?url={url}')
 
     # 이전 결과 다 삭제
     grocery = Grocery.objects.filter(email=email)
