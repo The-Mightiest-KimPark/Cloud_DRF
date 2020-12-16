@@ -308,7 +308,7 @@ def GroceryAlarm(request):
         return Response(grocery_from_user)
 
 # 유저 정보
-class UserInfo(generics.ListCreateAPIView):
+class UserView(generics.ListCreateAPIView):
     # name = "UserInfo"
     # def get(self, request, *args, **kwargs):
     #     email = request.query_params.get("id")

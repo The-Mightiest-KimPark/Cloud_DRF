@@ -13,7 +13,7 @@ from django.dispatch import receiver
 
 # 사용자
 class UserInfo(models.Model):
-    email = models.CharField(User, primary_key=True,max_length=50) # PK(사용자PK)
+    email = models.CharField(primary_key=True,max_length=50) # PK(사용자PK)
     age = models.IntegerField(blank=True,null=True)
     sex = models.IntegerField(blank=True,null=True)
     phone_number = models.CharField(max_length=500, null=True)
@@ -24,31 +24,12 @@ class UserInfo(models.Model):
     purpose = models.CharField(max_length=500, null=True)
     img_url = models.CharField(max_length=500, null=True)
 
-    # objects = 
-
     class Meta:
         db_table = 'USER_INFO'
 
-    USERNAME_FIELD = 'email'
 
     def __int__(self):
         return self.id
-
-    def get_id(self):
-        return self.id
-
-    # def __str__(self):
-    #     return self.email.username
-
-# class Auth(models.Model):
-#     user = models.ForeignKey(UserInfo, related_name='auths', on_delete=models.CASCADE)
-#     role = models.CharField(max_length=30, default=ROLES.get('ROLE_NORMAL', 'NORMAL'))
-
-# @receiver(post_save, sender=User)
-# def create_or_update_user_profile(sender, instance, created, **kwargs):
-#     if created:
-#         UserInfo.objects.create(email=instance)
-#     instance.userinfo.save()
 
 
 
