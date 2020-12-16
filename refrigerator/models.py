@@ -15,6 +15,7 @@ class Refrigerator(models.Model):
     manutactor_date = models.DateField
     outing_mode = models.IntegerField(default=0)
     motion_period = models.IntegerField(default=1)
+    alarm_mode = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'REFRIGERATOR'
