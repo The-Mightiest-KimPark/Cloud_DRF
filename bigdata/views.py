@@ -99,3 +99,5 @@ def BdRecommRecipe(request):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
+# 추천레시피 조회

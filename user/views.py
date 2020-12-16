@@ -114,9 +114,7 @@ def FollowPhotoRead(request):
 @api_view(['GET'])
 def FollowUserInfo(request):
     email = request.GET.get('email')
-    print('email : ', email)
     queryset = UserInfo.objects.filter(email=email)
-    print('queryset : ', queryset)
     serializer = UserViewSerializer(queryset, many=True)
     return Response(serializer.data)
 
@@ -250,10 +248,6 @@ def RecipeFavorites(request):
             recipe_from_user.append(allrecipe_serializer.data[0])
         return Response(recipe_from_user)
 
-# user information
-# class MemberDetailView(DetailView):
-#     template_name = 'detail.html'
-#     model = UserInfo
 
 # 식재료 알림 삽입 / 조회 / 수정 / 삭제
 @api_view(['POST','GET','PUT','DELETE'])

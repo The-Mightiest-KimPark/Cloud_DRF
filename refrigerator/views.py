@@ -66,3 +66,18 @@ def GoingOutMode(request):
         return Response({"result":True}, status=status.HTTP_201_CREATED)
     except:
         return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# 센서값 조회
+# 받는 값 : email. name(센서이름)
+# 만든이 : snchoi
+@api_view(['GET'])
+def SensorValue(request):
+    email = request.GET.get('email')
+    print(email)
+    name = request.GET.get('name')
+    print(name)
+
+    queryset = Sensor.objects.filter(Q(email=email),Q(name=name))
+    serializer = SensorSerializer(queryset, many=True)
+    return Response(serializer.data)
