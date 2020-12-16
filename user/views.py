@@ -107,6 +107,20 @@ def FollowPhotoRead(request):
         return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
 
 
+# 사용자 정보 조회
+# 친구 이메일로 조회시 당사자 이름, 이메일 정보 조회
+# 받는 값 : email
+# 만든이 : snchoi
+@api_view(['GET'])
+def FollowUserInfo(request):
+    email = request.GET.get('email')
+    print('email : ', email)
+    queryset = UserInfo.objects.filter(email=email)
+    print('queryset : ', queryset)
+    serializer = UserInfoSerializer(queryset, many=True)
+    return Response(serializer.data)
+
+
 # 회원가입
 # 받는 값(json) : email, age, sex, phone_number, name, password, guardian_name, guardian_phone_number, purpose
 # 만든이 : snchoi
@@ -306,6 +320,8 @@ def GroceryAlarm(request):
             recipe_favorite_info['name'] = all_grocery.name        
             grocery_from_user.append(recipe_favorite_info)
         return Response(grocery_from_user)
+
+
 
 # 유저 정보
 class UserView(generics.ListCreateAPIView):
