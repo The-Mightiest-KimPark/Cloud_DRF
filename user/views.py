@@ -59,7 +59,7 @@ def FollowingLatestPhoto(request):
     email = request.GET.get('email')
     
     # 내가 팔로우 하는 친구email조회(읽지 않은 사진)
-    follow_queryset = Follow.objects.filter(Q(email=email),Q(read=False))
+    follow_queryset = Follow.objects.filter(Q(email=email),Q(read=0))
     follow_serializer = FollowSerializer(follow_queryset, many=True)
     
     real_result_list = []
@@ -98,7 +98,7 @@ def FollowPhotoRead(request):
     following_user_id = params['following_user_id']
 
     follow = Follow.objects.get(email=email,following_user_id=following_user_id)
-    follow.read = True
+    follow.read = 1
     try:
         follow.save()
         print('읽음 완료')
