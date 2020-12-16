@@ -52,3 +52,17 @@ class UserViewSerializer(serializers.ModelSerializer):
             'purpose',
             # 'img_url'
         ]
+
+class UserModifySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserInfo
+        fields = [
+            'email',
+            'age',
+            'sex',
+            'phone_number',
+            'name',
+            'guardian_name',
+            'guardian_phone_number',
+            'purpose'
+        ]
