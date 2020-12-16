@@ -73,6 +73,8 @@ def AiImgGroceryTest(request):
     # AI분석 로직
     # API로 받아오기
     ai_result = requests.get(f'http://13.209.95.229:8888/api/aitest/?url={url}')
+    ai_result = ai_result.text
+    print('ai_result : ', ai_result.text)
     # ai_result = [{
     #     'name' : '당근',
     #     'count' : 3,

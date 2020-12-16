@@ -80,8 +80,11 @@ def FollowingLatestPhoto(request):
             result_dict['reg_date'] = reg_date
 
             # 친구email을 통해 '이름' 가져옴
-            name = UserInfo.objects.get(email=email).name
-            result_dict['name'] = name
+            userinfo = UserInfo.objects.get(email=email)
+            result_dict['name'] = userinfo.name
+            result_dict['img_url'] = userinfo.img_url
+            result_dict['sex'] = userinfo.sex
+
         real_result_list.append(result_dict)
     return Response(real_result_list)
 
