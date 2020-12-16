@@ -165,6 +165,28 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 
 
 
+### GET api/follow-userinfo/?email=str
+
+- DRF
+- 이메일 조회시 해당 사용자 정보 조회
+- **parameter**: email = str(친구 이메일)
+- [
+      {
+          "email": str(이메일),
+          "age": int(나이),
+          "sex": int(성별),
+          "phone_number": str(핸드폰번호),
+          "name": str(이름),
+          "guardian_name": str(보호자이름),
+          "guardian_phone_number": str(보호자번호),
+          "purpose": str(목적 - 다이어트 등등),
+          "img_url": str(프로필 사진 이미지)
+      }, {}..
+  ]
+- 만든이 : snchoi
+
+
+
 ### GET api/follow-latest-photo/?email=str
 
 - DRF
@@ -306,10 +328,6 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 ## 3. 남은 백엔드 기능
 
 - 회원 사진 등록/수정 - 수녕
-- 친구 이메일로 조회시 당사자 이름, 이메일 정보 조회 - 륜화
-- 회원 정보 조회 - 륜화
-  - 조회값 : 일단 비밀번호 뺴고 다
-  - 받는 값 : email
 - 회원 정보 수정 - 륜화
   - update 가능 값 : 이메일, 비밀번호 빼고 다!!
   - 받는 값 : email

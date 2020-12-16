@@ -115,7 +115,7 @@ def FollowPhotoRead(request):
 def FollowUserInfo(request):
     email = request.GET.get('email')
     queryset = UserInfo.objects.filter(email=email)
-    serializer = UserInfoSerializer(queryset, many=True)
+    serializer = UserViewSerializer(queryset, many=True)
     return Response(serializer.data)
 
 
