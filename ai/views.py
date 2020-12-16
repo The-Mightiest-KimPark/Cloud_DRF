@@ -158,7 +158,6 @@ def AiImgGroceryTest(request):
     # data = {"email":email}
     res = requests.get(f'http://3.92.44.79/api/bd-recomm-recipe/?email={email}')
     print('res : ', res)
-    #BdRecommRecipe(email= email)
 
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
