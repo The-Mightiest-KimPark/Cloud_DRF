@@ -112,7 +112,8 @@ def AiImgGrocery(request):
     for i in range(11):
         id_num = i*10000 + 1
         bdqueryset = AllRecipe.objects.get(id=id_num)
-        bdqueryset.name = grocery
+        bdqueryset.ingredient_name = grocery
+        bdqueryset.name = 'all_grocery'
         print('grocery : ', grocery)
         print('id_num : ', id_num)
         try:
