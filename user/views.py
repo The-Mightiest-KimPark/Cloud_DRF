@@ -33,23 +33,29 @@ def FollowAndUnfollow(request):
     params = request.data
     email = params['email']
     following_user_id = params['following_user_id']
-    # 해당 id,email에 해당하는 값 존재 확인
-    followTF = Follow.objects.filter(Q(email=email),Q(following_user_id=following_user_id))
-    followTF = len(followTF)
-    print('followTF : ', followTF)
-    if followTF==0:
-        # 존재하지 않을 경우 insert
-        serializer = FollowSerializer(data=params)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        # 존재할 경우 delete
-        result = Follow.objects.filter(Q(email=email),Q(following_user_id=following_user_id)).delete()
-        if len(result):
-            return Response(status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        existing = UserInfo.objects.get(email=following_user_id)
+
+        # 해당 id,email에 해당하는 값 존재 확인
+        followTF = Follow.objects.filter(Q(email=email),Q(following_user_id=following_user_id))
+        followTF = len(followTF)
+        print('followTF : ', followTF)
+        if followTF==0:
+            # 존재하지 않을 경우 insert
+            serializer = FollowSerializer(data=params)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            # 존재할 경우 delete
+            result = Follow.objects.filter(Q(email=email),Q(following_user_id=following_user_id)).delete()
+            if len(result):
+                return Response(status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -60,16 +66,9 @@ def FollowAndUnfollow(request):
 def FollowingLatestPhoto(request):
     # 값 받아오기
     email = request.GET.get('email')
-    # read 안읽은 사람 조회하고 싶을 때 
-    read = request.GET.get('read')
     
-    if read:
-        # 내가 팔로우 하는 친구email조회(읽지 않은 사진 조회 위해)
-        follow_queryset = Follow.objects.filter(Q(email=email),Q(read=read))
-    else:
-        # 내가 팔로우 하는 모든 친구email조회
-        follow_queryset = Follow.objects.filter(email=email)
-
+    # 내가 팔로우 하는 모든 친구email조회
+    follow_queryset = Follow.objects.filter(email=email).order_by('-read')
     follow_serializer = FollowSerializer(follow_queryset, many=True)
     
     real_result_list = []
@@ -79,7 +78,7 @@ def FollowingLatestPhoto(request):
         # 친구email
         f_u_email = follow['following_user_id']
         # 친구email을 통해 '이미지'와 '날짜' 가져옴(날짜 내림차순)
-        photo_queryset = Photo.objects.filter(email=f_u_email).order_by('-reg_date')[:1]
+        photo_queryset = Photo.objects.filter(email=f_u_email)#.order_by('-reg_date')[:1]
         photo_serializer = PhotoSerializer(photo_queryset, many=True)
         result_list = []
         for photo in photo_serializer.data:
