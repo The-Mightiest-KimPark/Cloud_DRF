@@ -153,6 +153,15 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 - 만든이 : snchoi
 
 
+### PUT api/alarm-mode/
+
+- DRF
+- 알림 모드 ON OFF 변경
+- **body**: {email: str(이메일), alarm_mode: int(알림모드 ,default=0)}
+- return: HTTP_201_CREATED | HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
+
 
 ### PUT api/follow/
 
@@ -325,6 +334,52 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 - 문의 사항 -> 최수녕, 류제룡
 
 
+### 추천레시피 조회  api/recomm-recipe/?email=str
+
+- DRF
+- 사용자별 추천레시피 조회
+- **parameter**: 
+  - email = str(이메일)
+- return: RECOMM_RECIPE [{
+    "id": pk,
+    "email": str(사용자아이디),
+    "all_recipe_id": int(전체레시피pk),
+    "name": str(레시피이름),
+    "ingredient": str(재료종류 - 여러가지),
+    "ingredient_name": str(재료이름),
+    "seasoning": str(소스이름 + 양까지),
+    "seasoning_name": str(소스이름만),
+    "howto": str(방법),
+    "purpose": str(목적),
+    "views": int(조회수),
+    "img": str(레시피이미지url),
+    "recipe_num": int(레시피번호)
+}, {}]
+- 만든이 : snchoi
+
+
+### 추천레시피 랜덤으로 1개만 조회 api/recomm-recipe-one/?email=str
+
+- DRF
+- 사용자별 추천레시피 랜덤으로 1개만 조회(메인페이지 사용)
+- **parameter**: 
+  - email = str(이메일)
+- return: RECOMM_RECIPE {
+    "id": pk,
+    "email": str(사용자아이디),
+    "all_recipe_id": int(전체레시피pk),
+    "name": str(레시피이름),
+    "ingredient": str(재료종류 - 여러가지),
+    "ingredient_name": str(재료이름),
+    "seasoning": str(소스이름 + 양까지),
+    "seasoning_name": str(소스이름만),
+    "howto": str(방법),
+    "purpose": str(목적),
+    "views": int(조회수),
+    "img": str(레시피이미지url),
+    "recipe_num": int(레시피번호)
+}
+- 만든이 : snchoi
 
 
 
@@ -334,4 +389,3 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 - 회원 정보 수정 - 륜화
   - update 가능 값 : 이메일, 비밀번호 빼고 다!!
   - 받는 값 : email
-- 추천레시피 조회 /  목적에 맞는 추천레시피 조회 - 륜화

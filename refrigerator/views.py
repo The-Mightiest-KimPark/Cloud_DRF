@@ -69,7 +69,7 @@ def GoingOutMode(request):
 
 
 # 알림모드 ON OFF 변경
-# 받는 값 : email, outing_mode -> (1/0)
+# 받는 값 : email, alarm_mode -> (1/0)
 # 만든이 : snchoi
 @api_view(['PUT'])
 def AlarmMode(request):
