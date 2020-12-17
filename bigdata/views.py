@@ -17,37 +17,39 @@ import json
 import random
 
 # AI 이미지 분석을 통한 결과 저장
-@api_view(['GET'])
-def BdRecommRecipe(request):
-    email = request.GET.get('email')
+# @api_view(['GET'])
+def BdRecommRecipe(email):
+    # #email = request.GET.get('email')
 
-    print('빅데이터 진입')
+    # print('빅데이터 진입')
 
-    # 해당 사용자가 가지고 있는 재료정보 
-    response = requests.get(f'http://3.92.44.79/api/user-input-grocery/?email={email}')
-    data = response.text
-    grocery = re.findall('"name":".*?"', data)
-    grocery = ' '.join(grocery)
-    grocery = re.sub('[",:,name]', '', grocery)
+    # # 해당 사용자가 가지고 있는 재료정보 
+    # response = requests.get(f'http://3.92.44.79/api/user-input-grocery/?email={email}')
+    # print('해당 사용자가 가지고 있는 재료정보')
+    # data = response.text
+    # grocery = re.findall('"name":".*?"', data)
+    # grocery = ' '.join(grocery)
+    # grocery = re.sub('[",:,name]', '', grocery)
+    # print('name')
 
     # 빅데이터 로직
     # MariaDB에서 data호출
-    result = AllRecipe.objects.values_list('id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num')
+    recipe_data = AllRecipe.objects.values_list('id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num')
 
-    recipe_data = pd.DataFrame(list(result), columns=['id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num'])
-    #print('빅데이터 로직')
+    # recipe_data = pd.DataFrame(list(result), columns=['id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num'])
+    # #print('빅데이터 로직')
 
-    # 현재 냉장고재료 0열에 추가
-    for n in range((len(recipe_data) // 10000) + 1):
-        recipe_data.iloc[n * 10000] = [n * 10000, 'grocery', 0, grocery, 0, 0, 0, 0, 0, 0, 0]
+    # # 현재 냉장고재료 0열에 추가
+    # for n in range((len(recipe_data) // 10000) + 1):
+    #     recipe_data.iloc[n * 10000] = [n * 10000, 'grocery', 0, grocery, 0, 0, 0, 0, 0, 0, 0]
 
     index_list = []
     score_list = []
-    #print('현재 냉장고재료 0열에 추가')
+    # print('현재 냉장고재료 0열에 추가')
 
     # tfidf벡터 생성
     tfidf = TfidfVectorizer()
-    #print('tfidf벡터 생성')
+    print('tfidf벡터 생성')
 
     # 10000단위로 유사도검사 후 병합
     for n in range((len(recipe_data) // 10000) + 1):
@@ -72,25 +74,25 @@ def BdRecommRecipe(request):
         index_list = index_list + food_indices
         score_list = score_list + sim_scores_list
 
-    #print('10000단위로 유사도검사 후 병합')
+    print('10000단위로 유사도검사 후 병합')
 
     # 330개의 레시피중 유사도가 높은 레피시 인덱스 30개 추출
     sim_df = pd.DataFrame({'food_indices': index_list, 'sim_scores': score_list})
     sim_df.sort_values(by='sim_scores', ascending=False, inplace=True)
     high_score_indices = sim_df['food_indices'].values.tolist()[:30]
-    #print('330개의 레시피중 유사도가 높은 레피시 인덱스 30개 추출')
+    print('330개의 레시피중 유사도가 높은 레피시 인덱스 30개 추출')
 
     # 인덱스를 활용하여 30개의 레시피를 조회수 순으로 재정렬 후 10개 추출
     recomm_recipe = recipe_data.iloc[high_score_indices]
     recomm_recipe.sort_values(by='views', ascending=False, inplace=True)
     recomm_recipe = recomm_recipe[:10]
     recomm_recipe.reset_index(drop=True, inplace=True)
-    #print('인덱스를 활용하여 30개의 레시피를 조회수 순으로 재정렬 후 10개 추출')
+    print('인덱스를 활용하여 30개의 레시피를 조회수 순으로 재정렬 후 10개 추출')
 
     # json으로 변환
     recomm_recipe_to_json = recomm_recipe.to_json(orient="records")
     recomm_recipe_results = json.loads(recomm_recipe_to_json)
-    #print('json으로 변환')
+    print('json으로 변환')
     #('recomm_recipe_resultsm : ', recomm_recipe_results)
     #print('type : ', type(recomm_recipe_results))
     
@@ -115,8 +117,8 @@ def BdRecommRecipe(request):
         else:
             #print(serializer.error_messages)
             #print(serializer.errors)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return False
+    return True
 
 
 # 추천레시피 조회
@@ -126,6 +128,12 @@ def RecommRecipeGet(request):
     email = request.GET.get('email')
     recom_recipe_queryset = RecommRecipe.objects.filter(email=email)
     serializers = RecommRecipeSerializer(recom_recipe_queryset, many=True)
+    # 빅데이터 함수 호출(삽입)
+    # headers = {"Content-Type": "application/json"}
+    # data = {"email":email}
+    # res = requests.get(f'http://3.92.44.79/api/bd-recomm-recipe/?email={email}')
+    BdRecommRecipe(email)
+    print('---------end--------')
     return Response(serializers.data)
 
 

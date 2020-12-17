@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
 
+from bigdata.models import AllRecipe
+from bigdata.serializers import AllRecipeSerializer
 from .serializers import GrocerySerializer, AllGrocerySerializer
 from refrigerator.serializers import PhotoSerializer
 from refrigerator.models import Photo
@@ -20,6 +22,7 @@ from pytz import timezone
 import json
 import datetime
 import requests
+import re
 
   
 # AI 이미지 분석을 통한 결과 저장 복사본
@@ -83,12 +86,30 @@ def AiImgGrocery(request):
             except:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # 빅데이터 함수 호출
-    # headers = {"Content-Type": "application/json"}
-    # data = {"email":email}
-    res = requests.get(f'http://3.92.44.79/api/bd-recomm-recipe/?email={email}')
-    print('---------end--------')
+    # # 빅데이터 함수 호출
+    # # headers = {"Content-Type": "application/json"}
+    # # data = {"email":email}
+    # res = requests.get(f'http://3.92.44.79/api/bd-recomm-recipe/?email={email}')
+    # print('---------end--------')
 
+    res = requests.get(f'http://3.92.44.79/api/user-input-grocery/?email={email}')
+    data = res.text
+    grocery = re.findall('"name":".*?"', data)
+    grocery = ' '.join(grocery)
+    grocery = re.sub('[",:,name]', '', grocery)
+    for i in range(11):
+        id_num = i*10000 + 1
+        bdqueryset = AllRecipe.objects.get(id=id_num)
+        bdqueryset.name = grocery
+        print('grocery : ', grocery)
+        print('id_num : ', id_num)
+        try:
+            bdqueryset.save()
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        print('빅데 업뎃 완료')
+        # sql = "UPDATE ALL_RECIPE SET ingredient_name=%s WHERE id=%s"
+        # val = (grocery, id_num)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
