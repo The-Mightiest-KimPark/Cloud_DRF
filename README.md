@@ -278,7 +278,9 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
           "purpose": str(목적),
           "views": int(조회수),
           "img": str(레시피 이미지),
-          "recipe_num": int(만개의 레시피 고유번호)}, {}]
+          "recipe_num": int(만개의 레시피 고유번호),
+          "all_recipe_id": int(전체레시피 id값),
+          "email": str(사용자이메일)}, {}]
 - 만든이 : snchoi
 
 
