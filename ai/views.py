@@ -58,6 +58,7 @@ def AiImgGrocery(request):
     # AI분석 로직
     # API로 받아오기
     response = requests.get(f'http://13.209.95.229:8888/api/aitest/?url={url}')
+
     print('response : ', type(json.loads(response.text)))
     print(json.loads(response.text))
     print(type(json.loads(response.text)))
@@ -92,11 +93,22 @@ def AiImgGrocery(request):
     # res = requests.get(f'http://3.92.44.79/api/bd-recomm-recipe/?email={email}')
     # print('---------end--------')
 
-    res = requests.get(f'http://3.92.44.79/api/user-input-grocery/?email={email}')
-    data = res.text
-    grocery = re.findall('"name":".*?"', data)
-    grocery = ' '.join(grocery)
-    grocery = re.sub('[",:,name]', '', grocery)
+    # res = requests.get(f'http://3.92.44.79/api/user-input-grocery/?email={email}')
+
+    names = Grocery.objects.only('name').distinct()
+    print('names : ', names)
+    print('names : ', list(names)[0:])
+    
+    grocery = ''
+    for i in list(names)[0:]:
+        print(i)
+        grocery = str(i) + ' ' + grocery
+        print(grocery)
+
+    #data = res.text
+    # grocery = re.findall('"name":".*?"', data)
+    # grocery = ' '.join(grocery)
+    # grocery = re.sub('[",:,name]', '', grocery)
     for i in range(11):
         id_num = i*10000 + 1
         bdqueryset = AllRecipe.objects.get(id=id_num)
