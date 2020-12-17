@@ -35,7 +35,7 @@ def BdRecommRecipe(request):
     result = AllRecipe.objects.values_list('id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num')
 
     recipe_data = pd.DataFrame(list(result), columns=['id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num'])
-    print('빅데이터 로직')
+    #print('빅데이터 로직')
 
     # 현재 냉장고재료 0열에 추가
     for n in range((len(recipe_data) // 10000) + 1):
@@ -43,11 +43,11 @@ def BdRecommRecipe(request):
 
     index_list = []
     score_list = []
-    print('현재 냉장고재료 0열에 추가')
+    #print('현재 냉장고재료 0열에 추가')
 
     # tfidf벡터 생성
     tfidf = TfidfVectorizer()
-    print('tfidf벡터 생성')
+    #print('tfidf벡터 생성')
 
     # 10000단위로 유사도검사 후 병합
     for n in range((len(recipe_data) // 10000) + 1):
@@ -72,49 +72,49 @@ def BdRecommRecipe(request):
         index_list = index_list + food_indices
         score_list = score_list + sim_scores_list
 
-    print('10000단위로 유사도검사 후 병합')
+    #print('10000단위로 유사도검사 후 병합')
 
     # 330개의 레시피중 유사도가 높은 레피시 인덱스 30개 추출
     sim_df = pd.DataFrame({'food_indices': index_list, 'sim_scores': score_list})
     sim_df.sort_values(by='sim_scores', ascending=False, inplace=True)
     high_score_indices = sim_df['food_indices'].values.tolist()[:30]
-    print('330개의 레시피중 유사도가 높은 레피시 인덱스 30개 추출')
+    #print('330개의 레시피중 유사도가 높은 레피시 인덱스 30개 추출')
 
     # 인덱스를 활용하여 30개의 레시피를 조회수 순으로 재정렬 후 10개 추출
     recomm_recipe = recipe_data.iloc[high_score_indices]
     recomm_recipe.sort_values(by='views', ascending=False, inplace=True)
     recomm_recipe = recomm_recipe[:10]
     recomm_recipe.reset_index(drop=True, inplace=True)
-    print('인덱스를 활용하여 30개의 레시피를 조회수 순으로 재정렬 후 10개 추출')
+    #print('인덱스를 활용하여 30개의 레시피를 조회수 순으로 재정렬 후 10개 추출')
 
     # json으로 변환
     recomm_recipe_to_json = recomm_recipe.to_json(orient="records")
     recomm_recipe_results = json.loads(recomm_recipe_to_json)
-    print('json으로 변환')
-    print('recomm_recipe_resultsm : ', recomm_recipe_results)
-    print('type : ', type(recomm_recipe_results))
+    #print('json으로 변환')
+    #('recomm_recipe_resultsm : ', recomm_recipe_results)
+    #print('type : ', type(recomm_recipe_results))
     
     # 해당 사용자의 이전 결과 다 삭제
     recommRecipe = RecommRecipe.objects.filter(email=email)
     if recommRecipe:
         recommRecipe.delete()
-        print('삭제완료')
-    print('해당 사용자의 이전 결과 다 삭제')
+        #print('삭제완료')
+    #print('해당 사용자의 이전 결과 다 삭제')
 
     # 사용자 이메일 컬럼 추가
     for recomm_recipe_result in recomm_recipe_results:
-        print('해당 사용자의 이전 결과 다 삭제')
+        #print('해당 사용자의 이전 결과 다 삭제')
         recomm_recipe_result['email'] = email
         recomm_recipe_result['all_recipe_id'] = recomm_recipe_result['id']
-        print('recomm_recipe_result : ', recomm_recipe_result)
+        #print('recomm_recipe_result : ', recomm_recipe_result)
 
         # 데이터 저장
         serializer = RecommRecipeSerializer(data=recomm_recipe_result)
         if serializer.is_valid():
             serializer.save()
         else:
-            print(serializer.error_messages)
-            print(serializer.errors)
+            #print(serializer.error_messages)
+            #print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 

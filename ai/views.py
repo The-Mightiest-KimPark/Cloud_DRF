@@ -87,7 +87,7 @@ def AiImgGrocery(request):
     # headers = {"Content-Type": "application/json"}
     # data = {"email":email}
     res = requests.get(f'http://3.92.44.79/api/bd-recomm-recipe/?email={email}')
-    print('res : ', res)
+    print('---------end--------')
 
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
