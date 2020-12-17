@@ -86,7 +86,7 @@ def AiImgGrocery(request):
     # 빅데이터 함수 호출
     # headers = {"Content-Type": "application/json"}
     # data = {"email":email}
-    res = requests.get(f'http://3.92.44.79/api/bd-recomm-recipe/?email={email}')
+    res = requests.get(f'http://3.92.44.79:8000/api/bd-recomm-recipe/?email={email}')
     print('res : ', res)
 
     return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -131,7 +131,7 @@ def userInputGrocery(request):
         if serializer.is_valid():
             serializer.save()
             # 빅데이터 추천 레시피 저장 함수 불러오기
-            res = requests.get(f'http://3.92.44.79/api/bd-recomm-recipe/?email={email}')
+            res = requests.get(f'http://3.92.44.79:8000/api/bd-recomm-recipe/?email={email}')
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
