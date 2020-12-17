@@ -60,13 +60,22 @@ def FollowAndUnfollow(request):
 def FollowingLatestPhoto(request):
     # 값 받아오기
     email = request.GET.get('email')
+    # read 안읽은 사람 조회하고 싶을 때 
+    read = request.GET.get('read')
     
-    # 내가 팔로우 하는 친구email조회(읽지 않은 사진)
-    follow_queryset = Follow.objects.filter(Q(email=email),Q(read=0))
+    if read:
+        # 내가 팔로우 하는 친구email조회(읽지 않은 사진 조회 위해)
+        follow_queryset = Follow.objects.filter(Q(email=email),Q(read=read))
+    else:
+        # 내가 팔로우 하는 모든 친구email조회
+        follow_queryset = Follow.objects.filter(email=email)
+
     follow_serializer = FollowSerializer(follow_queryset, many=True)
     
     real_result_list = []
     for follow in follow_serializer.data:
+        # read 값
+        read = follow['read']
         # 친구email
         f_u_email = follow['following_user_id']
         # 친구email을 통해 '이미지'와 '날짜' 가져옴(날짜 내림차순)
@@ -87,6 +96,9 @@ def FollowingLatestPhoto(request):
             result_dict['name'] = userinfo.name
             result_dict['img_url'] = userinfo.img_url
             result_dict['sex'] = userinfo.sex
+
+            # read값 추가
+            result_dict['read'] = read
 
         real_result_list.append(result_dict)
     return Response(real_result_list)
