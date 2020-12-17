@@ -22,26 +22,13 @@ import random
 # @api_view(['GET'])
 def BdRecommRecipe(email):
     # email = request.GET.get('email')
-
     # print('빅데이터 진입')
-
-    # # 해당 사용자가 가지고 있는 재료정보
-    # response = requests.get(f'http://3.92.44.79/api/user-input-grocery/?email={email}')
-    # print('해당 사용자가 가지고 있는 재료정보')
-    # data = response.text
-    # grocery = re.findall('"name":".*?"', data)
-    # grocery = ' '.join(grocery)
-    # grocery = re.sub('[",:,name]', '', grocery)
-
+    # 해당 사용자가 가지고 있는 재료정보
     names = Grocery.objects.only('name').distinct()
-    print('names : ', names)
-    print('names : ', list(names)[0:])
     
     grocery = ''
-    for i in list(names)[0:]:
-        print(i)
-        grocery = str(i) + ' ' + grocery
-        print(grocery)
+    for name in list(names)[0:]:
+        grocery = str(name) + ' ' + grocery
 
     # 빅데이터 로직
     # MariaDB에서 data호출
@@ -108,8 +95,6 @@ def BdRecommRecipe(email):
     print('인덱스를 활용하여 30개의 레시피를 조회수 순으로 재정렬 후 10개 추출')
 
     # json으로 변환
-    # recomm_recipe_to_json = recomm_recipe.to_json(orient="records")
-    # recomm_recipe_to_json = json.Serializer().serialize(recomm_recipe)
     recomm_recipe_to_json = serializers.serialize("json", recomm_recipe)
     recomm_recipe_results = json.loads(recomm_recipe_to_json)
     print('json으로 변환')
@@ -132,15 +117,10 @@ def BdRecommRecipe(email):
         # print('recomm_recipe_result : ', recomm_recipe_result)
         # 데이터 저장
         serializer = RecommRecipeSerializer(data=body)
-        print('이건뭐죠', serializer)
-        print('이게 뭐죠', serializer.is_valid())
         print(time.time() - start)
         if serializer.is_valid():
-            print('여기')
             serializer.save()
         else:
-            print('여기2')
-            print(serializer.error_messages)
             print(serializer.errors)
             return False
     return True
@@ -154,9 +134,6 @@ def RecommRecipeGet(request):
     recom_recipe_queryset = RecommRecipe.objects.filter(email=email)
     serializers = RecommRecipeSerializer(recom_recipe_queryset, many=True)
     # 빅데이터 함수 호출(삽입)
-    # headers = {"Content-Type": "application/json"}
-    # data = {"email":email}
-    # res = requests.get(f'http://3.92.44.79/api/bd-recomm-recipe/?email={email}')
     result = BdRecommRecipe(email)
     print('result : ', result)
     print('---------end--------')
@@ -170,7 +147,6 @@ def RecommRecipeGetOne(request):
     email = request.GET.get('email')
     recom_recipe_queryset = RecommRecipe.objects.filter(email=email)
     serializers = RecommRecipeSerializer(recom_recipe_queryset, many=True)
-    # print(serializers.data)
     length = len(serializers.data)
     random_num = random.randint(0, length - 1)
     print(random_num)

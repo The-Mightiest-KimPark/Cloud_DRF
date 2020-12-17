@@ -39,7 +39,6 @@ def AiImgGrocery(request):
     refri = Refrigerator.objects.get(fridge_number=fridge_number)
     email = refri.email
     print('email : ', email)
-
     
     # 이전 날짜 이미지 다 삭제
     photo = Photo.objects.filter(email=email)
@@ -86,42 +85,6 @@ def AiImgGrocery(request):
                 print('이미지 인식 재료 결과 저장 완료')
             except:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # # 빅데이터 함수 호출
-    # # headers = {"Content-Type": "application/json"}
-    # # data = {"email":email}
-    # res = requests.get(f'http://3.92.44.79/api/bd-recomm-recipe/?email={email}')
-    # print('---------end--------')
-
-    # res = requests.get(f'http://3.92.44.79/api/user-input-grocery/?email={email}')
-
-    names = Grocery.objects.only('name').distinct()
-    print('names : ', names)
-    print('names : ', list(names)[0:])
-    
-    grocery = ''
-    for i in list(names)[0:]:
-        print(i)
-        grocery = str(i) + ' ' + grocery
-        print(grocery)
-
-    #data = res.text
-    # grocery = re.findall('"name":".*?"', data)
-    # grocery = ' '.join(grocery)
-    # grocery = re.sub('[",:,name]', '', grocery)
-    for i in range(11):
-        id_num = i*10000 + 1
-        bdqueryset = AllRecipe.objects.get(id=id_num)
-        bdqueryset.ingredient_name = grocery
-        print('grocery : ', grocery)
-        print('id_num : ', id_num)
-        try:
-            bdqueryset.save()
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        print('빅데 업뎃 완료')
-        # sql = "UPDATE ALL_RECIPE SET ingredient_name=%s WHERE id=%s"
-        # val = (grocery, id_num)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -163,8 +126,8 @@ def userInputGrocery(request):
         serializer = GrocerySerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            # 빅데이터 추천 레시피 저장 함수 불러오기
-            res = requests.get(f'http://3.92.44.79:8000/api/bd-recomm-recipe/?email={email}')
+            # # 빅데이터 추천 레시피 저장 함수 불러오기
+            # res = requests.get(f'http://3.92.44.79:8000/api/bd-recomm-recipe/?email={email}')
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
