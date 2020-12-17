@@ -68,7 +68,7 @@ def FollowingLatestPhoto(request):
     email = request.GET.get('email')
     
     # 내가 팔로우 하는 모든 친구email조회
-    follow_queryset = Follow.objects.filter(email=email).order_by('-read')
+    follow_queryset = Follow.objects.filter(email=email).order_by('read')
     follow_serializer = FollowSerializer(follow_queryset, many=True)
     
     real_result_list = []
@@ -78,7 +78,7 @@ def FollowingLatestPhoto(request):
         # 친구email
         f_u_email = follow['following_user_id']
         # 친구email을 통해 '이미지'와 '날짜' 가져옴(날짜 내림차순)
-        photo_queryset = Photo.objects.filter(email=f_u_email)#.order_by('-reg_date')[:1]
+        photo_queryset = Photo.objects.filter(email=f_u_email).order_by('-reg_date')[:1]
         photo_serializer = PhotoSerializer(photo_queryset, many=True)
         result_list = []
         for photo in photo_serializer.data:
