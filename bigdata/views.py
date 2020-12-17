@@ -14,6 +14,7 @@ from sklearn.metrics.pairwise import linear_kernel
 
 import requests
 import json
+import random
 
 # AI 이미지 분석을 통한 결과 저장
 @api_view(['GET'])
@@ -119,8 +120,25 @@ def BdRecommRecipe(request):
 
 
 # 추천레시피 조회
-
+# 받는 값 : email
+@api_view(['GET'])
+def RecommRecipeGet(request):
+    email = request.GET.get('email')
+    recom_recipe_queryset = RecommRecipe.objects.filter(email=email)
+    serializers = RecommRecipeSerializer(recom_recipe_queryset, many=True)
+    return Response(serializers.data)
 
 
 # 추천레시피 랜덤으로 하나만 조회
+# 받는 값 : email
+@api_view(['GET'])
+def RecommRecipeGetOne(request):
+    email = request.GET.get('email')
+    recom_recipe_queryset = RecommRecipe.objects.filter(email=email)
+    serializers = RecommRecipeSerializer(recom_recipe_queryset, many=True)
+    # print(serializers.data)
+    length = len(serializers.data)
+    random_num = random.randint(0, length-1)
+    print(random_num)
+    return Response(serializers.data[random_num])
 
