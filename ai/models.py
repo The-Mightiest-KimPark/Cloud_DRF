@@ -10,13 +10,13 @@ from datetime import datetime
 # 현재 식재료 
 class Grocery(models.Model):
     id = models.AutoField(primary_key=True) #PK(현재식재료PK)
-    email = models.CharField(max_length=50, null=True) # FK(사용자id값)
+    email = models.CharField(blank=True, max_length=50, null=True) # FK(사용자id값)
     all_grocery_id = models.IntegerField(blank=True, null=True) # FK(식료품id값)
-    name = models.CharField(max_length=20, null=True)
+    name = models.CharField(blank=True, max_length=20, null=True)
     count = models.IntegerField(blank=True, null=True)
     reg_date = models.DateTimeField(blank=True, null=True)
     gubun = models.IntegerField(blank=True, null=True)
-    coordinate = models.JSONField(null=True)
+    coordinate = models.JSONField(blank=True, null=True)
 
     class Meta:
         db_table = 'GROCERY'
@@ -27,8 +27,8 @@ class Grocery(models.Model):
 # 전체 식재료 
 class AllGrocery(models.Model):
     id = models.AutoField(primary_key=True) #PK(현재식재료PK)
-    name = models.CharField(max_length=20, null=True)
-    name_english = models.CharField(max_length=20, null=True)
+    name = models.CharField(blank=True, max_length=20, null=True)
+    name_english = models.CharField(blank=True, max_length=20, null=True)
 
     class Meta:
         db_table = 'ALL_GROCERY'

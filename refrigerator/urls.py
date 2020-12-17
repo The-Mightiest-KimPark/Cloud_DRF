@@ -6,4 +6,5 @@ urlpatterns = [
     path('api/insert-email-to-fridge/', views.InsertUserInfoToFridge),
     path('api/going-out-mode/',views.GoingOutMode),
     path('api/sensorvalue/', views.SensorValue),
+    path('api/alarm-mode/', views.AlarmMode),
 ]

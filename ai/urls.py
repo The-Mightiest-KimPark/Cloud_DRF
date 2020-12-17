@@ -6,5 +6,5 @@ urlpatterns = [
     path('api/all-grocery-name/', views.AllGroceryName.as_view()),
     path('api/user-input-grocery/', views.userInputGrocery),
     #path('api/test/', views.test),
-    path('api/ai-img-grocery/', views.AiImgGroceryTest)
+    path('api/ai-img-grocery/', views.AiImgGrocery)
 ]
