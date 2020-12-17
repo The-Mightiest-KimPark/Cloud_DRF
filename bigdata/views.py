@@ -11,10 +11,12 @@ import re
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
-
+import time
 import requests
+from django.core import serializers
 import json
 import random
+
 
 # AI 이미지 분석을 통한 결과 저장
 # @api_view(['GET'])
@@ -23,25 +25,28 @@ def BdRecommRecipe(email):
 
     # print('빅데이터 진입')
 
-    # # 해당 사용자가 가지고 있는 재료정보 
-    # response = requests.get(f'http://3.92.44.79/api/user-input-grocery/?email={email}')
-    # print('해당 사용자가 가지고 있는 재료정보')
-    # data = response.text
-    # grocery = re.findall('"name":".*?"', data)
-    # grocery = ' '.join(grocery)
-    # grocery = re.sub('[",:,name]', '', grocery)
-    # print('name')
+    # # 해당 사용자가 가지고 있는 재료정보
+    response = requests.get(f'http://3.92.44.79/api/user-input-grocery/?email={email}')
+    print('해당 사용자가 가지고 있는 재료정보')
+    data = response.text
+    grocery = re.findall('"name":".*?"', data)
+    grocery = ' '.join(grocery)
+    grocery = re.sub('[",:,name]', '', grocery)
 
     # 빅데이터 로직
     # MariaDB에서 data호출
-    recipe_data = AllRecipe.objects.values_list('id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num')
+    # recipe_data = AllRecipe.objects.values_list('id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num')
+    start = time.time()
+    result = AllRecipe.objects.values_list('ingredient_name', 'views')
 
+    recipe_df = pd.DataFrame(list(result), columns=['ingredient_name', 'views'])
+    print(time.time() - start)
     # recipe_data = pd.DataFrame(list(result), columns=['id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num'])
     # #print('빅데이터 로직')
 
     # # 현재 냉장고재료 0열에 추가
-    # for n in range((len(recipe_data) // 10000) + 1):
-    #     recipe_data.iloc[n * 10000] = [n * 10000, 'grocery', 0, grocery, 0, 0, 0, 0, 0, 0, 0]
+    for n in range((len(recipe_df) // 10000) + 1):
+        recipe_df.iloc[n * 10000] = [grocery, 0]
 
     index_list = []
     score_list = []
@@ -52,8 +57,8 @@ def BdRecommRecipe(email):
     print('tfidf벡터 생성')
 
     # 10000단위로 유사도검사 후 병합
-    for n in range((len(recipe_data) // 10000) + 1):
-        tfidf_matrix = tfidf.fit_transform(recipe_data['ingredient_name'][n * 10000:(n + 1) * 10000])
+    for n in range((len(recipe_df) // 10000) + 1):
+        tfidf_matrix = tfidf.fit_transform(recipe_df['ingredient_name'][n * 10000:(n + 1) * 10000])
 
         # 코사인유사도
         cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
@@ -83,40 +88,48 @@ def BdRecommRecipe(email):
     print('330개의 레시피중 유사도가 높은 레피시 인덱스 30개 추출')
 
     # 인덱스를 활용하여 30개의 레시피를 조회수 순으로 재정렬 후 10개 추출
-    recomm_recipe = recipe_data.iloc[high_score_indices]
-    recomm_recipe.sort_values(by='views', ascending=False, inplace=True)
+    # recomm_recipe = recipe_data.iloc[high_score_indices]
+    recipe_data = AllRecipe.objects.filter(pk__in=high_score_indices)
+    recomm_recipe = recipe_data
+    recomm_recipe = recomm_recipe.order_by('-views')
     recomm_recipe = recomm_recipe[:10]
-    recomm_recipe.reset_index(drop=True, inplace=True)
+    # recomm_recipe.reset_index(drop=True, inplace=True)
     print('인덱스를 활용하여 30개의 레시피를 조회수 순으로 재정렬 후 10개 추출')
 
     # json으로 변환
-    recomm_recipe_to_json = recomm_recipe.to_json(orient="records")
+    # recomm_recipe_to_json = recomm_recipe.to_json(orient="records")
+    # recomm_recipe_to_json = json.Serializer().serialize(recomm_recipe)
+    recomm_recipe_to_json = serializers.serialize("json", recomm_recipe)
     recomm_recipe_results = json.loads(recomm_recipe_to_json)
     print('json으로 변환')
-    #('recomm_recipe_resultsm : ', recomm_recipe_results)
-    #print('type : ', type(recomm_recipe_results))
-    
+    # ('recomm_recipe_resultsm : ', recomm_recipe_results)
+    # print('type : ', type(recomm_recipe_results))
+
     # 해당 사용자의 이전 결과 다 삭제
     recommRecipe = RecommRecipe.objects.filter(email=email)
     if recommRecipe:
         recommRecipe.delete()
-        #print('삭제완료')
-    #print('해당 사용자의 이전 결과 다 삭제')
+        # print('삭제완료')
+    # print('해당 사용자의 이전 결과 다 삭제')
 
     # 사용자 이메일 컬럼 추가
     for recomm_recipe_result in recomm_recipe_results:
-        #print('해당 사용자의 이전 결과 다 삭제')
+        # print('해당 사용자의 이전 결과 다 삭제')
         recomm_recipe_result['email'] = email
-        recomm_recipe_result['all_recipe_id'] = recomm_recipe_result['id']
-        #print('recomm_recipe_result : ', recomm_recipe_result)
-
+        recomm_recipe_result['all_recipe_id'] = recomm_recipe_result['pk']
+        # print('recomm_recipe_result : ', recomm_recipe_result)
         # 데이터 저장
         serializer = RecommRecipeSerializer(data=recomm_recipe_result)
+        print('이건뭐죠', serializer)
+        print('이게 뭐죠', serializer.is_valid())
+        print(time.time() - start)
         if serializer.is_valid():
+            print('여기')
             serializer.save()
         else:
-            #print(serializer.error_messages)
-            #print(serializer.errors)
+            print('여기2')
+            print(serializer.error_messages)
+            print(serializer.errors)
             return False
     return True
 
@@ -146,7 +159,7 @@ def RecommRecipeGetOne(request):
     serializers = RecommRecipeSerializer(recom_recipe_queryset, many=True)
     # print(serializers.data)
     length = len(serializers.data)
-    random_num = random.randint(0, length-1)
+    random_num = random.randint(0, length - 1)
     print(random_num)
     return Response(serializers.data[random_num])
 
