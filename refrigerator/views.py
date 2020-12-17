@@ -68,6 +68,25 @@ def GoingOutMode(request):
         return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
 
 
+# 알림모드 ON OFF 변경
+# 받는 값 : email, outing_mode -> (1/0)
+# 만든이 : snchoi
+@api_view(['PUT'])
+def AlarmMode(request):
+    params = request.data
+    email = params['email']
+    alarm_mode = params['alarm_mode']
+    refri_info = Refrigerator.objects.get(email=email)
+    refri_info.alarm_mode = alarm_mode
+    try:
+        refri_info.save()
+        return Response({"result":True}, status=status.HTTP_201_CREATED)
+    except:
+        return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 # 센서값 조회
 # 받는 값 : email. name(센서이름)
 # 만든이 : snchoi
@@ -81,3 +100,5 @@ def SensorValue(request):
     queryset = Sensor.objects.filter(Q(email=email),Q(name=name))
     serializer = SensorSerializer(queryset, many=True)
     return Response(serializer.data)
+
+

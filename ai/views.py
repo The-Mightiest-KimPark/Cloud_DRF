@@ -21,30 +21,11 @@ import json
 import datetime
 import requests
 
-
-# AI 이미지 분석을 통한 결과 저장
-# 만든이 : snchoi
-@api_view(['GET'])
-def AiImgGrocery(request):
-    url = "https://themightiestkpk1.s3.amazonaws.com/train12124.jpg"
-    # url = 'https://themightiestkpk1.s3.amazonaws.com/test9.jpg'
-    # model_path = 'ai/000/trained_weights_final.h5'
-    # class_path = 'ai/_classes.txt'
-
-    # yolo = YOLO(model_path=model_path, classes_path=class_path)
-
-    # 이미지 로딩
-    res = rqt.urlopen(url).read()
-    img = Image.open(BytesIO(res))
-    ai_result = load.pre_yolo.yolo.my_detect_image(img)
-    # ------------------------------
-    return Response(ai_result)
-
   
 # AI 이미지 분석을 통한 결과 저장 복사본
 # 만든이 : snchoi
 @api_view(['POST'])
-def AiImgGroceryTest(request):
+def AiImgGrocery(request):
     # 이미지 정보 받음
     params = request.data
     url = params['url']
@@ -70,34 +51,26 @@ def AiImgGroceryTest(request):
     else:
         print('이미지 저장 실패')
 
+
     # AI분석 로직
     # API로 받아오기
-    ai_result = requests.get(f'http://13.209.95.229:8888/api/aitest/?url={url}')
-    ai_result = ai_result.text
-    print('ai_result : ', ai_result.text)
-    # ai_result = [{
-    #     'name' : '당근',
-    #     'count' : 3,
-    #     'coordinate' : [[1,2],[3,2]]
-    # },{
-    #     'name' : '가지',
-    #     'count' : 2,
-    #     'coordinate' : [[1,2],[3,2]]
-    # },{
-    #     'name' : '사과',
-    #     'count' : 2,
-    #     'coordinate' : [[1,2],[3,2]]
-    # }]
-
+    response = requests.get(f'http://13.209.95.229:8888/api/aitest/?url={url}')
+    print('response : ', type(json.loads(response.text)))
+    print(json.loads(response.text))
+    print(type(json.loads(response.text)))
+    ai_result = json.loads(response.text)
 
     # 이전 결과 다 삭제
     grocery = Grocery.objects.filter(email=email)
     if grocery:
         grocery.delete()
+        print('결과 삭제')
     
     # 결과 저장
     for result in ai_result:
-        result['all_grocery_id'] = AllGrocery.objects.get(name=result['name']).id
+        print('result : ', result)
+        id = AllGrocery.objects.get(name=result['name']).id
+        result['all_grocery_id'] = id
         result['email'] = email
         result['reg_date'] = reg_date
         result['gubun'] = 1
