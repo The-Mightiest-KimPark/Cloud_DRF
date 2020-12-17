@@ -24,7 +24,7 @@ def BdRecommRecipe(request):
     print('빅데이터 진입')
 
     # 해당 사용자가 가지고 있는 재료정보 
-    response = requests.get(f'http://3.92.44.79:8000/api/user-input-grocery/?email={email}')
+    response = requests.get(f'http://3.92.44.79/api/user-input-grocery/?email={email}')
     data = response.text
     grocery = re.findall('"name":".*?"', data)
     grocery = ' '.join(grocery)
