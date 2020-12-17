@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Q
+from django.contrib.auth.forms import UserChangeForm
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -8,7 +9,7 @@ from rest_framework import viewsets, permissions, generics, status, filters
 
 from refrigerator.models import Photo
 from refrigerator.serializers import PhotoSerializer
-from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer, UserViewSerializer, AlarmSerializer
+from .serializers import UserInfoSerializer, FollowSerializer, RecipeFavoriteSerializer, UserViewSerializer, AlarmSerializer, UserModifySerializer
 from .models import UserInfo, Follow, RecipeFavorite, Alarm
 from themightiestkpk.settings import SECRET_KEY
 from bigdata.models import AllRecipe
@@ -340,12 +341,37 @@ def GroceryAlarm(request):
 
 # 유저 정보
 class UserView(generics.ListCreateAPIView):
-    # name = "UserInfo"
-    # def get(self, request, *args, **kwargs):
-    #     email = request.query_params.get("id")
-    #     query = UserInfo.id.get(id=email)
-    #     serializer = UserViewSerializer(query, many=False)
-
-    #     return Response(serializer.data)
     queryset = UserInfo.objects.all()
     serializer_class = UserViewSerializer
+
+
+# 유저 정보 수정
+@api_view(['PUT'])
+# class UserModify(generics.ListCreateAPIView):
+#     queryset = UserInfo.objects.all()
+#     serializer_class = UserModifySerializer
+def UserModify(request):
+    userinfo = request.GET.get('UserInfo', '')
+    if request.method == "PUT":
+        # email = request.email
+        userinfo.age = request.POST["age"]
+        userinfo.save()
+    return render(request)                                               
+
+# def UserModify(request):
+#     if request.method == "POST":
+#         user_change_form = UserChangeForm(data=request.POST, instance=request.user)
+#         if user_change_form.is_valid():
+#             user = user_change_form.save
+#     else:
+#         user_change_form = UserChangeForm(instance=request.user)
+
+#         context = {
+#             'user_change_form': user_change_form,
+#         }
+#         return render(request, context)
+
+# class CustomUserChangeForm(UserChangeForm):
+#     class Meta:
+#         model = UserInfo()
+#         fields = ['email', 'age', 'sex', 'phone_number', 'name', 'guardian_name', 'guardian_phone_number', 'purpose']

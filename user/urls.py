@@ -18,4 +18,5 @@ urlpatterns = [
     # path('<str:pk>/detail', views.MemberDetailView.as_view(), 'detail'),
     path('api/user-info/', views.UserView.as_view()),
     path('api/grocery-alarm/', views.GroceryAlarm),
+    path('api/user-modify/', views.UserModify),
 ]

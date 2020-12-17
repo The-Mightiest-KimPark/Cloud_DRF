@@ -27,7 +27,6 @@ class UserInfo(models.Model):
     class Meta:
         db_table = 'USER_INFO'
 
-
     def __int__(self):
         return self.id
 
