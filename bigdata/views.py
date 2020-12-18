@@ -1,11 +1,14 @@
 from django.shortcuts import render
+from django.db.models import Q
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
-from .serializers import RecommRecipeSerializer
+from .serializers import RecommRecipeSerializer, AllRecipeSerializer
 from .models import AllRecipe, RecommRecipe
 from ai.models import Grocery
+from user.models import UserInfo
 import pymysql
 import re
 import pandas as pd
@@ -127,7 +130,7 @@ def BdRecommRecipe(email):
     return True
 
 
-# 추천레시피 조회(list)
+# 추천레시피 조회(list) 
 # 받는 값 : email
 # 만든이 : snchoi
 @api_view(['GET'])
@@ -139,6 +142,21 @@ def RecommRecipeGet(request):
     result = BdRecommRecipe(email)
     print('result : ', result)
     print('---------end--------')
+    return Response(serializers.data)
+
+# 목적에 맞는 추천 레시피 조회
+# 받는 값 : email
+# 만든이 : snchoi
+@api_view(['GET'])
+def RecommRecipePurposeGet(request):
+    email = request.GET.get('email')
+    print(email)
+    # 목적 값 가져오기
+    purpose = UserInfo.objects.get(email=email).purpose
+    print(purpose)
+    # 이메일과 목적에 맞는 추천레시피 조회
+    recom_recipe_queryset = RecommRecipe.objects.filter(Q(email=email),Q(purpose=purpose))
+    serializers = RecommRecipeSerializer(recom_recipe_queryset, many=True)
     return Response(serializers.data)
 
 
@@ -163,9 +181,9 @@ def RecommRecipeGetOne(request):
 def RecommRecipeDetail(request):
     all_recipe_id = request.GET.get('all_recipe_id')
 
-    queryset = RecommRecipe.objects.filter(all_recipe_id=all_recipe_id)
-    serializers = RecommRecipeSerializer(queryset, many=True)
-    return Response(serializers.data)
+    queryset = AllRecipe.objects.filter(id=all_recipe_id)
+    serializers = AllRecipeSerializer(queryset, many=True)
+    return Response(serializers.data[0])
 
 
 
