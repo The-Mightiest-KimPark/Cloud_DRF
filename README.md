@@ -202,10 +202,10 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 ### GET api/follow-latest-photo/?email=str
 
 - DRF
-- 팔로우 된 상태일 때 친구 냉장고 가장최근 사진 조회 (조건: read안읽고, 최신사진순으로)
+- 팔로우 된 상태일 때 친구 냉장고 가장최근 사진 조회 (조건: read안읽은 순으로)
 - //클릭시 > 현재와 반대 값으로 업데이트 (인스타에서 하트 누르면 팔로우, 다시 누르면 언팔로우)
 - **parameter**: email = str(내 이메일)
-- return: [{"email": str(친구 이메일), "url": str(친구 사진url), "reg_date": str(친구 사진 등록날짜), "name": str(친구이름), "img_url": str(프로필사진), "sex": int(성별)}.{}]
+- return: [{"email": str(친구 이메일), "url": str(친구 사진url), "reg_date": str(친구 사진 등록날짜), "name": str(친구이름), "img_url": str(프로필사진), "sex": int(성별), "read":boolean(읽음여부)}.{}]
 - 만든이 : snchoi
 
 
