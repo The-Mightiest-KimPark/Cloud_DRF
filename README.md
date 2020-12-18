@@ -383,6 +383,33 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 - 만든이 : snchoi
 
 
+
+### 목적에 맞는 추천레시피 조회  api/recomm-recipe-purpose/?email=str
+
+- DRF
+- 사용자별 목적에 맞는 추천레시피 조회
+- **parameter**: 
+  - email = str(이메일)
+- return: RECOMM_RECIPE [{
+    "id": pk,
+    "email": str(사용자아이디),
+    "all_recipe_id": int(전체레시피pk),
+    "name": str(레시피이름),
+    "ingredient": str(재료종류 - 여러가지),
+    "ingredient_name": str(재료이름),
+    "seasoning": str(소스이름 + 양까지),
+    "seasoning_name": str(소스이름만),
+    "howto": str(방법),
+    "purpose": str(목적),
+    "views": int(조회수),
+    "img": str(레시피이미지url),
+    "recipe_num": int(레시피번호)
+}, {}]
+- 리턴 값 없을 경우 []
+- 만든이 : snchoi
+
+
+
 ### 추천레시피 랜덤으로 1개만 조회 api/recomm-recipe-one/?email=str
 
 - DRF
