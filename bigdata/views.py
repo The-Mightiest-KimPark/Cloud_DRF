@@ -155,39 +155,39 @@ def RecommRecipeGetOne(request):
     return Response(serializers.data[random_num])
 
 # 음성 대답 저장
-def AnswerGroceryCount(email):
-    # 학습된 식재료명 리스트
-    g_list = ['달걀', '레몬', '자두', '오이', '사이다', '당근', '애호박', '옥수수', '파인애플', '사과', '양파', '마늘', '토마토',
-         '브로콜리', '깻잎', '가지', '단호박', '무', '양배추', '파프리카', '야쿠르트', '맥주', '콜라', '딸기']
-    grocery_name = Grocery.objects.filter(name__in=g_list).values_list('name', 'count')
-    grocery_data = pd.DataFrame(list(grocery_name), columns=['name', 'count'])
-
-    # 냉장고속 식재료 개수 초기화
-    grocery_count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    answer_list = []
-
-    # 식재료별 현재 개수 계산
-    for i in range(len(grocery_data['name'])):
-        g_index = g_list.index(grocery_data['name'][i])
-        grocery_count[g_index] = grocery_count[g_index] + grocery_data['count'][i]
-    # 현재 학습된 식재료 개수 23
-    for i in range(23):
-        answer_str = '현재 ' + g_list[i] + '의 개수는 ' + str(grocery_count[i]) + '개 입니다.'
-        answer_list.append(answer_str)
-
-    # DB에 업데이트(id값 고정시키기위해)
-    for i in range(23):
-        id_num = i + 1
-        conn = pymysql.connect(host='themightiestkpk.c9jl6xhdt5hy.us-east-1.rds.amazonaws.com', port=3306, user='admin',
-                               passwd='themightiestkpk1', db='themightiestkpk', cursorclass=pymysql.cursors.DictCursor)
-        try:
-            cur = conn.cursor()
-            sql = '''
-                UPDATE ANSWER_COUNT SET id=id, question=question, answer=%s where id=%s
-            '''
-            val = (answer_list[i], id_num)
-            cur.execute(sql, val)
-        finally:
-            conn.commit()
-            conn.close()
-    return True
+# def AnswerGroceryCount(email):
+#     # 학습된 식재료명 리스트
+#     g_list = ['달걀', '레몬', '자두', '오이', '사이다', '당근', '애호박', '옥수수', '파인애플', '사과', '양파', '마늘', '토마토',
+#          '브로콜리', '깻잎', '가지', '단호박', '무', '양배추', '파프리카', '야쿠르트', '맥주', '콜라', '딸기']
+#     grocery_name = Grocery.objects.filter(name__in=g_list).values_list('name', 'count')
+#     grocery_data = pd.DataFrame(list(grocery_name), columns=['name', 'count'])
+#
+#     # 냉장고속 식재료 개수 초기화
+#     grocery_count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+#     answer_list = []
+#
+#     # 식재료별 현재 개수 계산
+#     for i in range(len(grocery_data['name'])):
+#         g_index = g_list.index(grocery_data['name'][i])
+#         grocery_count[g_index] = grocery_count[g_index] + grocery_data['count'][i]
+#     # 현재 학습된 식재료 개수 23
+#     for i in range(23):
+#         answer_str = '현재 ' + g_list[i] + '의 개수는 ' + str(grocery_count[i]) + '개 입니다.'
+#         answer_list.append(answer_str)
+#
+#     # DB에 업데이트(id값 고정시키기위해)
+#     for i in range(23):
+#         id_num = i + 1
+#         conn = pymysql.connect(host='themightiestkpk.c9jl6xhdt5hy.us-east-1.rds.amazonaws.com', port=3306, user='admin',
+#                                passwd='themightiestkpk1', db='themightiestkpk', cursorclass=pymysql.cursors.DictCursor)
+#         try:
+#             cur = conn.cursor()
+#             sql = '''
+#                 UPDATE ANSWER_COUNT SET id=id, question=question, answer=%s where id=%s
+#             '''
+#             val = (answer_list[i], id_num)
+#             cur.execute(sql, val)
+#         finally:
+#             conn.commit()
+#             conn.close()
+#     return True
