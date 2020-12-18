@@ -32,7 +32,9 @@ python manage.py runserver
 
 lambda :  https://8i8wxh81q2.execute-api.us-east-1.amazonaws.com
 
-drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
+drf :  
+- (구버전)http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
+- (신버전)http://13.209.95.229
 
 
 
