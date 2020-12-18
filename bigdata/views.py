@@ -127,8 +127,9 @@ def BdRecommRecipe(email):
     return True
 
 
-# 추천레시피 조회
+# 추천레시피 조회(list)
 # 받는 값 : email
+# 만든이 : snchoi
 @api_view(['GET'])
 def RecommRecipeGet(request):
     email = request.GET.get('email')
@@ -143,6 +144,7 @@ def RecommRecipeGet(request):
 
 # 추천레시피 랜덤으로 하나만 조회
 # 받는 값 : email
+# 만든이 : snchoi
 @api_view(['GET'])
 def RecommRecipeGetOne(request):
     email = request.GET.get('email')
@@ -152,4 +154,18 @@ def RecommRecipeGetOne(request):
     random_num = random.randint(0, length - 1)
     print(random_num)
     return Response(serializers.data[random_num])
+
+
+# 추천레시피 상세 보기
+# 받는 값 : all_recipe_id
+# 만든이 : snchoi
+@api_view(['GET'])
+def RecommRecipeDetail(request):
+    all_recipe_id = request.GET.get('all_recipe_id')
+
+    queryset = RecommRecipe.objects.filter(all_recipe_id=all_recipe_id)
+    serializers = RecommRecipeSerializer(queryset, many=True)
+    return Response(serializers.data)
+
+
 
