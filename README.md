@@ -268,7 +268,7 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 - 즐겨찾기한 레시피 조회
 - **parameter**: 
   - email = str(이메일)
-- return: RECIPE_FAVORITE [{ "id": int(pk),
+- return: ALL_RECIPE [{ "id": int(pk),
           "name": str(레시피 이름),
           "ingredient": str(재료),
           "ingredient_name": str(재료 이름),
