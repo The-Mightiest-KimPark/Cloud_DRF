@@ -285,6 +285,29 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 
 
 
+
+### GET api/recomm-recipe-detail/?all_recipe_id=int
+
+- DRF
+- 레세피 조회 상세보기
+- **parameter**: 
+  - all_recipe_id = str(레시피id)
+- return: ALL_RECIPE {
+    "id": int(레시피id),
+    "name": str(레시피 이름),
+    "ingredient": str(재료),
+    "ingredient_name": str(재료 이름),
+    "seasoning": str(양념),
+    "seasoning_name": str(양념 이름),
+    "howto": str(방법),
+    "purpose": str(목적),
+    "views": int(조회수),
+    "img": str(레시피 이미지),
+    "recipe_num": int(만개의 레시피 고유번호)
+}
+- 만든이 : snchoi
+
+
 ### POST api/grocery-alarm/
 
 - DRF
