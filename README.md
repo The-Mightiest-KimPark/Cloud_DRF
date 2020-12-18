@@ -268,7 +268,7 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 - 즐겨찾기한 레시피 조회
 - **parameter**: 
   - email = str(이메일)
-- return: RECIPE_FAVORITE [{ "id": int(pk),
+- return: ALL_RECIPE [{ "id": int(pk),
           "name": str(레시피 이름),
           "ingredient": str(재료),
           "ingredient_name": str(재료 이름),
@@ -283,6 +283,29 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
           "email": str(사용자이메일)}, {}]
 - 만든이 : snchoi
 
+
+
+
+### GET api/recomm-recipe-detail/?all_recipe_id=int
+
+- DRF
+- 레세피 조회 상세보기
+- **parameter**: 
+  - all_recipe_id = str(레시피id)
+- return: ALL_RECIPE {
+    "id": int(레시피id),
+    "name": str(레시피 이름),
+    "ingredient": str(재료),
+    "ingredient_name": str(재료 이름),
+    "seasoning": str(양념),
+    "seasoning_name": str(양념 이름),
+    "howto": str(방법),
+    "purpose": str(목적),
+    "views": int(조회수),
+    "img": str(레시피 이미지),
+    "recipe_num": int(만개의 레시피 고유번호)
+}
+- 만든이 : snchoi
 
 
 ### POST api/grocery-alarm/
@@ -358,6 +381,33 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
     "recipe_num": int(레시피번호)
 }, {}]
 - 만든이 : snchoi
+
+
+
+### 목적에 맞는 추천레시피 조회  api/recomm-recipe-purpose/?email=str
+
+- DRF
+- 사용자별 목적에 맞는 추천레시피 조회
+- **parameter**: 
+  - email = str(이메일)
+- return: RECOMM_RECIPE [{
+    "id": pk,
+    "email": str(사용자아이디),
+    "all_recipe_id": int(전체레시피pk),
+    "name": str(레시피이름),
+    "ingredient": str(재료종류 - 여러가지),
+    "ingredient_name": str(재료이름),
+    "seasoning": str(소스이름 + 양까지),
+    "seasoning_name": str(소스이름만),
+    "howto": str(방법),
+    "purpose": str(목적),
+    "views": int(조회수),
+    "img": str(레시피이미지url),
+    "recipe_num": int(레시피번호)
+}, {}]
+- 리턴 값 없을 경우 []
+- 만든이 : snchoi
+
 
 
 ### 추천레시피 랜덤으로 1개만 조회 api/recomm-recipe-one/?email=str
