@@ -256,6 +256,14 @@ AI올린 EC2:
 - 만든이 : snchoi
 
 
+### PUT api/user-modify/
+
+- DRF
+- 회원정보 수정 (이메일, 비밀번호는 변경하지 않음)
+- - **body**: {email: str(이메일), age: int(나이), sex: int(성별), phone_number: str(핸드폰번호000-0000-0000형식으로 받아주세용), name: str(이름), guardian_name: str(보호자이름), guardian_phone_number: str(핸드폰번호000-0000-0000형식으로 받아주세용), purpose: str(목적-다이어트, 당뇨 등등)}
+- return: HTTP_200_OK | HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
 
 ### POST api/token-check/
 
