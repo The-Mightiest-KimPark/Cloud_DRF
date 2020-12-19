@@ -75,19 +75,28 @@ def BdRecommRecipe(email):
         # 유사도가 높은 30개 레시피 (0번은 자기자신)
         sim_scores = sim_scores[1:31]
 
-        # 유사도가 높은 30개의 레시피 인덱스 추출
+        # 유사도가 높은 30개 레시피 (0번은 자기자신, 무한루프방지 30개)
+        sim_scores = sim_scores[1:31]
+        # 유사도 0.6이상만 추출하기
+        # for s in range(len(sim_scores)):
+        #     if sim_scores[s][1] < 0.6:
+        #         sim_scores = sim_scores[0:s]
+        #         break
+
+        # 유사도가 0.6이상의 레시피 인덱스 추출
         food_indices = [i[0] + (n * 10000) for i in sim_scores]
         sim_scores_list = [i[1] for i in sim_scores]
         index_list = index_list + food_indices
         score_list = score_list + sim_scores_list
 
     print('10000단위로 유사도검사 후 병합')
+    print(score_list)
 
-    # 330개의 레시피중 유사도가 높은 레피시 인덱스 30개 추출
+    # 합쳐진 유사도 0.6이상의 레시피중 유사도가 가장 높은 레피시 인덱스 30개 추출
     sim_df = pd.DataFrame({'food_indices': index_list, 'sim_scores': score_list})
     sim_df.sort_values(by='sim_scores', ascending=False, inplace=True)
     high_score_indices = sim_df['food_indices'].values.tolist()[:30]
-    print('330개의 레시피중 유사도가 높은 레피시 인덱스 30개 추출')
+    print('합쳐진 유사도 0.6이상의 레시피중 유사도가 가장 높은 레피시 인덱스 30개 추출')
 
     # 인덱스를 활용하여 30개의 레시피를 조회수 순으로 재정렬 후 10개 추출
     # recomm_recipe = recipe_data.iloc[high_score_indices]
