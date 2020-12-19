@@ -22,6 +22,8 @@ import random
 
 
 # AI 이미지 분석을 통한 결과 저장
+# 받는 값 : email
+# 만든이 : jr
 # @api_view(['GET'])
 def BdRecommRecipe(email):
     # email = request.GET.get('email')
@@ -145,6 +147,7 @@ def RecommRecipeGet(request):
     print('---------end--------')
     return Response(serializers.data)
 
+
 # 목적에 맞는 추천 레시피 조회
 # 받는 값 : email
 # 만든이 : snchoi
@@ -176,6 +179,8 @@ def RecommRecipeGetOne(request):
 
 
 # 음성 대답 저장
+# 받는 값 : email
+# 만든이 : jr
 # def AnswerGroceryCount(email):
 #     # 학습된 식재료명 리스트
 #     g_list = ['달걀', '레몬', '자두', '오이', '사이다', '당근', '애호박', '옥수수', '파인애플', '사과', '양파', '마늘', '토마토',

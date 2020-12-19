@@ -123,6 +123,7 @@ def userInputGrocery(request):
         serializer = GrocerySerializer(queryset, many=True)
         return Response(serializer.data)
     
+
     # 사용자 재료 입력
     elif request.method == 'POST':
         data = request.data
@@ -136,6 +137,7 @@ def userInputGrocery(request):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
     # 사용자 입력 재료 수정
     elif request.method == 'PUT':
@@ -173,5 +175,15 @@ def userInputGrocery(request):
         return Response({"result":True}, status=status.HTTP_201_CREATED)
 
 
-        
+# 식재료 갯수 조회
+# 받는 값 : email, all_grocery_id
+# 만든이 : snchoi
+@api_view(['GET'])
+def GroceryCount(request):
+    email = request.GET.get('email')      
+    all_grocery_id = request.GET.get('all_grocery_id')
+
+    count = Grocery.objects.filter(Q(email=email),Q(all_grocery_id=all_grocery_id)).count()
+    print('count : ', count)
+    return Response({"count":count})
 
