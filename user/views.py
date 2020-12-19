@@ -358,33 +358,22 @@ class UserView(generics.ListCreateAPIView):
     serializer_class = UserViewSerializer
 
 
-# 유저 정보 수정
+# 유저 정보 수정(아이디, 비밀번호 수정 불가능 / 회원 이미지 사진은 여기서 바꾸는게 아님)
 @api_view(['PUT'])
-# class UserModify(generics.ListCreateAPIView):
-#     queryset = UserInfo.objects.all()
-#     serializer_class = UserModifySerializer
 def UserModify(request):
-    userinfo = request.GET.get('UserInfo', '')
-    if request.method == "PUT":
-        # email = request.email
-        userinfo.age = request.POST["age"]
-        userinfo.save()
-    return render(request)                                               
+    data = request.data
+    user = UserInfo.objects.get(email=data['email'])                                         
+    user.age = data['age']
+    user.sex = data['sex']
+    user.phone_number = data['phone_number']
+    user.name = data['name']
+    user.guardian_name = data['guardian_name']
+    user.guardian_phone_number = data['guardian_phone_number']
+    user.purpose = data['purpose']
+    try:
+        user.save()
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_200_OK)
 
-# def UserModify(request):
-#     if request.method == "POST":
-#         user_change_form = UserChangeForm(data=request.POST, instance=request.user)
-#         if user_change_form.is_valid():
-#             user = user_change_form.save
-#     else:
-#         user_change_form = UserChangeForm(instance=request.user)
 
-#         context = {
-#             'user_change_form': user_change_form,
-#         }
-#         return render(request, context)
-
-# class CustomUserChangeForm(UserChangeForm):
-#     class Meta:
-#         model = UserInfo()
-#         fields = ['email', 'age', 'sex', 'phone_number', 'name', 'guardian_name', 'guardian_phone_number', 'purpose']
