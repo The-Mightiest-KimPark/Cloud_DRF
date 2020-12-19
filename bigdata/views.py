@@ -1,11 +1,14 @@
 from django.shortcuts import render
+from django.db.models import Q
+
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
-from .serializers import RecommRecipeSerializer
+from .serializers import RecommRecipeSerializer, AllRecipeSerializer
 from .models import AllRecipe, RecommRecipe
 from ai.models import Grocery
+from user.models import UserInfo
 import pymysql
 import re
 import pandas as pd
@@ -128,22 +131,39 @@ def BdRecommRecipe(email):
     return True
 
 
-# 추천레시피 조회
+# 추천레시피 조회(list) 
 # 받는 값 : email
+# 만든이 : snchoi
 @api_view(['GET'])
 def RecommRecipeGet(request):
     email = request.GET.get('email')
     recom_recipe_queryset = RecommRecipe.objects.filter(email=email)
     serializers = RecommRecipeSerializer(recom_recipe_queryset, many=True)
     # 빅데이터 함수 호출(삽입)
-    result = BdRecommRecipe(email)
-    print('result : ', result)
-    print('---------end--------')
+    # result = BdRecommRecipe(email)
+    # print('result : ', result)
+    # print('---------end--------')
+    return Response(serializers.data)
+
+# 목적에 맞는 추천 레시피 조회
+# 받는 값 : email
+# 만든이 : snchoi
+@api_view(['GET'])
+def RecommRecipePurposeGet(request):
+    email = request.GET.get('email')
+    print(email)
+    # 목적 값 가져오기
+    purpose = UserInfo.objects.get(email=email).purpose
+    print(purpose)
+    # 이메일과 목적에 맞는 추천레시피 조회
+    recom_recipe_queryset = RecommRecipe.objects.filter(Q(email=email),Q(purpose=purpose))
+    serializers = RecommRecipeSerializer(recom_recipe_queryset, many=True)
     return Response(serializers.data)
 
 
 # 추천레시피 랜덤으로 하나만 조회
 # 받는 값 : email
+# 만든이 : snchoi
 @api_view(['GET'])
 def RecommRecipeGetOne(request):
     email = request.GET.get('email')
@@ -153,6 +173,7 @@ def RecommRecipeGetOne(request):
     random_num = random.randint(0, length - 1)
     print(random_num)
     return Response(serializers.data[random_num])
+
 
 # 음성 대답 저장
 # def AnswerGroceryCount(email):
@@ -191,3 +212,18 @@ def RecommRecipeGetOne(request):
 #             conn.commit()
 #             conn.close()
 #     return True
+
+
+
+# 추천레시피 상세 보기
+# 받는 값 : all_recipe_id
+# 만든이 : snchoi
+@api_view(['GET'])
+def RecommRecipeDetail(request):
+    all_recipe_id = request.GET.get('all_recipe_id')
+
+    queryset = AllRecipe.objects.filter(id=all_recipe_id)
+    serializers = AllRecipeSerializer(queryset, many=True)
+    return Response(serializers.data[0])
+
+

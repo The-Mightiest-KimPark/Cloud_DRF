@@ -32,13 +32,18 @@ python manage.py runserver
 
 lambda :  https://8i8wxh81q2.execute-api.us-east-1.amazonaws.com
 
-drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
+drf :  
+- (구버전)http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
+- (신버전)http://13.209.95.229
+
+AI올린 EC2:
+- http://13.209.95.229:8888
 
 
 
 ## 2. 요청 method 정보
 
-### POST dev/s3
+### POST dev/s3(사용안함)
 
 - lambda
 - S3 이미지 업로드 시 AI에게 전달
@@ -59,6 +64,18 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 - date형태 : '%Y-%m-%d %H:%M:%S.%f'
 - return: HTTP_200_OK | HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
+
+
+### POST api/ai-img-grocery/
+
+- DRF
+- S3 이미지 업로드 시 AI에게 전달
+  - 이미지를 업로드 하되 파일명(냉장고번호)을 받아 S3에 있는 것과 비교하여 해당 파일만 저장될 수 있도록 해야함
+- **body** : {url : str(버킷에올라가 이미지 url), fridge_number : str(냉장고번호), reg_date : str(현재날짜, 형식 : 2020-12-12 11:01:25.518280)}
+- date형태 : '%Y-%m-%d %H:%M:%S.%f'
+- return: HTTP_200_OK | HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
 
 ### GET api/sensorvalue/?email=str(이메일)&name=str(센서이름)
 
@@ -202,10 +219,10 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 ### GET api/follow-latest-photo/?email=str
 
 - DRF
-- 팔로우 된 상태일 때 친구 냉장고 가장최근 사진 조회 (조건: read안읽고, 최신사진순으로)
+- 팔로우 된 상태일 때 친구 냉장고 가장최근 사진 조회 (조건: read안읽은 순으로)
 - //클릭시 > 현재와 반대 값으로 업데이트 (인스타에서 하트 누르면 팔로우, 다시 누르면 언팔로우)
 - **parameter**: email = str(내 이메일)
-- return: [{"email": str(친구 이메일), "url": str(친구 사진url), "reg_date": str(친구 사진 등록날짜), "name": str(친구이름), "img_url": str(프로필사진), "sex": int(성별)}.{}]
+- return: [{"email": str(친구 이메일), "url": str(친구 사진url), "reg_date": str(친구 사진 등록날짜), "name": str(친구이름), "img_url": str(프로필사진), "sex": int(성별), "read":boolean(읽음여부)}.{}]
 - 만든이 : snchoi
 
 
@@ -239,6 +256,14 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 - 만든이 : snchoi
 
 
+### PUT api/user-modify/
+
+- DRF
+- 회원정보 수정 (이메일, 비밀번호는 변경하지 않음)
+- - **body**: {email: str(이메일), age: int(나이), sex: int(성별), phone_number: str(핸드폰번호000-0000-0000형식으로 받아주세용), name: str(이름), guardian_name: str(보호자이름), guardian_phone_number: str(핸드폰번호000-0000-0000형식으로 받아주세용), purpose: str(목적-다이어트, 당뇨 등등)}
+- return: HTTP_200_OK | HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
 
 ### POST api/token-check/
 
@@ -268,7 +293,7 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 - 즐겨찾기한 레시피 조회
 - **parameter**: 
   - email = str(이메일)
-- return: RECIPE_FAVORITE [{ "id": int(pk),
+- return: ALL_RECIPE [{ "id": int(pk),
           "name": str(레시피 이름),
           "ingredient": str(재료),
           "ingredient_name": str(재료 이름),
@@ -283,6 +308,29 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
           "email": str(사용자이메일)}, {}]
 - 만든이 : snchoi
 
+
+
+
+### GET api/recomm-recipe-detail/?all_recipe_id=int
+
+- DRF
+- 레세피 조회 상세보기
+- **parameter**: 
+  - all_recipe_id = str(레시피id)
+- return: ALL_RECIPE {
+    "id": int(레시피id),
+    "name": str(레시피 이름),
+    "ingredient": str(재료),
+    "ingredient_name": str(재료 이름),
+    "seasoning": str(양념),
+    "seasoning_name": str(양념 이름),
+    "howto": str(방법),
+    "purpose": str(목적),
+    "views": int(조회수),
+    "img": str(레시피 이미지),
+    "recipe_num": int(만개의 레시피 고유번호)
+}
+- 만든이 : snchoi
 
 
 ### POST api/grocery-alarm/
@@ -332,7 +380,7 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 
 
 ### 추천레시피 저장
-- 이미지 인식 , 직접 재료 입력 후 호출되도록 구현
+- 추천레시피 조회시 호출되도록 구현
 - 문의 사항 -> 최수녕, 류제룡
 
 
@@ -358,6 +406,33 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
     "recipe_num": int(레시피번호)
 }, {}]
 - 만든이 : snchoi
+
+
+
+### 목적에 맞는 추천레시피 조회  api/recomm-recipe-purpose/?email=str
+
+- DRF
+- 사용자별 목적에 맞는 추천레시피 조회
+- **parameter**: 
+  - email = str(이메일)
+- return: RECOMM_RECIPE [{
+    "id": pk,
+    "email": str(사용자아이디),
+    "all_recipe_id": int(전체레시피pk),
+    "name": str(레시피이름),
+    "ingredient": str(재료종류 - 여러가지),
+    "ingredient_name": str(재료이름),
+    "seasoning": str(소스이름 + 양까지),
+    "seasoning_name": str(소스이름만),
+    "howto": str(방법),
+    "purpose": str(목적),
+    "views": int(조회수),
+    "img": str(레시피이미지url),
+    "recipe_num": int(레시피번호)
+}, {}]
+- 리턴 값 없을 경우 []
+- 만든이 : snchoi
+
 
 
 ### 추천레시피 랜덤으로 1개만 조회 api/recomm-recipe-one/?email=str
