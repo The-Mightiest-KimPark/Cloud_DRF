@@ -43,7 +43,7 @@ AI올린 EC2:
 
 ## 2. 요청 method 정보
 
-### POST dev/s3
+### POST dev/s3(사용안함)
 
 - lambda
 - S3 이미지 업로드 시 AI에게 전달
@@ -64,6 +64,18 @@ AI올린 EC2:
 - date형태 : '%Y-%m-%d %H:%M:%S.%f'
 - return: HTTP_200_OK | HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
+
+
+### POST api/ai-img-grocery/
+
+- DRF
+- S3 이미지 업로드 시 AI에게 전달
+  - 이미지를 업로드 하되 파일명(냉장고번호)을 받아 S3에 있는 것과 비교하여 해당 파일만 저장될 수 있도록 해야함
+- **body** : {url : str(버킷에올라가 이미지 url), fridge_number : str(냉장고번호), reg_date : str(현재날짜, 형식 : 2020-12-12 11:01:25.518280)}
+- date형태 : '%Y-%m-%d %H:%M:%S.%f'
+- return: HTTP_200_OK | HTTP_400_BAD_REQUEST
+- 만든이 : snchoi
+
 
 ### GET api/sensorvalue/?email=str(이메일)&name=str(센서이름)
 
