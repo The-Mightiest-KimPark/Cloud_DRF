@@ -140,9 +140,9 @@ def RecommRecipeGet(request):
     recom_recipe_queryset = RecommRecipe.objects.filter(email=email)
     serializers = RecommRecipeSerializer(recom_recipe_queryset, many=True)
     # 빅데이터 함수 호출(삽입)
-    # result = BdRecommRecipe(email)
-    # print('result : ', result)
-    # print('---------end--------')
+    result = BdRecommRecipe(email)
+    print('result : ', result)
+    print('---------end--------')
     return Response(serializers.data)
 
 # 목적에 맞는 추천 레시피 조회
