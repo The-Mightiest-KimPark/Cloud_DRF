@@ -107,6 +107,18 @@ AI올린 EC2:
 
 
 
+### GET api/grocery-count/?email=str&all_grocery_id=int
+
+- DRF
+- 특정 식재료 갯수 조회
+- **parameter**: 
+  - email = str(사용자email)
+  - all_grocery_id = int(전체식재료id)
+- return  : {"count": int(갯수)}
+- 만든이 : snchoi
+
+
+
 ### GET api/user-input-grocery/?email=str
 
 - DRF
