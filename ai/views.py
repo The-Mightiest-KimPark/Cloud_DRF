@@ -31,9 +31,13 @@ import re
 def AiImgGrocery(request):
     # 이미지 정보 받음
     params = request.data
+    print('params : ', params)
     url = params['url']
+    print('url : ', url)
     reg_date = params['reg_date']
+    print('reg_date : ', reg_date)
     fridge_number = params['fridge_number']
+    print('fridge_number : ', fridge_number)
 
     # 냉장고 번호를 통해 아이디 값 가져오기
     refri = Refrigerator.objects.get(fridge_number=fridge_number)
@@ -84,6 +88,7 @@ def AiImgGrocery(request):
                 serializer.save()
                 print('이미지 인식 재료 결과 저장 완료')
             except:
+                print('이미지 인식 재료 결과 저장 실패')
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 

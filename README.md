@@ -32,7 +32,12 @@ python manage.py runserver
 
 lambda :  https://8i8wxh81q2.execute-api.us-east-1.amazonaws.com
 
-drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
+drf :  
+- (구버전)http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
+- (신버전)http://13.209.95.229
+
+AI올린 EC2:
+- http://13.209.95.229:8888
 
 
 
@@ -355,7 +360,7 @@ drf :  http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 
 
 ### 추천레시피 저장
-- 이미지 인식 , 직접 재료 입력 후 호출되도록 구현
+- 추천레시피 조회시 호출되도록 구현
 - 문의 사항 -> 최수녕, 류제룡
 
 
