@@ -5,20 +5,22 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
-from .serializers import RecommRecipeSerializer, AllRecipeSerializer
-from .models import AllRecipe, RecommRecipe
+from .serializers import RecommRecipeSerializer, AllRecipeSerializer, AnswercountSerializer
+from .models import AllRecipe, RecommRecipe, Answercount, IntentModel, Preprocess, FindAnswer
 from ai.models import Grocery
 from user.models import UserInfo
 import pymysql
 import re
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import time
 import requests
 from django.core import serializers
 import json
 import random
+
 
 
 # AI 이미지 분석을 통한 결과 저장
@@ -36,6 +38,7 @@ def BdRecommRecipe(email):
     for name in list(names)[0:]:
         grocery = str(name) + ' ' + grocery
     # print('grocery',grocery)
+    # grocery = ' '.join(set(grocery.split()))
 
     # 빅데이터 로직
     # MariaDB에서 data호출
@@ -63,7 +66,8 @@ def BdRecommRecipe(email):
     # 10000단위로 유사도검사 후 병합
     for n in range((len(recipe_df) // 10000) + 1):
         tfidf_matrix = tfidf.fit_transform(recipe_df['ingredient_name'][n * 10000:(n + 1) * 10000])
-
+        # tfidf_matrix = TfidfVectorizer().fit_transform(recipe_df['ingredient_name'][n * 10000:(n + 1) * 10000]).toarray()
+        # tfidf_matrix = HashingVectorizer(n_features=300000).transform(recipe_df['ingredient_name'][n * 10000:(n + 1) * 10000])
         # 코사인유사도
         cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
@@ -77,7 +81,15 @@ def BdRecommRecipe(email):
         # 유사도가 높은 30개 레시피 (0번은 자기자신)
         sim_scores = sim_scores[1:31]
 
-        # 유사도가 높은 30개의 레시피 인덱스 추출
+        # 유사도가 높은 30개 레시피 (0번은 자기자신, 무한루프방지 30개)
+        sim_scores = sim_scores[1:31]
+        # 유사도 0.6이상만 추출하기
+        # for s in range(len(sim_scores)):
+        #     if sim_scores[s][1] < 0.6:
+        #         sim_scores = sim_scores[0:s]
+        #         break
+
+        # 유사도가 0.6이상의 레시피 인덱스 추출
         food_indices = [i[0] + (n * 10000) for i in sim_scores]
         sim_scores_list = [i[1] for i in sim_scores]
         index_list = index_list + food_indices
@@ -85,11 +97,13 @@ def BdRecommRecipe(email):
 
     print('10000단위로 유사도검사 후 병합')
 
-    # 330개의 레시피중 유사도가 높은 레피시 인덱스 30개 추출
+    # 합쳐진 유사도 0.6이상의 레시피중 유사도가 가장 높은 레피시 인덱스 30개 추출
     sim_df = pd.DataFrame({'food_indices': index_list, 'sim_scores': score_list})
     sim_df.sort_values(by='sim_scores', ascending=False, inplace=True)
+    print('유사도1위',sim_df['sim_scores'][0])
+    print(recipe_df['ingredient_name'][0])
     high_score_indices = sim_df['food_indices'].values.tolist()[:30]
-    print('330개의 레시피중 유사도가 높은 레피시 인덱스 30개 추출')
+    print('합쳐진 유사도 0.6이상의 레시피중 유사도가 가장 높은 레피시 인덱스 30개 추출')
 
     # 인덱스를 활용하여 30개의 레시피를 조회수 순으로 재정렬 후 10개 추출
     # recomm_recipe = recipe_data.iloc[high_score_indices]
@@ -124,9 +138,9 @@ def BdRecommRecipe(email):
         # print('recomm_recipe_result : ', recomm_recipe_result)
         # 데이터 저장
         serializer = RecommRecipeSerializer(data=body)
-        print(time.time() - start)
         if serializer.is_valid():
             serializer.save()
+            print(time.time() - start)
         else:
             print(serializer.errors)
             return False
@@ -176,6 +190,7 @@ def RecommRecipeGetOne(request):
     random_num = random.randint(0, length - 1)
     print(random_num)
     return Response(serializers.data[random_num])
+
 
 
 # 음성 대답 저장
@@ -232,3 +247,114 @@ def RecommRecipeDetail(request):
     return Response(serializers.data[0])
 
 
+def AnswerGroceryCount(query):
+    start = time.time()
+    # 전처리 객체 생성
+    p = Preprocess(word2index_dic='C:\\DjangoRestFramework\\bigdata\\chatbot\\chatbot_dict_v2.bin', userdic='C:\\DjangoRestFramework\\bigdata\\chatbot\\user_dic_v1.tsv')
+    print(type(query),query)
+    query = query
+
+    # 의도 파악
+    print('여기',time.time()-start)
+    intent = IntentModel(model_name='C:\\DjangoRestFramework\\bigdata\\chatbot\\intent_model_v1.h5', proprocess=p)
+    predict = intent.predict_class(query)
+    intent_name = intent.labels[predict]
+
+    # 개체명 인식
+    # from models.ner.NerModel import NerModel
+    # ner = NerModel(model_name='../models/ner/ner_model.h5', proprocess=p)
+    # predicts = ner.predict(query)
+    # ner_tags = ner.predict_tags(query)
+
+    print("질문 : ", query)
+    print("=" * 100)
+    print("의도 파악 : ", intent_name)
+    # print("개체명 인식 : ", predicts)
+    # print("답변 검색에 필요한 NER 태그 : ", ner_tags)
+    print("=" * 100)
+
+    # 답변 검색
+    answer = Answercount.objects.values_list('answer').filter(intent=intent_name)
+    print(type(answer[0][0]))
+    print(answer[0][0])
+    if not answer:
+        answer = "죄송해요 무슨 말인지 모르겠어요."
+
+    print("답변 : ", answer[0][0])
+    print(time.time()-start)
+    return True
+
+
+# 추천레시피 조회(list)
+# 받는 값 : email
+# 만든이 : snchoi
+@api_view(['GET'])
+def AnswerCountGet(request):
+    query = request.GET.get('query')
+    Answercount_queryset = Answercount.objects.all()
+    serializers = AnswercountSerializer(Answercount_queryset, many=True)
+    # 빅데이터 함수 호출(삽입)
+    result = AnswerGroceryCount(query)
+    print('result : ', result)
+    print('---------end--------')
+    return Response(serializers.data)
+
+
+# 음성 대답 저장
+def SaveGroceryCount(email):
+    # 학습된 식재료명 리스트 (향후 모든 식재료를 학습시 g_list와 filter 삭제)
+    start = time.time()
+    g_list = ['달걀', '레몬', '자두', '오이', '사이다', '당근', '애호박', '옥수수', '파인애플', '사과', '양파', '마늘', '토마토',
+              '브로콜리', '깻잎', '가지', '단호박', '무', '양배추', '파프리카', '야쿠르트', '맥주', '콜라', '딸기']
+    grocery_name = Grocery.objects.filter(email=email, name__in=g_list).values_list('name', 'count')
+    grocery_data = pd.DataFrame(list(grocery_name), columns=['name', 'count'])
+    # 냉장고속 식재료 개수 초기화
+    grocery_count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    intent_list = []
+    answer_list = []
+
+    # 식재료별 현재 개수 계산
+    for i in range(len(grocery_data['name'])):
+        g_index = g_list.index(grocery_data['name'][i])
+        grocery_count[g_index] = grocery_count[g_index] + grocery_data['count'][i]
+
+    # 현재 학습된 식재료 개수 23
+    for i in range(23):
+        intent_str = f'{g_list[i]}개수'
+        intent_list.append(intent_str)
+        answer_str = f'현재 {g_list[i]}의 개수는 {grocery_count[i]}개 입니다.'
+        answer_list.append(answer_str)
+
+    print('현재 학습된 식재료 개수 23')
+    count_data = Answercount.objects.all()
+    count_to_json = serializers.serialize("json", count_data)
+    count_results = json.loads(count_to_json)
+    # DB삭제
+    answer_grocery_count = Answercount.objects.all()
+    answer_grocery_count.delete()
+
+    for answer in count_results:
+        body = answer['fields']
+        # 데이터 저장
+        serializer = AnswercountSerializer(data=body)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            print(serializer.errors)
+            return False
+    print(time.time() - start)
+    return True
+
+# 추천레시피 조회(list)
+# 받는 값 : email
+# 만든이 : snchoi
+@api_view(['GET'])
+def SaveCountGet(request):
+    email = request.GET.get('email')
+    Answercount_queryset = Answercount.objects.all()
+    serializers = AnswercountSerializer(Answercount_queryset, many=True)
+    # 빅데이터 함수 호출(삽입)
+    result = SaveGroceryCount(email)
+    print('result : ', result)
+    print('---------end--------')
+    return Response(serializers.data)
