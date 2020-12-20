@@ -369,7 +369,7 @@ AI올린 EC2:
 
 
 
-### DELETE api/grocery-alarm/
+### DELETE api/grocery-alarm/?email=str&all_grocery_id=int
 
 - DRF
 - 식재료 알림 삭제
