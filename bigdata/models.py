@@ -58,7 +58,7 @@ class AllRecipe(models.Model):
 # 챗봇 대답
 class Answercount(models.Model):
     id = models.AutoField(primary_key=True) #pk
-    intent = models.CharField(blank=True, max_length=500, null=True)
+    intent = models.CharField(blank=True, max_length=50, null=True)
     answer = models.CharField(blank=True,max_length=50, null=True)
 
     class Meta:
@@ -69,13 +69,13 @@ class Answercount(models.Model):
 
 # 챗봇 의도 분류
 class IntentModel:
+    tf.compat.v1.enable_eager_execution()
+    tf.compat.v1.logging.set_verbosity( tf.compat.v1.logging.ERROR)
     def __init__(self, model_name, proprocess):
         # 의도 클래스 별 레이블
-        self.labels = {0: "달걀개수", 1: "레몬개수", 2: "자두개수", 3: "오이개수", 4: "사이다개수", 5: "당근개수", 6: "애호박개수", 7: "옥수수개수",
-                        8: "파인애플개수",
-                        9: "사과개수", 10: "양파개수", 11: "마늘개수", 12: "토마토개수", 13: "브로콜리개수", 14: "깻잎개수",
-                        15: "가지개수", 16: "단호박개수", 17: "무개수", 18: "양배추개수", 19: "파프리카개수", 20: "야쿠르트개수", 21: "맥주개수",
-                        22: "콜라개수"}
+        self.labels = {0: "달걀개수", 1: "레몬개수", 2: "자두개수", 3: "오이개수", 4: "사이다개수", 5: "당근개수", 6: "애호박개수", 7: "옥수수개수", 8: "파인애플개수",
+                       9: "사과개수", 10: "양파개수", 11: "마늘개수", 12: "토마토개수", 13: "브로콜리개수", 14: "깻잎개수", 15: "가지개수", 16: "단호박개수",
+                       17: "무개수", 18: "양배추개수", 19: "파프리카개수", 20: "야쿠르트개수", 21: "맥주개수", 22: "콜라개수"}
 
         # 의도 분류 모델 불러오기
         self.model = load_model(model_name)

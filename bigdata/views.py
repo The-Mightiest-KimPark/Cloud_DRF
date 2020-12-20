@@ -136,9 +136,9 @@ def BdRecommRecipe(email):
         # print('recomm_recipe_result : ', recomm_recipe_result)
         # 데이터 저장
         serializer = RecommRecipeSerializer(data=body)
-        print(time.time() - start)
         if serializer.is_valid():
             serializer.save()
+            print(time.time() - start)
         else:
             print(serializer.errors)
             return False
@@ -201,22 +201,16 @@ def RecommRecipeDetail(request):
     return Response(serializers.data[0])
 
 
-# 식재료 개수 대답
-def AnswerGroceryCount(email):
+def AnswerGroceryCount(query):
+    start = time.time()
     # 전처리 객체 생성
-    p = Preprocess(word2index_dic='./chatbot/chatbot_dict.bin', userdic='./chatbot/user_dic.tsv')
-
-    # 질문/답변 학습 디비 연결 객체 생성
-    # db = Database(
-    #     host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db_name=DB_NAME
-    # )
-    # db.connect()  # 디비 연결
-
-    query = "당근 몇개 있어?"
+    p = Preprocess(word2index_dic='C:\\DjangoRestFramework\\bigdata\\chatbot\\chatbot_dict_v2.bin', userdic='C:\\DjangoRestFramework\\bigdata\\chatbot\\user_dic_v1.tsv')
+    print(type(query),query)
+    query = query
 
     # 의도 파악
-
-    intent = IntentModel(model_name='./chatbot/intent_model.h5', proprocess=p)
+    print('여기',time.time()-start)
+    intent = IntentModel(model_name='C:\\DjangoRestFramework\\bigdata\\chatbot\\intent_model_v1.h5', proprocess=p)
     predict = intent.predict_class(query)
     intent_name = intent.labels[predict]
 
@@ -234,11 +228,15 @@ def AnswerGroceryCount(email):
     print("=" * 100)
 
     # 답변 검색
-    answer = Answercount.object.values_list('answer').filter(intent=intent_name)
-    print(type(answer))
-    # answer = "죄송해요 무슨 말인지 모르겠어요"
+    answer = Answercount.objects.values_list('answer').filter(intent=intent_name)
+    print(type(answer[0][0]))
+    print(answer[0][0])
+    if not answer:
+        answer = "죄송해요 무슨 말인지 모르겠어요."
 
-    print("답변 : ", answer)
+    print("답변 : ", answer[0][0])
+    print(time.time()-start)
+    return True
 
 
 # 추천레시피 조회(list)
@@ -246,50 +244,71 @@ def AnswerGroceryCount(email):
 # 만든이 : snchoi
 @api_view(['GET'])
 def AnswerCountGet(request):
-    email = request.GET.get('email')
-    Answercount_queryset = Answercount.objects.all
+    query = request.GET.get('query')
+    Answercount_queryset = Answercount.objects.all()
     serializers = AnswercountSerializer(Answercount_queryset, many=True)
     # 빅데이터 함수 호출(삽입)
-    result = AnswerGroceryCount(email)
+    result = AnswerGroceryCount(query)
     print('result : ', result)
     print('---------end--------')
     return Response(serializers.data)
 
 
 # 음성 대답 저장
-# def SaveGroceryCount(email):
-#     # 학습된 식재료명 리스트
-#     g_list = ['달걀', '레몬', '자두', '오이', '사이다', '당근', '애호박', '옥수수', '파인애플', '사과', '양파', '마늘', '토마토',
-#          '브로콜리', '깻잎', '가지', '단호박', '무', '양배추', '파프리카', '야쿠르트', '맥주', '콜라', '딸기']
-#     grocery_name = Grocery.objects.filter(name__in=g_list).values_list('name', 'count')
-#     grocery_data = pd.DataFrame(list(grocery_name), columns=['name', 'count'])
-#
-#     # 냉장고속 식재료 개수 초기화
-#     grocery_count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-#     answer_list = []
-#
-#     # 식재료별 현재 개수 계산
-#     for i in range(len(grocery_data['name'])):
-#         g_index = g_list.index(grocery_data['name'][i])
-#         grocery_count[g_index] = grocery_count[g_index] + grocery_data['count'][i]
-#     # 현재 학습된 식재료 개수 23
-#     for i in range(23):
-#         answer_str = '현재 ' + g_list[i] + '의 개수는 ' + str(grocery_count[i]) + '개 입니다.'
-#         answer_list.append(answer_str)
-#
-#     # DB에 업데이트(id값 고정시키기위해)
-#     for i in range(23):
-#         id_num = i + 1
-#         conn = pymysql.connect(host='themightiestkpk.c9jl6xhdt5hy.us-east-1.rds.amazonaws.com', port=3306, user='admin',
-#                                passwd='themightiestkpk1', db='themightiestkpk', cursorclass=pymysql.cursors.DictCursor)
-#         try:
-#             cur = conn.cursor()
-#             sql = '''
-#                 UPDATE ANSWER_COUNT SET id=id, question=question, answer=%s where id=%s
-#             '''
-#             val = (answer_list[i], id_num)
-#             cur.execute(sql, val)
-#         finally:
-#             conn.commit()
-#             conn.close()
-#     return True
+def SaveGroceryCount(email):
+    # 학습된 식재료명 리스트 (향후 모든 식재료를 학습시 g_list와 filter 삭제)
+    start = time.time()
+    g_list = ['달걀', '레몬', '자두', '오이', '사이다', '당근', '애호박', '옥수수', '파인애플', '사과', '양파', '마늘', '토마토',
+              '브로콜리', '깻잎', '가지', '단호박', '무', '양배추', '파프리카', '야쿠르트', '맥주', '콜라', '딸기']
+    grocery_name = Grocery.objects.filter(email=email, name__in=g_list).values_list('name', 'count')
+    grocery_data = pd.DataFrame(list(grocery_name), columns=['name', 'count'])
+    # 냉장고속 식재료 개수 초기화
+    grocery_count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    intent_list = []
+    answer_list = []
+
+    # 식재료별 현재 개수 계산
+    for i in range(len(grocery_data['name'])):
+        g_index = g_list.index(grocery_data['name'][i])
+        grocery_count[g_index] = grocery_count[g_index] + grocery_data['count'][i]
+
+    # 현재 학습된 식재료 개수 23
+    for i in range(23):
+        intent_str = f'{g_list[i]}개수'
+        intent_list.append(intent_str)
+        answer_str = f'현재 {g_list[i]}의 개수는 {grocery_count[i]}개 입니다.'
+        answer_list.append(answer_str)
+
+    print('현재 학습된 식재료 개수 23')
+    count_data = Answercount.objects.all()
+    count_to_json = serializers.serialize("json", count_data)
+    count_results = json.loads(count_to_json)
+    # DB삭제
+    answer_grocery_count = Answercount.objects.all()
+    answer_grocery_count.delete()
+
+    for answer in count_results:
+        body = answer['fields']
+        # 데이터 저장
+        serializer = AnswercountSerializer(data=body)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            print(serializer.errors)
+            return False
+    print(time.time() - start)
+    return True
+
+# 추천레시피 조회(list)
+# 받는 값 : email
+# 만든이 : snchoi
+@api_view(['GET'])
+def SaveCountGet(request):
+    email = request.GET.get('email')
+    Answercount_queryset = Answercount.objects.all()
+    serializers = AnswercountSerializer(Answercount_queryset, many=True)
+    # 빅데이터 함수 호출(삽입)
+    result = SaveGroceryCount(email)
+    print('result : ', result)
+    print('---------end--------')
+    return Response(serializers.data)
