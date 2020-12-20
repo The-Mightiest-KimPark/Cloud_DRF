@@ -373,7 +373,9 @@ AI올린 EC2:
 
 - DRF
 - 식재료 알림 삭제
-- **body**: {email: str(내 이메일), all_grocery_id: int(식재료id)}
+- **parameter**
+  - email: str(내 이메일)
+  - all_grocery_id: int(식재료id)
 - return: HTTP_201_CREATED| HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
 
