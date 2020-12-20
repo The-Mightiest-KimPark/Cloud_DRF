@@ -5,20 +5,22 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
-from .serializers import RecommRecipeSerializer, AllRecipeSerializer
-from .models import AllRecipe, RecommRecipe
+from .serializers import RecommRecipeSerializer, AllRecipeSerializer, AnswercountSerializer
+from .models import AllRecipe, RecommRecipe, Answercount, IntentModel, Preprocess, FindAnswer
 from ai.models import Grocery
 from user.models import UserInfo
 import pymysql
 import re
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import time
 import requests
 from django.core import serializers
 import json
 import random
+
 
 
 # AI 이미지 분석을 통한 결과 저장
@@ -34,6 +36,7 @@ def BdRecommRecipe(email):
     for name in list(names)[0:]:
         grocery = str(name) + ' ' + grocery
     # print('grocery',grocery)
+    # grocery = ' '.join(set(grocery.split()))
 
     # 빅데이터 로직
     # MariaDB에서 data호출
@@ -61,7 +64,8 @@ def BdRecommRecipe(email):
     # 10000단위로 유사도검사 후 병합
     for n in range((len(recipe_df) // 10000) + 1):
         tfidf_matrix = tfidf.fit_transform(recipe_df['ingredient_name'][n * 10000:(n + 1) * 10000])
-
+        # tfidf_matrix = TfidfVectorizer().fit_transform(recipe_df['ingredient_name'][n * 10000:(n + 1) * 10000]).toarray()
+        # tfidf_matrix = HashingVectorizer(n_features=300000).transform(recipe_df['ingredient_name'][n * 10000:(n + 1) * 10000])
         # 코사인유사도
         cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
@@ -90,11 +94,12 @@ def BdRecommRecipe(email):
         score_list = score_list + sim_scores_list
 
     print('10000단위로 유사도검사 후 병합')
-    print(score_list)
 
     # 합쳐진 유사도 0.6이상의 레시피중 유사도가 가장 높은 레피시 인덱스 30개 추출
     sim_df = pd.DataFrame({'food_indices': index_list, 'sim_scores': score_list})
     sim_df.sort_values(by='sim_scores', ascending=False, inplace=True)
+    print('유사도1위',sim_df['sim_scores'][0])
+    print(recipe_df['ingredient_name'][0])
     high_score_indices = sim_df['food_indices'].values.tolist()[:30]
     print('합쳐진 유사도 0.6이상의 레시피중 유사도가 가장 높은 레피시 인덱스 30개 추출')
 
@@ -184,8 +189,75 @@ def RecommRecipeGetOne(request):
     return Response(serializers.data[random_num])
 
 
+# 추천레시피 상세 보기
+# 받는 값 : all_recipe_id
+# 만든이 : snchoi
+@api_view(['GET'])
+def RecommRecipeDetail(request):
+    all_recipe_id = request.GET.get('all_recipe_id')
+
+    queryset = AllRecipe.objects.filter(id=all_recipe_id)
+    serializers = AllRecipeSerializer(queryset, many=True)
+    return Response(serializers.data[0])
+
+
+# 식재료 개수 대답
+def AnswerGroceryCount(email):
+    # 전처리 객체 생성
+    p = Preprocess(word2index_dic='./chatbot/chatbot_dict.bin', userdic='./chatbot/user_dic.tsv')
+
+    # 질문/답변 학습 디비 연결 객체 생성
+    # db = Database(
+    #     host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db_name=DB_NAME
+    # )
+    # db.connect()  # 디비 연결
+
+    query = "당근 몇개 있어?"
+
+    # 의도 파악
+
+    intent = IntentModel(model_name='./chatbot/intent_model.h5', proprocess=p)
+    predict = intent.predict_class(query)
+    intent_name = intent.labels[predict]
+
+    # 개체명 인식
+    # from models.ner.NerModel import NerModel
+    # ner = NerModel(model_name='../models/ner/ner_model.h5', proprocess=p)
+    # predicts = ner.predict(query)
+    # ner_tags = ner.predict_tags(query)
+
+    print("질문 : ", query)
+    print("=" * 100)
+    print("의도 파악 : ", intent_name)
+    # print("개체명 인식 : ", predicts)
+    # print("답변 검색에 필요한 NER 태그 : ", ner_tags)
+    print("=" * 100)
+
+    # 답변 검색
+    answer = Answercount.object.values_list('answer').filter(intent=intent_name)
+    print(type(answer))
+    # answer = "죄송해요 무슨 말인지 모르겠어요"
+
+    print("답변 : ", answer)
+
+
+# 추천레시피 조회(list)
+# 받는 값 : email
+# 만든이 : snchoi
+@api_view(['GET'])
+def AnswerCountGet(request):
+    email = request.GET.get('email')
+    Answercount_queryset = Answercount.objects.all
+    serializers = AnswercountSerializer(Answercount_queryset, many=True)
+    # 빅데이터 함수 호출(삽입)
+    result = AnswerGroceryCount(email)
+    print('result : ', result)
+    print('---------end--------')
+    return Response(serializers.data)
+
+
 # 음성 대답 저장
-# def AnswerGroceryCount(email):
+# def SaveGroceryCount(email):
 #     # 학습된 식재료명 리스트
 #     g_list = ['달걀', '레몬', '자두', '오이', '사이다', '당근', '애호박', '옥수수', '파인애플', '사과', '양파', '마늘', '토마토',
 #          '브로콜리', '깻잎', '가지', '단호박', '무', '양배추', '파프리카', '야쿠르트', '맥주', '콜라', '딸기']
@@ -221,18 +293,3 @@ def RecommRecipeGetOne(request):
 #             conn.commit()
 #             conn.close()
 #     return True
-
-
-
-# 추천레시피 상세 보기
-# 받는 값 : all_recipe_id
-# 만든이 : snchoi
-@api_view(['GET'])
-def RecommRecipeDetail(request):
-    all_recipe_id = request.GET.get('all_recipe_id')
-
-    queryset = AllRecipe.objects.filter(id=all_recipe_id)
-    serializers = AllRecipeSerializer(queryset, many=True)
-    return Response(serializers.data[0])
-
-

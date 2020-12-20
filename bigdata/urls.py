@@ -8,4 +8,5 @@ urlpatterns = [
     path('api/recomm-recipe-purpose/', views.RecommRecipePurposeGet),
     path('api/recomm-recipe-one/', views.RecommRecipeGetOne),
     path('api/recomm-recipe-detail/', views.RecommRecipeDetail),
+    path('api/answer-count/', views.AnswerCountGet)
 ]
