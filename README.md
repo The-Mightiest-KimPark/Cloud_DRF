@@ -119,10 +119,12 @@ AI올린 EC2:
 
 
 
-### GET api/user-input-grocery/?email=str
+### 1) GET api/user-input-grocery/?email=str
+### 2) GET api/user-input-grocery/?email=str&gubun=int
 
 - DRF
-- 사용자 냉장고 재료 조회(구분 없이 전체 재료 조회)
+- 1) 사용자 냉장고 재료 조회(구분 없이 전체 재료 조회)
+- 2) 사용자 냉장고 재료 조회(이미지인식/직접입력 구분하여 )
 - **parameter**: 
   - gubun = int(1(이미지 인식) or 2(직접입력)) 
   - email = str(사용자email)
