@@ -168,7 +168,7 @@ def userInputGrocery(request):
         email = data['email']
         all_grocery_id = data['all_grocery_id']
         try:
-            queryset = Grocery.objects.get(Q(all_grocery_id=all_grocery_id),Q(email=email))
+            queryset = Grocery.objects.get(Q(all_grocery_id=all_grocery_id),Q(email=email),Q(gubun=2))
             queryset.delete()
         except:
             return Response({"result":False}, status=status.HTTP_400_BAD_REQUEST)
