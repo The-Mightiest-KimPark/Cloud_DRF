@@ -158,8 +158,8 @@ AI올린 EC2:
 - DRF
 - 재료 직접 입력 삭제
 - **parameter** 
-- "email": str(사용자email)
-- "all_grocery_id": int(식재료id)
+  - "email": str(사용자email)
+  - "all_grocery_id": int(식재료id)
 - return : HTTP_201_CREATED | HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
 
