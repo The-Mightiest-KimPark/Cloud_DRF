@@ -318,9 +318,11 @@ def GroceryAlarm(request):
     
     # 식재료 알림 삭제
     elif request.method == 'DELETE':
-        params = request.data
-        email = params['email']
-        all_grocery_id = params['all_grocery_id']
+        # params = request.data
+        # email = params['email']
+        # all_grocery_id = params['all_grocery_id']
+        email = request.GET.get('email')
+        all_grocery_id = request.GET.get('all_grocery_id')
 
         queryset = Alarm.objects.get(Q(email=email),Q(all_grocery_id=all_grocery_id))
 
