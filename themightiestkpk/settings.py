@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'bigdata',
     'refrigerator',
     'user',
-    'ai'
+    'ai',
+    'corsheaders'
     #'storages',
 ]
 
@@ -109,6 +110,9 @@ DATABASES = {
      'PORT': '3306',  # 데이터베이스 port
      }
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Password validation
