@@ -164,9 +164,11 @@ def userInputGrocery(request):
 
     # 사용자 입력 재료 삭제
     elif request.method == 'DELETE':
-        data = request.data
-        email = data['email']
-        all_grocery_id = data['all_grocery_id']
+        # data = request.data
+        # email = data['email']
+        # all_grocery_id = data['all_grocery_id']
+        email = request.GET.get('email')
+        all_grocery_id = request.GET.get('all_grocery_id')
         try:
             queryset = Grocery.objects.get(Q(all_grocery_id=all_grocery_id),Q(email=email),Q(gubun=2))
             queryset.delete()
