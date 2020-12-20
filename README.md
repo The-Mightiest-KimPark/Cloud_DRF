@@ -107,10 +107,24 @@ AI올린 EC2:
 
 
 
-### GET api/user-input-grocery/?email=str
+### GET api/grocery-count/?email=str&all_grocery_id=int
 
 - DRF
-- 사용자 냉장고 재료 조회(구분 없이 전체 재료 조회)
+- 특정 식재료 갯수 조회
+- **parameter**: 
+  - email = str(사용자email)
+  - all_grocery_id = int(전체식재료id)
+- return  : {"count": int(갯수)}
+- 만든이 : snchoi
+
+
+
+### 1) GET api/user-input-grocery/?email=str
+### 2) GET api/user-input-grocery/?email=str&gubun=int
+
+- DRF
+- 1) 사용자 냉장고 재료 조회(구분 없이 전체 재료 조회)
+- 2) 사용자 냉장고 재료 조회(이미지인식/직접입력 구분하여 )
 - **parameter**: 
   - gubun = int(1(이미지 인식) or 2(직접입력)) 
   - email = str(사용자email)
@@ -139,11 +153,13 @@ AI올린 EC2:
 
 
 
-### DELETE api/user-input-grocery/
+### DELETE api/user-input-grocery/?email=str&all_grocery_id=int
 
 - DRF
 - 재료 직접 입력 삭제
-- **body** : GROCERY {"email": str, "all_grocery_id": int}
+- **parameter** 
+  - "email": str(사용자email)
+  - "all_grocery_id": int(식재료id)
 - return : HTTP_201_CREATED | HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
 
@@ -353,11 +369,13 @@ AI올린 EC2:
 
 
 
-### DELETE api/grocery-alarm/
+### DELETE api/grocery-alarm/?email=str&all_grocery_id=int
 
 - DRF
 - 식재료 알림 삭제
-- **body**: {email: str(내 이메일), all_grocery_id: int(식재료id)}
+- **parameter**
+  - email: str(내 이메일)
+  - all_grocery_id: int(식재료id)
 - return: HTTP_201_CREATED| HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
 
@@ -463,6 +481,3 @@ AI올린 EC2:
 ## 3. 남은 백엔드 기능
 
 - 회원 사진 등록/수정 - 수녕
-- 회원 정보 수정 - 륜화
-  - update 가능 값 : 이메일, 비밀번호 빼고 다!!
-  - 받는 값 : email
