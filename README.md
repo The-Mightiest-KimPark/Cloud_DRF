@@ -153,11 +153,13 @@ AI올린 EC2:
 
 
 
-### DELETE api/user-input-grocery/
+### DELETE api/user-input-grocery/?email=str&all_grocery_id=int
 
 - DRF
 - 재료 직접 입력 삭제
-- **body** : GROCERY {"email": str, "all_grocery_id": int}
+- **parameter** 
+  - "email": str(사용자email)
+  - "all_grocery_id": int(식재료id)
 - return : HTTP_201_CREATED | HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
 
