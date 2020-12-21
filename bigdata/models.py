@@ -58,6 +58,7 @@ class AllRecipe(models.Model):
 # 챗봇 대답
 class Answercount(models.Model):
     id = models.AutoField(primary_key=True) #pk
+    email = models.CharField(blank=True, max_length=50, null=True)  # FK(사용자id값)
     intent = models.CharField(blank=True, max_length=50, null=True)
     answer = models.CharField(blank=True,max_length=50, null=True)
 
