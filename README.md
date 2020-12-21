@@ -137,7 +137,8 @@ AI올린 EC2:
 
 - DRF
 - 재료 직접 입력 삽입
-- **body** : GROCERY {"email": str, "all_grocery_id": int, "name": str, "count": int}
+- **body** : GROCERY {"email": str, "all_grocery_id": int, "name": str, "count": int, "expiration_date": date(유통기한)}
+- date형식 "2020-12-24"
 - return : HTTP_201_CREATED | HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
 
@@ -475,6 +476,27 @@ AI올린 EC2:
     "recipe_num": int(레시피번호)
 }
 - 만든이 : snchoi
+
+
+
+### POST api/answer-save/
+
+- DRF
+- 음성챗봇-재료몇개 (기존 재료 기반으로 데이터 저장) > 냉장고 문 닫힐시 호출 (7초)
+- **body**: {email: str(내 이메일)}
+- return: HTTP_201_CREATED| HTTP_400_BAD_REQUEST
+- 만든이 : jr
+
+
+### GET api/answer-count/?email=str&query=str
+
+- DRF
+- 사용자별 식재료 알림 조회
+- **parameter**: 
+  - email = str(이메일)
+  - query = str(질문) > 가지몇개야?
+- return: ANSWER_COUNT {"result":"가지는3개입니다."}
+- 만든이 : jr
 
 
 
