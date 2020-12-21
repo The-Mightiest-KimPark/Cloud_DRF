@@ -99,28 +99,10 @@ class IntentModel:
         predict_class = tf.math.argmax(predict, axis=1)
         return predict_class.numpy()[0]
 
-# 챗봇 답변 검색
-class FindAnswer:
-    def __init__(self, db):
-        self.db = db
-
-    # 검색 쿼리 생성
-    def _make_query(self, intent_name):
-        sql = "select from ANSWER_COUNT"
-        if intent_name != None:
-            sql = sql + f" where intent='{intent_name}' "
-
-        return sql
-
-        # 의도명으로 답변 검색
-        sql = self._make_query(intent_name)
-        answer = self.db.select_one(sql)
-
-        return (answer['answer'])
 
 # 챗봇 전처리
 class Preprocess:
-    def __init__(self, word2index_dic='', userdic=None):
+    def __init__(self, word2index_dic = '', userdic=None):
         # 단어 인덱스 사전 불러오기
         if (word2index_dic != ''):
             f = open(word2index_dic, "rb")
