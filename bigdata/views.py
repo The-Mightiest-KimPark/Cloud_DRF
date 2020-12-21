@@ -244,7 +244,7 @@ def AnswerGroceryCount(email, query):
 
 # 챗봇 재료 개수 답변 검색
 # 받는 값 : query
-# 만든이 : snchoi
+# 만든이 : jr
 @api_view(['GET'])
 def AnswerCountGet(request):
     email = request.GET.get('email')
@@ -308,14 +308,22 @@ def SaveGroceryCount(email):
 
 # 챗봇 답변 저장(list)
 # 받는 값 : email
-# 만든이 : snchoi
-@api_view(['GET'])
+# 만든이 : jr
+@api_view(['POST'])
 def SaveCountGet(request):
-    email = request.GET.get('email')
+
+    # email = request.GET.get('email')
+    data = request.data
+    email = data['email']
     Answercount_queryset = Answercount.objects.filter(email=email)
     serializers = AnswercountSerializer(Answercount_queryset, many=True)
+
     # 빅데이터 함수 호출(삽입)
     result = SaveGroceryCount(email)
     print('result : ', result)
+    if result:
+        return Response(status=status.HTTP_201_CREATED)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
     print('---------end--------')
-    return Response(serializers.data)
+    return Response({"result : ", result})
