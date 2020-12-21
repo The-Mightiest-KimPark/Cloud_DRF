@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets, permissions, generics, status, filters
 from .serializers import RecommRecipeSerializer, AllRecipeSerializer, AnswercountSerializer
-from .models import AllRecipe, RecommRecipe, Answercount, IntentModel, Preprocess, FindAnswer
+from .models import AllRecipe, RecommRecipe, Answercount, IntentModel, Preprocess
 from ai.models import Grocery
 from user.models import UserInfo
 import pymysql
@@ -20,7 +20,7 @@ import requests
 from django.core import serializers
 import json
 import random
-
+from .import load
 
 
 # AI 이미지 분석을 통한 결과 저장
@@ -210,16 +210,18 @@ def RecommRecipeDetail(request):
 def AnswerGroceryCount(query):
     start = time.time()
     # 전처리 객체 생성
-    p = Preprocess(word2index_dic='C:\\DjangoRestFramework\\bigdata\\chatbot\\chatbot_dict_v2.bin', userdic='C:\\DjangoRestFramework\\bigdata\\chatbot\\user_dic_v1.tsv')
+    p = Preprocess(word2index_dic='./bigdata/chatbot/chatbot_dict_21.bin', userdic='./bigdata/chatbot/user_dic_v1.tsv')
     print(type(query),query)
     query = query
+    print('시간1',time.time()-start)
 
+    start2 = time.time()
     # 의도 파악
-    print('여기',time.time()-start)
-    intent = IntentModel(model_name='C:\\DjangoRestFramework\\bigdata\\chatbot\\intent_model_v1.h5', proprocess=p)
-    predict = intent.predict_class(query)
-    intent_name = intent.labels[predict]
 
+    # intent = IntentModel(model_name='./bigdata/chatbot/intent_model_21.h5', proprocess=p)
+    predict = load.pre_intent.intent.predict_class(query)
+    intent_name = load.pre_intent.intent.labels[predict]
+    print('시간2', time.time() - start2)
     # 개체명 인식
     # from models.ner.NerModel import NerModel
     # ner = NerModel(model_name='../models/ner/ner_model.h5', proprocess=p)
@@ -233,6 +235,7 @@ def AnswerGroceryCount(query):
     # print("답변 검색에 필요한 NER 태그 : ", ner_tags)
     print("=" * 100)
 
+    start3 = time.time()
     # 답변 검색
     answer = Answercount.objects.values_list('answer').filter(intent=intent_name)
     answer = answer[0][0]
@@ -242,7 +245,8 @@ def AnswerGroceryCount(query):
         answer = "죄송해요 무슨 말인지 모르겠어요."
 
     print("답변 : ", answer)
-    print(time.time()-start)
+    print('시간3', time.time() - start3)
+    print('총시간', time.time()-start)
     return answer
 
 
@@ -258,7 +262,7 @@ def AnswerCountGet(request):
     result = AnswerGroceryCount(query)
     print('result : ', result)
     print('---------end--------')
-    return Response(serializers.data)
+    return Response({"result":result})
 
 
 # 챗봇 답변 저장
@@ -269,43 +273,56 @@ def SaveGroceryCount(email):
     start = time.time()
     g_list = ['달걀', '레몬', '자두', '오이', '사이다', '당근', '애호박', '옥수수', '파인애플', '사과', '양파', '마늘', '토마토',
               '브로콜리', '깻잎', '가지', '단호박', '무', '양배추', '파프리카', '야쿠르트', '맥주', '콜라', '딸기']
-    grocery_name = Grocery.objects.filter(email=email, name__in=g_list).values_list('name', 'count')
-    grocery_data = pd.DataFrame(list(grocery_name), columns=['name', 'count'])
+    grocery_name = Grocery.objects.filter(name__in=g_list).values_list('name', 'count')
+    print('시간', time.time() - start)
+    # grocery_data = pd.DataFrame(list(grocery_name), columns=['name', 'count'])
     # 냉장고속 식재료 개수 초기화
     grocery_count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     intent_list = []
     answer_list = []
-
+    print('시간1', time.time()-start)
+    start2 = time.time()
     # 식재료별 현재 개수 계산
-    for i in range(len(grocery_data['name'])):
-        g_index = g_list.index(grocery_data['name'][i])
-        grocery_count[g_index] = grocery_count[g_index] + grocery_data['count'][i]
-
+    # for i in range(len(grocery_data['name'])):
+    #     g_index = g_list.index(grocery_data['name'][i])
+    #     grocery_count[g_index] = grocery_count[g_index] + grocery_data['count'][i]
+    for i in range(len(grocery_name)):
+        g_index = g_list.index(grocery_name[i][0])
+        grocery_count[g_index] = grocery_count[g_index] + grocery_name[i][1]
+    print('시간2', time.time() - start2)
+    start3 = time.time()
     # 현재 학습된 식재료 개수 23
     for i in range(23):
         intent_str = f'{g_list[i]}개수'
         intent_list.append(intent_str)
         answer_str = f'현재 {g_list[i]}의 개수는 {grocery_count[i]}개 입니다.'
         answer_list.append(answer_str)
-
+    print('확인', answer_list)
+    print('시간3', time.time() - start3)
+    start4 = time.time()
     print('현재 학습된 식재료 개수 23')
+    # count_data = Answercount.objects.filter()
     count_data = Answercount.objects.all()
     count_to_json = serializers.serialize("json", count_data)
     count_results = json.loads(count_to_json)
     # DB삭제
-    answer_grocery_count = Answercount.objects.all()
+    answer_grocery_count = Answercount.objects.filter()
     answer_grocery_count.delete()
-
+    print('시간4', time.time() - start4)
+    start5 = time.time()
     for answer in count_results:
         body = answer['fields']
         # 데이터 저장
         serializer = AnswercountSerializer(data=body)
+        print(serializer)
+        print('시간5', time.time() - start5)
         if serializer.is_valid():
             serializer.save()
         else:
             print(serializer.errors)
             return False
-    print(time.time() - start)
+    print('시간6', time.time() - start4)
+    print('최종시간', time.time() - start)
     return True
 
 # 챗봇 답변 저장(list)
