@@ -17,6 +17,7 @@ class Grocery(models.Model):
     reg_date = models.DateTimeField(blank=True, null=True)
     gubun = models.IntegerField(blank=True, null=True)
     coordinate = models.JSONField(blank=True, null=True)
+    expiration_date = models.DateField(blank=True, null=True) #유통기한 추가
 
     class Meta:
         db_table = 'GROCERY'
