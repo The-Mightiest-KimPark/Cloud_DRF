@@ -249,8 +249,8 @@ def AnswerGroceryCount(email, query):
 def AnswerCountGet(request):
     email = request.GET.get('email')
     query = request.GET.get('query')
-    Answercount_queryset = Answercount.objects.all()
-    serializers = AnswercountSerializer(Answercount_queryset, many=True)
+    # Answercount_queryset = Answercount.objects.all()
+    # serializers = AnswercountSerializer(Answercount_queryset, many=True)
     # 빅데이터 함수 호출(삽입)
     result = AnswerGroceryCount(email,query)
     print('result : ', result)
@@ -315,8 +315,8 @@ def SaveCountGet(request):
     # email = request.GET.get('email')
     data = request.data
     email = data['email']
-    Answercount_queryset = Answercount.objects.filter(email=email)
-    serializers = AnswercountSerializer(Answercount_queryset, many=True)
+    # Answercount_queryset = Answercount.objects.filter(email=email)
+    # serializers = AnswercountSerializer(Answercount_queryset, many=True)
 
     # 빅데이터 함수 호출(삽입)
     result = SaveGroceryCount(email)
