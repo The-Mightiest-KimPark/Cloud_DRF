@@ -491,7 +491,7 @@ AI올린 EC2:
 ### GET api/answer-count/?email=str&query=str
 
 - DRF
-- 사용자별 식재료 알림 조회
+- 사용자별 식재료 알림 조회 > 음성챗봇으로 재료 몇개인지 물어볼 때 호출(4초)
 - **parameter**: 
   - email = str(이메일)
   - query = str(질문) > 가지몇개야?
