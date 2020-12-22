@@ -14,8 +14,8 @@
 | 일 | 월 | 화 | 수 | 목 | 금 | 토 |
 | --- | --- | --- | --- | --- | --- | --- |
 |  |  |  |  | [19](document/topic.md#NOV19) | [20](document/topic.md#NOV20) | [21](document/topic.md#NOV21) |
-| 22 | [23](document/meeting.md#NOV23) | [24](document/meeting.md#NOV24) | [25](document/meeting.md#NOV25) | [26](document/meeting.md#NOV26) | [27](document/meeting.md#NOV27) | [28](document/meeting.md#NOV28) |
-| 29 | [30](document/meeting.md#NOV30) |
+| 22 | [23](document/design.md#NOV23) | [24](document/design.md#NOV24) | [25](document/design.md#NOV25) | [26](document/design.md#NOV26) | [27](document/design.md#NOV27) | [28](document/design.md#NOV28) |
+| 29 | [30](document/design.md#NOV30) |
 
 
 
@@ -23,10 +23,10 @@
 
 | 일 | 월 | 화 | 수 | 목 | 금 | 토 |
 | --- | --- | --- | --- | --- | --- | --- |
-|  |  | [1] | [2] | [3] | [4] | 5 |
-| 6 | [7] | [8] | [9] | [10] | [11]| [12] |
-| [13] | [14] | [15] | [16] | [17] | [18] | [19] |
-| [20] | [21] | [22] | [23] | [24] |  |  |
+|  |  | [1](document/develop-1st.md#DEC01) | [2](document/develop-1st.md#DEC02) | [3](document/develop-1st.md#DEC03) | [4](document/develop-1st.md#DEC04) | [5](document/develop-1st.md#DEC05) |
+| 6 | [7](document/develop-2nd.md#DEC07) | [8](document/develop-2nd.md#DEC08) | [9](document/develop-2nd.md#DEC09) | [10](document/develop-2nd.md#DEC10) | [11](document/develop-2nd.md#DEC11) | [12](document/develop-2nd.md#DEC12) |
+| [13](document/develop-2nd.md#DEC13) | [14](document/develop-3rd.md#DEC14) | [15](document/develop-3rd.md#DEC15) | [16](document/develop-3rd.md#DEC16) | [17](document/develop-3rd.md#DEC17) | [18](document/develop-3rd.md#DEC18) | [19](document/develop-3rd.md#DEC19) |
+| [20](document/develop-3rd.md#DEC20) | [21](document/develop-4th.md#DEC21) | [22](document/develop-4th.md#DEC22) | [23](document/develop-4th.md#DEC23) | [24](document/develop-4th.md#DEC24) |  |  |
 
 * 11.19 - 11.21: 주제 선정 및 기획
 * 11.23 - 11.30: 구체화 및 사전준비
