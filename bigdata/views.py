@@ -31,8 +31,8 @@ def BdRecommRecipe(email):
     # email = request.GET.get('email')
     # print('빅데이터 진입')
     # 해당 사용자가 가지고 있는 재료정보
-    # names = Grocery.objects.filter(email=email).only('name')
-    names = Grocery.objects.all().only('name')
+    names = Grocery.objects.filter(email=email).only('name')
+    # names = Grocery.objects.all().only('name')
     # print('names',names)
     grocery = ''
     for name in list(names)[0:]:
