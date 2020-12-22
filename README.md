@@ -3,7 +3,7 @@
 
 - [회의록](#회의록)
 - [실행방법](#실행방법)
-- [REST API 정보](#document/rest-api.md)
+- [REST API 정보](document/rest-api.md)
 
 
 
