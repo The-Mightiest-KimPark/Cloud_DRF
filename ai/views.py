@@ -23,6 +23,7 @@ import json
 import datetime
 import requests
 import re
+from django.db.models import F
 
   
 # AI 이미지 분석을 통한 결과 저장 복사본
@@ -114,7 +115,7 @@ def userInputGrocery(request):
 
         # 구분값이 존재한다면 
         if gubun:
-            queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email)).order_by('expiration_date')
+            queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email)).order_by(F('expiration_date').desc(nulls_last=True))
         
         # 구분값이 존재하지 않는다면
         else:
