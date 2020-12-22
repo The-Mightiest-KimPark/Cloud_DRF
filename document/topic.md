@@ -195,6 +195,30 @@
   * 면접 시스템에 이용한대도 평가하여 보여주는게 있어야 할텐데 그것이 명확하지 않음
 
 
+
+### 참고자료
+
+* 이미지를 통한 결제
+
+  http://www.sisajournal-e.com/news/articleView.html?idxno=189192
+
+* 스마트 냉장고
+
+  https://scienceon.kisti.re.kr/commons/util/originalView.do?cn=JAKO201811648108240&oCn=JAKO201811648108240&dbt=JAKO&journal=NJOU00301497
+
+* 스마트 주차장
+
+   https://scienceon.kisti.re.kr/commons/util/originalView.do?cn=CFKO201523070247673&oCn=NPAP12593551&dbt=CFKO&journal=NPRO00376657
+
+* 알약구분
+
+  https://scienceon.kisti.re.kr/commons/util/originalView.do?cn=TRKO201800005241&dbt=TRKO&rn=
+
+* 딥러닝과 IoT카메라를 사용하여 화재를 감지하는 CCTV
+
+  https://www.youtube.com/watch?v=qEjsYnMoL6I&feature=youtu.be
+
+
 ---
 ---
 
@@ -258,6 +282,14 @@
   * api_emotion, aws_chatbot, polly등의 서비스가 있어서 AI면접, 챗봇 등이 걱정하는 것 보다 쉽게 구현 가능하다
 * 스마트 주차장
   * 어떤 event가 발생했을 때 개별 차주에게 연락을 주는 시스템이 필요
+
+
+
+### 참고자료
+
+* IoT냉장고 용기를 활용한 레시피 추천 시스템 설계
+
+  https://scienceon.kisti.re.kr/commons/util/originalView.do?cn=CFKO201518459287137&oCn=NPAP12687233&dbt=CFKO&journal=NPRO00377579
 
 ---
 
