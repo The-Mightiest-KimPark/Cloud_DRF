@@ -13,6 +13,7 @@ import pickle
 import jpype
 
 
+
 # 식재료 기반 추천 레시피
 class RecommRecipe(models.Model):
     id = models.AutoField(primary_key=True) #PK(추천레시피PK)
