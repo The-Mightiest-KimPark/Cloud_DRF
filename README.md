@@ -291,6 +291,18 @@ AI올린 EC2:
 - 만든이 : snchoi
 
 
+### GET api/register-check/?emails=str
+
+- DRF
+- 냉장고 번호 등록 시 이미 등록한 사람이지 체크
+- **parameter**: 
+  - email = str(이메일)
+- {"result": false / true}
+- 만든이 : snchoi
+
+
+
+
 
 ### PUT api/recipe-favorite/
 
