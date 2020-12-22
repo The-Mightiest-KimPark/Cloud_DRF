@@ -13,9 +13,9 @@
 
 | 일 | 월 | 화 | 수 | 목 | 금 | 토 |
 | --- | --- | --- | --- | --- | --- | --- |
-|  |  |  |  | [19](document/meeting.md#NOV19) | [20](document/meeting.md#NOV20) | [21] |
-| 22 | 23 | [24] | [25] | [26] | [27] | [28] |
-| 29 | [30] |
+|  |  |  |  | [19](document/topic.md#NOV19) | [20](document/topic.md#NOV20) | [21](document/topic.md#NOV20) |
+| 22 | [23](document/meeting.md#NOV23) | [24](document/meeting.md#NOV24) | [25](document/meeting.md#NOV25) | [26](document/meeting.md#NOV26) | [27](document/meeting.md#NOV27) | [28](document/meeting.md#NOV28) |
+| 29 | [30](document/meeting.md#NOV30) |
 
 
 
