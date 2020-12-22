@@ -223,7 +223,24 @@ def TockenCheck(request):
     if UserInfo.objects.filter(email=user_token_info['email']).exists():
         return Response(status=status.HTTP_200_OK)
 
-    return Response(status=status.HTTP_403_FORBIDDEN)    
+    return Response(status=status.HTTP_403_FORBIDDEN)  
+
+
+# 냉장고 번호 등록 회원 여부
+# 받는 값 : email
+# 만든이 : snchoi
+@api_view(['GET'])
+def RefriRegistCheck(request):
+    email = request.GET.get('email')
+    try:
+        register = Refrigerator.objects.get(email=email)
+        result = True
+
+    except:
+        result = False
+    return Response({"result":result})
+
+
 
 # 레시피 즐겨찾기
 # 만든이 : snchoi
