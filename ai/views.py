@@ -68,7 +68,7 @@ def AiImgGrocery(request):
     ai_result = json.loads(response.text)
 
     # 이전 결과 다 삭제
-    grocery = Grocery.objects.filter(email=email)
+    grocery = Grocery.objects.filter(Q(email=email),Q(gubun=1))
     if grocery:
         grocery.delete()
         print('결과 삭제')
