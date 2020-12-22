@@ -1,4 +1,5 @@
-# 냉장고를 부탁해요우 - Please Take Care of My Refridgerator
+# 냉장고를 부탁해요우
+# Please Take Care of My Refridgerator
 
 - [회의록](#회의록)
 - [실행방법](#실행방법)
