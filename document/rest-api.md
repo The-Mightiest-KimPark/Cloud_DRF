@@ -79,7 +79,7 @@ AI올린 EC2:
 - **parameter**: 
   - gubun = int(1(이미지 인식) or 2(직접입력)) 
   - email = str(사용자email)
-- return  : GROCERY [{"id": int, "email": str, "all_grocery_id": int,  "name": str, "count": int, "reg_date": str(date), "gubun": int, "coordinate": "str(list)" },{}]
+- return  : GROCERY [{"id": int, "email": str, "all_grocery_id": int,  "name": str, "count": int, "reg_date": str(date), "gubun": int, "coordinate": "str(list)", "expiration_date": date(0000-00-00) },{}]
 - 만든이 : snchoi
 
 
@@ -106,7 +106,7 @@ AI올린 EC2:
 - **parameter**: 
   - gubun = int(1(이미지 인식) or 2(직접입력)) 
   - email = str(사용자email)
-- return  : GROCERY [{"id": int, "email": str, "all_grocery_id": int,  "name": str, "count": int, "reg_date": str(date), "gubun": int, "coordinate": "str(list)" },{}]
+- return  : GROCERY [{"id": int, "email": str, "all_grocery_id": int,  "name": str, "count": int, "reg_date": str(date), "gubun": int, "coordinate": "str(list)", "expiration_date": date(0000-00-00)},{}]
 - 만든이 : snchoi
 
 
@@ -126,7 +126,7 @@ AI올린 EC2:
 
 - DRF
 - 재료 직접 입력 수정
-- **body** : GROCERY {"email": str, "all_grocery_id": int, "name": str, "count": int}
+- **body** : GROCERY {"email": str, "all_grocery_id": int, "name": str, "count": int, "expiration_date": date(0000-00-00)}
 - return : HTTP_201_CREATED | HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
 
@@ -472,7 +472,7 @@ AI올린 EC2:
 ### POST api/answer-save/
 
 - DRF
-- 음성챗봇-재료몇개 (기존 재료 기반으로 데이터 저장) > 냉장고 문 닫힐시 호출 (7초)
+- 음성챗봇-재료몇개 (기존 재료 기반으로 데이터 저장) > 냉장고 문 닫힐시 호출 (3초)
 - **body**: {email: str(내 이메일)}
 - return: HTTP_201_CREATED| HTTP_400_BAD_REQUEST
 - 만든이 : jr
@@ -481,7 +481,7 @@ AI올린 EC2:
 ### GET api/answer-count/?email=str&query=str
 
 - DRF
-- 사용자별 식재료 알림 조회 > 음성챗봇으로 재료 몇개인지 물어볼 때 호출(4초)
+- 사용자별 식재료 알림 조회 > 음성챗봇으로 재료 몇개인지 물어볼 때 호출(2초)
 - **parameter**: 
   - email = str(이메일)
   - query = str(질문) > 가지몇개야?
