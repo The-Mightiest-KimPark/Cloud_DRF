@@ -472,7 +472,7 @@ AI올린 EC2:
 ### POST api/answer-save/
 
 - DRF
-- 음성챗봇-재료몇개 (기존 재료 기반으로 데이터 저장) > 냉장고 문 닫힐시 호출 (7초)
+- 음성챗봇-재료몇개 (기존 재료 기반으로 데이터 저장) > 냉장고 문 닫힐시 호출 (3초)
 - **body**: {email: str(내 이메일)}
 - return: HTTP_201_CREATED| HTTP_400_BAD_REQUEST
 - 만든이 : jr
@@ -481,7 +481,7 @@ AI올린 EC2:
 ### GET api/answer-count/?email=str&query=str
 
 - DRF
-- 사용자별 식재료 알림 조회 > 음성챗봇으로 재료 몇개인지 물어볼 때 호출(4초)
+- 사용자별 식재료 알림 조회 > 음성챗봇으로 재료 몇개인지 물어볼 때 호출(2초)
 - **parameter**: 
   - email = str(이메일)
   - query = str(질문) > 가지몇개야?
