@@ -35,6 +35,7 @@ lambda :  https://8i8wxh81q2.execute-api.us-east-1.amazonaws.com
 drf :  
 - (구버전)http://3.92.44.79 또는 http://ec2-3-92-44-79.compute-1.amazonaws.com/
 - (신버전)http://13.209.95.229
+- (빅데이터음성부분)http://3.93.61.7
 
 AI올린 EC2:
 - http://13.209.95.229:8888
