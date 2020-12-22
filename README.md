@@ -3,7 +3,7 @@
 
 - [회의록](#회의록)
 - [실행방법](#실행방법)
-- [REST API 정보](#rest-api.md)
+- [REST API 정보](#/document/rest-api.md)
 
 
 
@@ -13,7 +13,7 @@
 
 | 일 | 월 | 화 | 수 | 목 | 금 | 토 |
 | --- | --- | --- | --- | --- | --- | --- |
-|  |  |  |  | [19](meeting.md#NOV19) | [20](meeting.md#NOV20) | [21] |
+|  |  |  |  | [19](/document/meeting.md#NOV19) | [20](/document/meeting.md#NOV20) | [21] |
 | 22 | 23 | [24] | [25] | [26] | [27] | [28] |
 | 29 | [30] |
 
