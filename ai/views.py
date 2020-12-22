@@ -114,7 +114,7 @@ def userInputGrocery(request):
 
         # 구분값이 존재한다면 
         if gubun:
-            queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email))
+            queryset = Grocery.objects.filter(Q(gubun=gubun),Q(email=email)).order_by('expiration_date')
         
         # 구분값이 존재하지 않는다면
         else:
@@ -145,11 +145,13 @@ def userInputGrocery(request):
         email = data['email']
         name = data['name']
         count = data['count']
+        expiration_date = data['expiration_date']
         all_grocery_id = data['all_grocery_id']
         try:
             grocery_queryset = Grocery.objects.get(Q(all_grocery_id=all_grocery_id),Q(email=email),Q(gubun=2))
             grocery_queryset.name = name
             grocery_queryset.count = count
+            grocery_queryset.expiration_date = expiration_date
             grocery_queryset.all_grocery_id = data['all_grocery_id']
 
             try:
