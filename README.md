@@ -214,7 +214,7 @@ AI올린 EC2:
 - DRF
 - 이메일 조회시 해당 사용자 정보 조회
 - **parameter**: email = str(친구 이메일)
-- [
+-
       {
           "email": str(이메일),
           "age": int(나이),
@@ -228,8 +228,7 @@ AI올린 EC2:
           "alarm_mode": int(알림모드) -> default 0,
           "outing_mode": int(외출모드) -> default 0,
           "motion_period" : int(모션센서 알림 설정기간) -> default 1
-      }, {}..
-  ]
+      }
 - 만든이 : snchoi
 
 
