@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/sign-in/', views.SignIn),
 
     path('api/token-check/', views.TockenCheck),
+    path('api/register-check/', views.RefriRegistCheck),
     path('api/recipe-favorite/', views.RecipeFavorites),
     # path('<str:pk>/detail', views.MemberDetailView.as_view(), 'detail'),
     path('api/user-info/', views.UserView.as_view()),
