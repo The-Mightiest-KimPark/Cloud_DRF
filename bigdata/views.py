@@ -42,7 +42,6 @@ def BdRecommRecipe(email):
 
     # 빅데이터 로직
     # MariaDB에서 data호출
-    # recipe_data = AllRecipe.objects.values_list('id', 'name', 'ingredient', 'ingredient_name', 'seasoning', 'seasoning_name', 'howto', 'purpose', 'views', 'img', 'recipe_num')
     start = time.time()
     result = AllRecipe.objects.values_list('ingredient_name', 'views')
 
@@ -70,6 +69,7 @@ def BdRecommRecipe(email):
         # tfidf_matrix = HashingVectorizer(n_features=300000).transform(recipe_df['ingredient_name'][n * 10000:(n + 1) * 10000])
         # 코사인유사도
         cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+        print('tfidf_matrix : ', tfidf_matrix.shape)
 
         # 냉장고재료 idx=0 으로 고정
         idx = 0
@@ -102,6 +102,8 @@ def BdRecommRecipe(email):
     sim_df.sort_values(by='sim_scores', ascending=False, inplace=True)
     print('유사도1위',sim_df['sim_scores'][0])
     print(recipe_df['ingredient_name'][0])
+    for i in range(10):
+        print('유사도 ', str(i+1), '위 : ', sim_df['sim_scores'][i], sep='')
     high_score_indices = sim_df['food_indices'].values.tolist()[:30]
     print('합쳐진 유사도 0.6이상의 레시피중 유사도가 가장 높은 레피시 인덱스 30개 추출')
 
@@ -155,10 +157,10 @@ def RecommRecipeGet(request):
     email = request.GET.get('email')
     recom_recipe_queryset = RecommRecipe.objects.filter(email=email)
     serializers = RecommRecipeSerializer(recom_recipe_queryset, many=True)
-    # # 빅데이터 함수 호출(삽입)
-    # result = BdRecommRecipe(email)
-    # print('result : ', result)
-    # print('---------end--------')
+    # 빅데이터 함수 호출(삽입)
+    result = BdRecommRecipe(email)
+    print('result : ', result)
+    print('---------end--------')
     return Response(serializers.data)
 
 
@@ -231,6 +233,7 @@ def AnswerGroceryCount(email, query):
     start3 = time.time()
     # 답변 검색
     answer = Answercount.objects.values_list('answer').filter(email=email, intent=intent_name)
+    print('answer',answer)
     if not answer:
         answer = "현재 냉장고 속에 존재하지 않습니다."
     else:
@@ -285,9 +288,9 @@ def SaveGroceryCount(email):
     intent_list = list(now_grocery_dict.keys())
     count_list = list(now_grocery_dict.values())
     for i in range(len(now_grocery_dict)):
-        answer_dict = {'email' : email, 'intent': intent_list[i] + '개수', 'answer': count_list[i]}
+        answer_dict = {'email' : email, 'intent': intent_list[i] + '개수', 'answer': '현재 ' + intent_list[i] + '의 ' + '개수는 ' + str(count_list[i])+ '개 입니다.'}
         answer_dict_list.append(answer_dict)
-
+    print(answer_dict_list)
     # DB삭제
     answer_grocery_count = Answercount.objects.filter(email=email)
     answer_grocery_count.delete()
