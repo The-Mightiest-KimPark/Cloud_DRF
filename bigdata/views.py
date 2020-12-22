@@ -235,7 +235,10 @@ def AnswerGroceryCount(email, query):
     answer = Answercount.objects.values_list('answer').filter(email=email, intent=intent_name)
     print('answer',answer)
     if not answer:
-        answer = "현재 냉장고 속에 존재하지 않습니다."
+        answer = Answercount.objects.values_list('answer').filter(intent=intent_name)
+        print('여기야',answer)
+        if not answer:
+            answer = "현재 냉장고 속에 존재하지 않습니다."
     else:
         answer = answer[0][0]
 
@@ -290,7 +293,6 @@ def SaveGroceryCount(email):
     for i in range(len(now_grocery_dict)):
         answer_dict = {'email' : email, 'intent': intent_list[i] + '개수', 'answer': '현재 ' + intent_list[i] + '의 ' + '개수는 ' + str(count_list[i])+ '개 입니다.'}
         answer_dict_list.append(answer_dict)
-    print(answer_dict_list)
     # DB삭제
     answer_grocery_count = Answercount.objects.filter(email=email)
     answer_grocery_count.delete()
@@ -300,6 +302,7 @@ def SaveGroceryCount(email):
     for answer in answer_dict_list:
         # 데이터 저장
         serializer = AnswercountSerializer(data=answer)
+        print(answer)
         if serializer.is_valid():
             serializer.save()
         else:
