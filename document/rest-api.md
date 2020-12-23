@@ -79,7 +79,7 @@ AI올린 EC2:
 - **parameter**: 
   - gubun = int(1(이미지 인식) or 2(직접입력)) 
   - email = str(사용자email)
-- return  : GROCERY [{"id": int, "email": str, "all_grocery_id": int,  "name": str, "count": int, "reg_date": str(date), "gubun": int, "coordinate": "str(list)", "expiration_date": date(0000-00-00) },{}]
+- return  : GROCERY [{"id": int, "email": str, "all_grocery_id": int,  "name": str, "count": int, "reg_date": str(date), "gubun": int, "coordinate": "str(list)", "expiration_date": str(0000-00-00) },{}]
 - 만든이 : snchoi
 
 
@@ -106,7 +106,7 @@ AI올린 EC2:
 - **parameter**: 
   - gubun = int(1(이미지 인식) or 2(직접입력)) 
   - email = str(사용자email)
-- return  : GROCERY [{"id": int, "email": str, "all_grocery_id": int,  "name": str, "count": int, "reg_date": str(date), "gubun": int, "coordinate": "str(list)", "expiration_date": date(0000-00-00)},{}]
+- return  : GROCERY [{"id": int, "email": str, "all_grocery_id": int,  "name": str, "count": int, "reg_date": str(date), "gubun": int, "coordinate": "str(list)", "expiration_date": str(0000-00-00)},{}]
 - 만든이 : snchoi
 
 
@@ -115,7 +115,7 @@ AI올린 EC2:
 
 - DRF
 - 재료 직접 입력 삽입
-- **body** : GROCERY {"email": str, "all_grocery_id": int, "name": str, "count": int, "expiration_date": date(유통기한)}
+- **body** : GROCERY {"email": str, "all_grocery_id": int, "name": str, "count": int, "expiration_date": str(유통기한)}
 - date형식 "2020-12-24"
 - return : HTTP_201_CREATED | HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
@@ -126,7 +126,7 @@ AI올린 EC2:
 
 - DRF
 - 재료 직접 입력 수정
-- **body** : GROCERY {"email": str, "all_grocery_id": int, "name": str, "count": int, "expiration_date": date(0000-00-00)}
+- **body** : GROCERY {"email": str, "all_grocery_id": int, "name": str, "count": int, "expiration_date": str(0000-00-00)}
 - return : HTTP_201_CREATED | HTTP_400_BAD_REQUEST
 - 만든이 : snchoi
 
