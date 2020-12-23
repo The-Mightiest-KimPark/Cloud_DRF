@@ -136,7 +136,7 @@ https://docs.google.com/document/d/1eXv47uANkFSXV7JfyVx2gC2OmVvpu5J0/edit#
 
 ### 클라우드 아키텍처 작성
 
-![TMK-cloudArchitecture](TMK-cloudArchitecture.png)
+![TMK-cloudArchitecture](image/TMK-cloudArchitecture.png)
 
 
 
@@ -330,7 +330,7 @@ IoT core는 사진의 갯수가 많거나 영상을 보내는 경우에 이용�
 
 ### 클라우드 강사님의 말씀
 
-![TMK-cloud](TMK-cloud.png)
+![TMK-cloud](image/TMK-cloud.png)
 
 IoT가 데이터를 주면 모델을 생성하는 것은 AI와 BD가 알아서 하는것이다
 
@@ -344,7 +344,7 @@ IoT가 데이터를 주면 모델을 생성하는 것은 AI와 BD가 알아서 �
 
 ### 시스템 플로우 작성
 
-![TheMightest-kpk시스템플로우](TMK-systemFlow.png)
+![TheMightest-kpk시스템플로우](image/TMK-systemFlow.png)
 
 
 
@@ -430,5 +430,5 @@ IoT가 데이터를 주면 모델을 생성하는 것은 AI와 BD가 알아서 �
 
 ### 데이터베이스 설계
 
-
+![TMK-ERDtemp](image\TMK-ERDtemp.png)
 

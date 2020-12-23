@@ -101,7 +101,7 @@ https://ovenapp.io/view/Vwcg2anAMp5qpBkgox6DhfT8SrdNWI8Z/1ZPVQ
 * LabelImg 설치 완료
 * Keras-YOLO chess dataset으로 fine-tune 완료
 
-![AI-chess](AI-chess.png)
+![AI-chess](image/AI-chess.png)
 
 
 
@@ -135,7 +135,7 @@ https://ovenapp.io/view/Vwcg2anAMp5qpBkgox6DhfT8SrdNWI8Z/1ZPVQ
 
 ### ERD 작성
 
-![ERD-before](ERD-before.PNG)
+![ERD-before](image/ERD-before.PNG)
 
 
 
