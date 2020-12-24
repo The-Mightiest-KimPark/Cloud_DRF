@@ -83,15 +83,21 @@ def BdRecommRecipe(email):
 
         # 유사도가 높은 30개 레시피 (0번은 자기자신, 무한루프방지 30개)
         sim_scores = sim_scores[1:31]
+        fin_sim_scores = sim_scores.copy()
         # 유사도 0.6이상만 추출하기
-        # for s in range(len(sim_scores)):
-        #     if sim_scores[s][1] < 0.6:
-        #         sim_scores = sim_scores[0:s]
-        #         break
+        for s in range(len(fin_sim_scores)):
+            if fin_sim_scores[s][1] < 0.6:
+                fin_sim_scores = fin_sim_scores[0:s]
+                # 식재료가 부실하여 높은 유사도추출이 불가능 할 시 기존 30개의 레시피를 추출
+                if not fin_sim_scores:
+                    fin_sim_scores = sim_scores
+                    break
+                else:
+                    break
 
         # 유사도가 0.6이상의 레시피 인덱스 추출
-        food_indices = [i[0] + (n * 10000) for i in sim_scores]
-        sim_scores_list = [i[1] for i in sim_scores]
+        food_indices = [i[0] + (n * 10000) for i in fin_sim_scores]
+        sim_scores_list = [i[1] for i in fin_sim_scores]
         index_list = index_list + food_indices
         score_list = score_list + sim_scores_list
 
