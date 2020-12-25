@@ -5,6 +5,7 @@
 **최수녕**
 
 * AWS cognito 진행
+* AWS RDS생성
 
 
 
@@ -15,7 +16,6 @@
 * 깃허브 repository 생성
 
 * AWS 계정 발급
-* AWS RDS생성
 
 
 
