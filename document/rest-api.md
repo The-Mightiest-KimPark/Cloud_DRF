@@ -191,21 +191,21 @@ AI올린 EC2:
 - DRF
 - 이메일 조회시 해당 사용자 정보 조회
 - **parameter**: email = str(친구 이메일)
-  -
-      {
-          "email": str(이메일),
-          "age": int(나이),
-          "sex": int(성별),
-          "phone_number": str(핸드폰번호),
-          "name": str(이름),
-          "guardian_name": str(보호자이름),
-          "guardian_phone_number": str(보호자번호),
-          "purpose": str(목적 - 다이어트 등등),
-          "img_url": str(프로필 사진 이미지),
-          "alarm_mode": int(알림모드) -> default 0,
-          "outing_mode": int(외출모드) -> default 0,
-          "motion_period" : int(모션센서 알림 설정기간) -> default 1
-      }
+-return:
+    {
+        "email": str(이메일),
+        "age": int(나이),
+        "sex": int(성별),
+        "phone_number": str(핸드폰번호),
+        "name": str(이름),
+        "guardian_name": str(보호자이름),
+        "guardian_phone_number": str(보호자번호),
+        "purpose": str(목적 - 다이어트 등등),
+        "img_url": str(프로필 사진 이미지),
+        "alarm_mode": int(알림모드) -> default 0,
+        "outing_mode": int(외출모드) -> default 0,
+        "motion_period" : int(모션센서 알림 설정기간) -> default 1
+    }
 - 만든이 : snchoi
 
 
