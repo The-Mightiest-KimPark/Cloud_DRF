@@ -191,7 +191,7 @@ AI올린 EC2:
 - DRF
 - 이메일 조회시 해당 사용자 정보 조회
 - **parameter**: email = str(친구 이메일)
--return:
+- return: 
     {
         "email": str(이메일),
         "age": int(나이),
